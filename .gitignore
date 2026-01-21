@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# server-only
+.ecosystem*
+ecosystem.config.cjs
+.env*
+.next/
+node_modules/
