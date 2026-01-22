@@ -5,6 +5,7 @@ import { dbConnect } from "../../../../lib/db/mongoose";
 import { Hold } from "../../../../models/Hold";
 import { Reservation } from "../../../../models/Reservation";
 import { TRIPS, type TripId } from "../../../../lib/booking/catalog";
+import { sendBrevoEmail } from "../../../../lib/email/brevo";
 
 type ConfirmResponse =
   | {
@@ -16,6 +17,11 @@ type ConfirmResponse =
       slotId: string;
       bookingMode: "private" | "shared";
       message: string;
+      customer?: {
+        name?: string;
+        email?: string;
+        phone?: string;
+      };
     }
   | { ok: false; error: string };
 
@@ -192,10 +198,14 @@ export async function POST(req: Request) {
         slotId: hold.slotId,
         bookingMode: hold.bookingMode,
         message: "Booking confirmed ✅",
+        customer: {
+          name: (hold.customer as any)?.name,
+          email: (hold.customer as any)?.email,
+          phone: (hold.customer as any)?.phone,
+        },
       };
     });
 
-    // withTransaction can return undefined if it aborts before callback completes
     if (!response) {
       const r: ConfirmResponse = { ok: false, error: "Transaction aborted" };
       return NextResponse.json(r, { status: 500 });
@@ -209,6 +219,49 @@ export async function POST(req: Request) {
         409;
 
       return NextResponse.json(response, { status });
+    }
+
+    // ✅ Send email AFTER booking is confirmed (best-effort)
+    try {
+      const trip = getTripOrThrow(response.tripId);
+      const toEmail = response.customer?.email?.trim() || "";
+      const toName = response.customer?.name?.trim() || "";
+
+      if (toEmail) {
+        const subject = `Booking confirmed — ${trip.title} (${response.date})`;
+
+        const html = `
+          <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+            <h2 style="margin: 0 0 12px;">Booking confirmed ✅</h2>
+            <p style="margin: 0 0 12px;">Thank you${toName ? `, ${toName}` : ""}! Your booking is confirmed.</p>
+
+            <div style="padding: 12px 14px; border: 1px solid #eee; border-radius: 10px;">
+              <p style="margin: 0 0 6px;"><strong>Trip:</strong> ${trip.title}</p>
+              <p style="margin: 0 0 6px;"><strong>Date:</strong> ${response.date}</p>
+              <p style="margin: 0 0 6px;"><strong>Slot:</strong> ${response.slotId}</p>
+              <p style="margin: 0 0 6px;"><strong>Mode:</strong> ${response.bookingMode}</p>
+              <p style="margin: 0 0 6px;"><strong>Price:</strong> €${response.priceEur}</p>
+              <p style="margin: 0;"><strong>Reservation ID:</strong> ${response.reservationId}</p>
+            </div>
+
+            <p style="margin: 14px 0 0; color: #555;">
+              If you have questions, reply to this email.
+            </p>
+          </div>
+        `;
+
+        await sendBrevoEmail({
+          toEmail,
+          toName: toName || undefined,
+          subject,
+          html,
+          text: `Booking confirmed. Trip: ${trip.title}. Date: ${response.date}. Slot: ${response.slotId}. Mode: ${response.bookingMode}. Price: €${response.priceEur}. Reservation ID: ${response.reservationId}`,
+          reservationId: response.reservationId,
+        });
+      }
+    } catch (err) {
+      console.error("Brevo email failed:", err);
+      // do not throw — booking stays confirmed
     }
 
     return NextResponse.json(response);
