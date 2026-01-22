@@ -1,13 +1,25 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { dbConnect } from "../../../../../../lib/db/mongoose";
 import { Reservation } from "../../../../../../models/Reservation";
 import { TRIPS } from "../../../../../../lib/booking/catalog";
 import { sendBrevoEmail } from "../../../../../../lib/email/brevo";
+import { getCookieName, verifySession } from "../../../../../../lib/admin/auth";
 
-export async function POST(_: Request, ctx: { params: { id: string } }) {
+export async function POST(
+  _req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  // ✅ Admin auth (Node runtime, crypto OK)
+  const cookieStore = await cookies();
+  const token = cookieStore.get(getCookieName())?.value;
+  const session = verifySession(token);
+  if (!session) return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+
   await dbConnect();
 
-  const id = ctx.params.id;
+  const { id } = await context.params;
+
   const r = await Reservation.findById(id).lean();
   if (!r) return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
 
