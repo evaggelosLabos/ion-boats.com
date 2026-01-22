@@ -1,4 +1,3 @@
-// app/api/booking/confirm/route.ts
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import { dbConnect } from "../../../../lib/db/mongoose";
@@ -196,7 +195,7 @@ export async function POST(req: Request) {
         tripId: hold.tripId as TripId,
         date: hold.date,
         slotId: hold.slotId,
-        bookingMode: hold.bookingMode,
+        bookingMode: hold.bookingMode as "private" | "shared",
         message: "Booking confirmed ✅",
         customer: {
           name: (hold.customer as any)?.name,
@@ -213,66 +212,76 @@ export async function POST(req: Request) {
 
     if (!response.ok) {
       const status =
-        response.error.includes("expired") ? 410 :
-        response.error.includes("not found") ? 404 :
-        response.error.includes("Missing") ? 400 :
-        409;
+        response.error.toLowerCase().includes("expired")
+          ? 410
+          : response.error.toLowerCase().includes("not found")
+          ? 404
+          : response.error.toLowerCase().includes("missing")
+          ? 400
+          : 409;
 
       return NextResponse.json(response, { status });
     }
 
-    // ✅ Send email AFTER booking is confirmed (best-effort)
-    try {
+    // ✅ NON-BLOCKING EMAIL (after successful transaction)
+    const toEmail = response.customer?.email;
+    const toName = response.customer?.name;
+
+    if (toEmail) {
       const trip = getTripOrThrow(response.tripId);
-      const toEmail = response.customer?.email?.trim() || "";
-      const toName = response.customer?.name?.trim() || "";
 
-      if (toEmail) {
-        const subject = `Booking confirmed — ${trip.title} (${response.date})`;
+      const subject = `Booking confirmed — ${trip.title ?? "ION Boats"}`;
+      const html = `
+        <div style="font-family:Arial,sans-serif;line-height:1.5">
+          <h2>Booking Confirmed ✅</h2>
+          <p>Thank you for your booking.</p>
+          <hr/>
+          <p><strong>Reservation ID:</strong> ${response.reservationId}</p>
+          <p><strong>Trip:</strong> ${trip.title ?? response.tripId}</p>
+          <p><strong>Date:</strong> ${response.date}</p>
+          <p><strong>Slot:</strong> ${response.slotId}</p>
+          <p><strong>Mode:</strong> ${response.bookingMode}</p>
+          <p><strong>Price:</strong> €${response.priceEur}</p>
+          <hr/>
+          <p>If you have any questions, reply to this email.</p>
+        </div>
+      `;
 
-        const html = `
-          <div style="font-family: Arial, sans-serif; line-height: 1.5;">
-            <h2 style="margin: 0 0 12px;">Booking confirmed ✅</h2>
-            <p style="margin: 0 0 12px;">Thank you${toName ? `, ${toName}` : ""}! Your booking is confirmed.</p>
+      // fire-and-forget (won’t break booking)
+      void sendBrevoEmail({
+  toEmail,
+  toName: toName || undefined,
+  subject,
+  html,
+  text: `Booking confirmed. Trip: ${trip.title ?? response.tripId}. Date: ${response.date}. Slot: ${response.slotId}. Mode: ${response.bookingMode}. Price: €${response.priceEur}. Reservation ID: ${response.reservationId}`,
+  reservationId: response.reservationId,
+})
+  .then((res: any) => {
+    console.log(
+      "[BREVO] confirm email result",
+      res?.messageId ? { messageId: res.messageId } : res
+    );
+  })
+  .catch((err: any) => {
+    console.error("[BREVO] confirm email failed", err?.message || err);
+  });
 
-            <div style="padding: 12px 14px; border: 1px solid #eee; border-radius: 10px;">
-              <p style="margin: 0 0 6px;"><strong>Trip:</strong> ${trip.title}</p>
-              <p style="margin: 0 0 6px;"><strong>Date:</strong> ${response.date}</p>
-              <p style="margin: 0 0 6px;"><strong>Slot:</strong> ${response.slotId}</p>
-              <p style="margin: 0 0 6px;"><strong>Mode:</strong> ${response.bookingMode}</p>
-              <p style="margin: 0 0 6px;"><strong>Price:</strong> €${response.priceEur}</p>
-              <p style="margin: 0;"><strong>Reservation ID:</strong> ${response.reservationId}</p>
-            </div>
-
-            <p style="margin: 14px 0 0; color: #555;">
-              If you have questions, reply to this email.
-            </p>
-          </div>
-        `;
-
-        await sendBrevoEmail({
-          toEmail,
-          toName: toName || undefined,
-          subject,
-          html,
-          text: `Booking confirmed. Trip: ${trip.title}. Date: ${response.date}. Slot: ${response.slotId}. Mode: ${response.bookingMode}. Price: €${response.priceEur}. Reservation ID: ${response.reservationId}`,
-          reservationId: response.reservationId,
-        });
-      }
-    } catch (err) {
-      console.error("Brevo email failed:", err);
-      // do not throw — booking stays confirmed
+    } else {
+      console.warn("[BREVO] No customer email found; skipping confirmation email", {
+        reservationId: response.reservationId,
+      });
     }
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, { status: 200 });
   } catch (e: unknown) {
+    console.error("Confirm error:", e);
+
     if (isDupKeyError(e)) {
-      const r: ConfirmResponse = { ok: false, error: "This slot is already booked privately." };
+      const r: ConfirmResponse = { ok: false, error: "Already confirmed (duplicate)." };
       return NextResponse.json(r, { status: 409 });
     }
 
-    const msg = e instanceof Error ? e.message : "Server error";
-    const r: ConfirmResponse = { ok: false, error: msg };
+    const r: ConfirmResponse = { ok: false, error: "Server error" };
     return NextResponse.json(r, { status: 500 });
   } finally {
     session.endSession();

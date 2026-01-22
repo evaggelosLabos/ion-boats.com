@@ -54,8 +54,9 @@ export async function sendBrevoEmail(args: {
   reservationId?: string;
 }) {
   const apiKey = mustEnv("BREVO_API_KEY");
-  const fromEmail = mustEnv("EMAIL_FROM_EMAIL");
-  const fromName = process.env.EMAIL_FROM_NAME || "ION Boats";
+  const fromEmail = mustEnv("BREVO_SENDER_EMAIL");
+const fromName = process.env.BREVO_SENDER_NAME || "ION Boats";
+
 
   const payload: BrevoSendPayload = {
     sender: { name: fromName, email: fromEmail },
