@@ -2,7 +2,7 @@
 import mongoose, { Schema, type Model } from "mongoose";
 import type { TripId, BookingMode } from "../lib/booking/catalog";
 
-export type ReservationStatus = "confirmed";
+export type ReservationStatus = "confirmed" | "cancelled";
 
 export type ReservationDoc = {
   tripId: TripId;
@@ -35,7 +35,12 @@ const ReservationSchema = new Schema<ReservationDoc>(
     quantity: { type: Number, required: true, enum: [1], default: 1 },
     priceEur: { type: Number, required: true },
 
-    status: { type: String, required: true, enum: ["confirmed"], default: "confirmed" },
+    status: {
+      type: String,
+      required: true,
+      enum: ["confirmed", "cancelled"],
+      default: "confirmed",
+    },
 
     customer: {
       name: { type: String, required: true },
@@ -46,7 +51,7 @@ const ReservationSchema = new Schema<ReservationDoc>(
   { timestamps: true }
 );
 
-// Prevent multiple PRIVATE reservations for same slot
+// Prevent multiple CONFIRMED PRIVATE reservations for same slot
 ReservationSchema.index(
   { tripId: 1, date: 1, slotId: 1, bookingMode: 1, status: 1 },
   {

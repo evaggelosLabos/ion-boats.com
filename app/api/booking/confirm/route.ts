@@ -5,6 +5,8 @@ import { Hold } from "../../../../models/Hold";
 import { Reservation } from "../../../../models/Reservation";
 import { TRIPS, type TripId } from "../../../../lib/booking/catalog";
 import { sendBrevoEmail } from "../../../../lib/email/brevo";
+import { bookingConfirmedTemplate } from "../../../../lib/email/templates/bookingConfirmed";
+
 
 type ConfirmResponse =
   | {
@@ -228,43 +230,33 @@ export async function POST(req: Request) {
     const toName = response.customer?.name;
 
     if (toEmail) {
-      const trip = getTripOrThrow(response.tripId);
+      const tripTitle = (TRIPS as any)?.title ?? String(response.tripId);
 
-      const subject = `Booking confirmed — ${trip.title ?? "ION Boats"}`;
-      const html = `
-        <div style="font-family:Arial,sans-serif;line-height:1.5">
-          <h2>Booking Confirmed ✅</h2>
-          <p>Thank you for your booking.</p>
-          <hr/>
-          <p><strong>Reservation ID:</strong> ${response.reservationId}</p>
-          <p><strong>Trip:</strong> ${trip.title ?? response.tripId}</p>
-          <p><strong>Date:</strong> ${response.date}</p>
-          <p><strong>Slot:</strong> ${response.slotId}</p>
-          <p><strong>Mode:</strong> ${response.bookingMode}</p>
-          <p><strong>Price:</strong> €${response.priceEur}</p>
-          <hr/>
-          <p>If you have any questions, reply to this email.</p>
-        </div>
-      `;
+const { subject, html, text } = bookingConfirmedTemplate({
+  brand: "ION Boats",
+  tripTitle,
+  tripId: response.tripId,
+  date: response.date,
+  slotId: response.slotId,
+  bookingMode: response.bookingMode,
+  priceEur: response.priceEur,
+  reservationId: response.reservationId,
+  customerName: toName || undefined,
+  supportEmail: "bookings@ion-boats.com",
+});
 
-      // fire-and-forget (won’t break booking)
-      void sendBrevoEmail({
+void sendBrevoEmail({
   toEmail,
   toName: toName || undefined,
   subject,
   html,
-  text: `Booking confirmed. Trip: ${trip.title ?? response.tripId}. Date: ${response.date}. Slot: ${response.slotId}. Mode: ${response.bookingMode}. Price: €${response.priceEur}. Reservation ID: ${response.reservationId}`,
+  text,
   reservationId: response.reservationId,
 })
-  .then((res: any) => {
-    console.log(
-      "[BREVO] confirm email result",
-      res?.messageId ? { messageId: res.messageId } : res
-    );
-  })
-  .catch((err: any) => {
-    console.error("[BREVO] confirm email failed", err?.message || err);
-  });
+  .then((res: any) => console.log("[BREVO] confirm email result", res?.messageId ? { messageId: res.messageId } : res))
+  .catch((err: any) => console.error("[BREVO] confirm email failed", err?.message || err));
+
+  
 
     } else {
       console.warn("[BREVO] No customer email found; skipping confirmation email", {
