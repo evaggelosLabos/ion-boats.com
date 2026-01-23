@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+type LoginResponse = { ok: true } | { ok: false; error?: string };
+
 export default function LoginClient() {
   const router = useRouter();
   const sp = useSearchParams();
@@ -13,21 +15,31 @@ export default function LoginClient() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErr("");
     setLoading(true);
+
     try {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ username, password }),
       });
-      const data = (await res.json().catch(() => ({}))) as any;
-      if (!res.ok || !data?.ok) throw new Error(data?.error || "Login failed");
-      router.push(next);
-    } catch (e: any) {
-      setErr(e?.message || "Login failed");
+
+      const data = (await res.json().catch(() => ({ ok: false }))) as LoginResponse;
+
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.ok === false && data.error ? data.error : "Login failed");
+      }
+
+      // you want Admin button -> /admin/login always, but after login we go to next
+      window.location.href = next;
+      return;
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Login failed";
+      setErr(message);
     } finally {
       setLoading(false);
     }
@@ -63,7 +75,7 @@ export default function LoginClient() {
             <label style={{ fontSize: 12, fontWeight: 900, opacity: 0.8 }}>Username</label>
             <input
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
               style={{
                 height: 46,
                 borderRadius: 14,
@@ -82,7 +94,7 @@ export default function LoginClient() {
             <input
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               style={{
                 height: 46,
                 borderRadius: 14,

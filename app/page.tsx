@@ -152,17 +152,15 @@ export default function HomePage() {
 
         {/* Desktop+ only: switch hero to 2 columns */}
         <style>{`
-          @media (min-width: 900px) {
-  .heroGrid {
-    grid-template-columns: 1.2fr 0.8fr !important;
-    gap: 28px !important;
-    align-items: start !important;
+  @media (min-width: 900px) {
+    .heroGrid {
+      grid-template-columns: 1.2fr 0.8fr !important;
+      gap: 28px !important;
+      align-items: start !important;
+    }
   }
-}
+`}</style>
 
-            }
-          }
-        `}</style>
 
         {/* Apply the class via wrapper re-render trick (no refactor) */}
         <div style={{ display: "none" }} />
