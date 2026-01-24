@@ -60,7 +60,7 @@ export default function HomePage() {
                 wordBreak: "break-word",
               }}
             >
-              ION Boats — Boat Trips in Corfu
+              ION Boats – DEV MODE
             </h1>
 
             <p

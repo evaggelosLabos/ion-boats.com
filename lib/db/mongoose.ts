@@ -22,7 +22,7 @@ export async function dbConnect(): Promise<typeof mongoose> {
   if (cache.conn) return cache.conn;
 
   if (!cache.promise) {
-    const uri = getMongoUri(); // ✅ uri is string
+    const uri = getMongoUri();
     cache.promise = mongoose
       .connect(uri, { bufferCommands: false })
       .then((m) => m);
@@ -31,3 +31,6 @@ export async function dbConnect(): Promise<typeof mongoose> {
   cache.conn = await cache.promise;
   return cache.conn;
 }
+
+// ✅ alias for agent/auth code
+export const connectMongoose = dbConnect;
