@@ -6,9 +6,10 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // protect /admin (but allow /admin/login)
-  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
     const token = req.cookies.get(COOKIE_NAME)?.value;
 
+    // only check presence (same behavior as before)
     if (!token) {
       const url = req.nextUrl.clone();
       url.pathname = "/admin/login";

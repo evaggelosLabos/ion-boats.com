@@ -1,4 +1,6 @@
 import BookingWidget from "../components/booking/BookingWidget";
+import Link from "next/link";
+
 
 export default function HomePage() {
   return (
@@ -15,13 +17,11 @@ export default function HomePage() {
           maxWidth: 1100,
           margin: "0 auto",
           padding: "clamp(22px, 4vw, 64px) clamp(14px, 3vw, 20px)",
-
         }}
       >
         {/* HERO */}
         <div
-        data-hero-grid
-  className="heroGrid"
+          className="heroGrid"
           style={{
             display: "grid",
             gridTemplateColumns: "minmax(0, 1fr)",
@@ -29,8 +29,9 @@ export default function HomePage() {
             alignItems: "start",
           }}
         >
-          {/* LEFT */}
+          {/* LEFT COLUMN */}
           <div style={{ minWidth: 0 }}>
+            {/* TOP PILL */}
             <div
               style={{
                 display: "inline-flex",
@@ -43,46 +44,58 @@ export default function HomePage() {
                 marginBottom: 16,
                 fontSize: 13,
                 color: "rgba(255,255,255,0.78)",
-                maxWidth: "100%",
                 flexWrap: "wrap",
               }}
             >
               <span style={{ color: "#d1b76e" }}>●</span>
-              <span style={{ display: "inline" }}>Instant confirmation • Online payment • Pay on arrival</span>
+              <span>Instant confirmation • Online payment • Pay on arrival</span>
             </div>
 
+            {/* TITLE */}
             <h1
-              style={{
-                fontSize: "clamp(30px, 5.2vw, 48px)",
-                lineHeight: 1.05,
-                margin: "0 0 14px 0",
-                letterSpacing: -0.6,
-                wordBreak: "break-word",
-              }}
-            >
-              ION Boats – DEV MODE
-            </h1>
+  style={{
+    fontFamily: "var(--font-serif)",
+    fontWeight: 600,
+    letterSpacing: "-0.4px",
+  }}
+>
+  ION Boats
+</h1>
 
-            <p
-              style={{
-                margin: 0,
-                fontSize: "clamp(15px, 2.2vw, 18px)",
-                lineHeight: 1.55,
-                color: "rgba(255,255,255,0.78)",
-                maxWidth: 640,
-              }}
-            >
-              Explore Paleokastritsa, North-East Corfu and hidden coves with a fast, premium booking experience.
-              Choose your trip, select a time slot, and confirm in seconds.
-            </p>
 
+            {/* DESCRIPTION */}
+           <p
+  style={{
+    fontFamily: "var(--font-sans)",
+    fontSize: "clamp(16px, 2.1vw, 18px)",
+    lineHeight: 1.7,
+    letterSpacing: "0.1px",
+    color: "rgba(255,255,255,0.78)",
+    maxWidth: 680,
+  }}
+>
+  Experience Corfu by boat with a focus on comfort, privacy, and thoughtful
+  planning. Our trips are designed for guests who value a relaxed pace,
+  well-chosen routes, and the feeling of having everything taken care of from
+  the moment they arrive. Departing from Benitses Marina, each journey is
+  planned with weather conditions, smooth sailing, and quality swim stops in
+  mind, making it ideal for couples, families, and private groups alike. Fixed
+  departure times, experienced skippers, and clear pricing ensure a predictable
+  and stress-free experience, while flexible options allow you to choose
+  between shared outings or fully private cruises. Check real-time availability,
+  select your preferred time slot, and confirm your trip in minutes — with
+  instant confirmation, local support, and a strong emphasis on safety,
+  comfort, and peace of mind.
+</p>
+
+
+            {/* CTA BUTTONS */}
             <div
               style={{
                 marginTop: 18,
                 display: "flex",
                 gap: 12,
                 flexWrap: "wrap",
-                alignItems: "center",
               }}
             >
               <a
@@ -96,7 +109,7 @@ export default function HomePage() {
                   borderRadius: 14,
                   background: "rgba(98,208,255,0.20)",
                   border: "1px solid rgba(98,208,255,0.45)",
-                  color: "rgba(255,255,255,0.92)",
+                  color: "#fff",
                   textDecoration: "none",
                   fontWeight: 800,
                   width: "min(320px, 100%)",
@@ -116,7 +129,7 @@ export default function HomePage() {
                   borderRadius: 14,
                   background: "rgba(255,255,255,0.06)",
                   border: "1px solid rgba(255,255,255,0.14)",
-                  color: "rgba(255,255,255,0.86)",
+                  color: "#fff",
                   textDecoration: "none",
                   fontWeight: 800,
                   width: "min(320px, 100%)",
@@ -126,6 +139,7 @@ export default function HomePage() {
               </a>
             </div>
 
+            {/* CHECKMARKS */}
             <div
               style={{
                 marginTop: 14,
@@ -141,35 +155,67 @@ export default function HomePage() {
               <span>✔ Agent reservations</span>
               <span>✔ Weather-safe policies</span>
             </div>
+
+            {/* CHIPS */}
+            <div
+              style={{
+                marginTop: 12,
+                display: "flex",
+                gap: 10,
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
+              {[
+                "Departures from Benitses Marina",
+                "Skipper included",
+                "Wind-safe route planning",
+                "WhatsApp support",
+                "Snorkeling masks available",
+                "Bring sunscreen & water",
+              ].map((t) => (
+                <span
+                  key={t}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "8px 12px",
+                    borderRadius: 999,
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    background: "rgba(0,0,0,0.18)",
+                    color: "rgba(255,255,255,0.80)",
+                    fontSize: 13,
+                    fontWeight: 800,
+                    lineHeight: 1,
+                  }}
+                >
+                  <span style={{ color: "rgba(98,208,255,0.95)" }}>✓</span>
+                  {t}
+                </span>
+              ))}
+            </div>
           </div>
 
-          {/* RIGHT (booking card) */}
+          {/* RIGHT COLUMN — BOOKING */}
           <div>
-  <BookingWidget />
-</div>
-
+            <BookingWidget />
+          </div>
         </div>
 
-        {/* Desktop+ only: switch hero to 2 columns */}
+        {/* DESKTOP GRID */}
         <style>{`
-  @media (min-width: 900px) {
-    .heroGrid {
-      grid-template-columns: 1.2fr 0.8fr !important;
-      gap: 28px !important;
-      align-items: start !important;
-    }
-  }
-`}</style>
-
-
-        {/* Apply the class via wrapper re-render trick (no refactor) */}
-        <div style={{ display: "none" }} />
+          @media (min-width: 900px) {
+            .heroGrid {
+              grid-template-columns: 1.2fr 0.8fr !important;
+              gap: 28px !important;
+            }
+          }
+        `}</style>
 
         {/* TRIPS */}
         <div id="trips" style={{ marginTop: "clamp(34px, 6vw, 54px)" }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(20px, 3vw, 26px)", letterSpacing: -0.3 }}>
-            Popular trips
-          </h2>
+          <h2 style={{ fontSize: "clamp(20px, 3vw, 26px)" }}>Popular trips</h2>
 
           <div
             style={{
@@ -179,45 +225,39 @@ export default function HomePage() {
               gap: 14,
             }}
           >
-            {[
-              { title: "Paleokastritsa", desc: "Caves, turquoise bays, iconic coastline." },
-              { title: "North-East Corfu", desc: "Hidden coves, calm waters, scenic swim stops." },
-              { title: "Custom Private Trip", desc: "Tell us what you want — we plan the route." },
-            ].map((x) => (
-              <div
-                key={x.title}
-                style={{
-                  padding: 16,
-                  borderRadius: 18,
-                  border: "1px solid rgba(255,255,255,0.14)",
-                  background: "rgba(255,255,255,0.06)",
-                }}
-              >
-                <div style={{ fontWeight: 900, marginBottom: 8 }}>{x.title}</div>
-                <div style={{ color: "rgba(255,255,255,0.72)", lineHeight: 1.45 }}>{x.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+    {[
+  { slug: "paleokastritsa", title: "Paleokastritsa", desc: "Caves, turquoise bays, iconic coastline." },
+  { slug: "north-east-corfu", title: "North-East Corfu", desc: "Hidden coves, calm waters, scenic swim stops." },
+  { slug: "custom-private", title: "Custom Private Trip", desc: "Tell us what you want — we plan the route." },
+  { slug: "paxos-antipaxos", title: "Paxos & Antipaxos Day Cruise", desc: "Emerald waters, Antipaxos beaches and the famous Blue Caves — a full-day island escape." },
+  { slug: "blue-lagoon", title: "Blue Lagoon & Mainland Beach Tour", desc: "Crystal-clear lagoon waters and secluded mainland beaches, ideal for relaxed swimming." },
+].map((x) => (
+  <Link key={x.slug} href={`/trips/${x.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+    <div
+      style={{
+        padding: 16,
+        borderRadius: 18,
+        border: "1px solid rgba(255,255,255,0.14)",
+        background: "rgba(255,255,255,0.06)",
+        cursor: "pointer",
+      }}
+    >
+      <div style={{ fontWeight: 900, marginBottom: 8 }}>{x.title}</div>
+      <div style={{ color: "rgba(255,255,255,0.72)", lineHeight: 1.45 }}>{x.desc}</div>
+      <div style={{ marginTop: 12, fontWeight: 900, fontSize: 13, color: "rgba(98,208,255,0.95)" }}>
+        View details →
+      </div>
+    </div>
+  </Link>
+))}
 
-        {/* BOOKING */}
-        <div id="book" style={{ marginTop: "clamp(34px, 6vw, 54px)", paddingBottom: 40 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(20px, 3vw, 26px)", letterSpacing: -0.3 }}>
-            Booking
-          </h2>
-          <p style={{ marginTop: 10, color: "rgba(255,255,255,0.74)", maxWidth: 720, lineHeight: 1.55 }}>
-            Next step: we’ll replace the demo box with the real booking widget (trip → date → slot → hold → checkout).
-          </p>
+          </div>
         </div>
       </div>
 
-      {/* One tiny safe global override: prevent accidental horizontal scroll */}
       <style>{`
         html, body { max-width: 100%; overflow-x: hidden; }
       `}</style>
-
-      {/* IMPORTANT: apply heroGrid class without restructuring */}
-      
     </main>
   );
 }

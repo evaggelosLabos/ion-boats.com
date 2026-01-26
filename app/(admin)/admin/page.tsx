@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { getCookieName, verifySession } from "../../lib/admin/auth";
+import { getCookieName, verifySession } from "../../../lib/admin/auth";
 import AdminClient from "./AdminClient";
 
 export const runtime = "nodejs";
