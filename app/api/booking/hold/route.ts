@@ -18,8 +18,9 @@ type HoldRequest = {
 };
 
 function isTripId(x: unknown): x is TripId {
-  return x === "paleo" || x === "ne" || x === "private";
+  return x === "paleo" || x === "ne" || x === "private" || x === "paxos" || x === "blue-lagoon";
 }
+
 function isBookingMode(x: unknown): x is BookingMode {
   return x === "private" || x === "shared";
 }

@@ -56,8 +56,215 @@ function parseError(payload: unknown, fallback: string): string {
   return fallback;
 }
 
-export default function BookingWidget() {
-  const [tripId, setTripId] = useState<TripId>("paleo");
+function SelectedTripCard({
+  t,
+  active,
+  onClick,
+}: {
+  t: Trip;
+  active: boolean;
+  onClick?: () => void;
+}) {
+  const meta =
+    t.id === "paleo"
+      ? {
+          tag: "Most popular",
+          emoji: "🏝️",
+          accent: "rgba(98,208,255,0.95)",
+          bg: "linear-gradient(135deg, rgba(98,208,255,0.20), rgba(255,255,255,0.04) 55%, rgba(0,0,0,0.12))",
+          thumb: "linear-gradient(135deg, rgba(98,208,255,0.35), rgba(6,18,26,0.15))",
+          bullets: ["Sea caves & turquoise bays", "Best photos & swim stops", "Fast route — premium views"],
+        }
+      : t.id === "ne"
+      ? {
+          tag: "Calm waters",
+          emoji: "🌊",
+          accent: "rgba(120,160,255,0.95)",
+          bg: "linear-gradient(135deg, rgba(120,160,255,0.18), rgba(255,255,255,0.04) 55%, rgba(0,0,0,0.12))",
+          thumb: "linear-gradient(135deg, rgba(120,160,255,0.32), rgba(6,18,26,0.15))",
+          bullets: ["Hidden coves & quiet beaches", "Great for relaxing swims", "Scenic coastline route"],
+        }
+      : {
+          tag: "Private only",
+          emoji: "🛥️",
+          accent: "rgba(209,183,110,0.95)",
+          bg: "linear-gradient(135deg, rgba(209,183,110,0.18), rgba(255,255,255,0.04) 55%, rgba(0,0,0,0.12))",
+          thumb: "linear-gradient(135deg, rgba(209,183,110,0.30), rgba(6,18,26,0.15))",
+          bullets: ["Your route, your time", "Ideal for families / couples", "Message us after booking"],
+        };
+
+  const sharedAllowed = (t.pricing?.maxCouples ?? 0) > 0;
+
+  return (
+    <div
+      role={onClick ? "button" : undefined}
+      onClick={onClick}
+      style={{
+        textAlign: "left",
+        width: "100%",
+        padding: 0,
+        borderRadius: 18,
+        border: active ? `1px solid ${meta.accent}` : "1px solid rgba(255,255,255,0.14)",
+        background: active ? meta.bg : "rgba(255,255,255,0.05)",
+        color: "rgba(255,255,255,0.95)",
+        overflow: "hidden",
+        boxShadow: active ? "0 18px 45px rgba(0,0,0,0.35)" : "none",
+      }}
+    >
+      <div style={{ height: 3, background: active ? meta.accent : "rgba(255,255,255,0.14)" }} />
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "78px 1fr",
+          gap: 12,
+          padding: 14,
+          alignItems: "stretch",
+        }}
+      >
+        <div
+          style={{
+            borderRadius: 16,
+            background: meta.thumb,
+            border: active ? `1px solid rgba(255,255,255,0.18)` : "1px solid rgba(255,255,255,0.10)",
+            display: "grid",
+            placeItems: "center",
+            position: "relative",
+          }}
+        >
+          <div style={{ fontSize: 26, filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.35))" }}>{meta.emoji}</div>
+
+          <div
+            style={{
+              position: "absolute",
+              left: 8,
+              bottom: 8,
+              padding: "5px 9px",
+              borderRadius: 999,
+              fontSize: 11,
+              fontWeight: 950,
+              background: "rgba(0,0,0,0.28)",
+              border: "1px solid rgba(255,255,255,0.14)",
+              color: "rgba(255,255,255,0.92)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {meta.tag}
+          </div>
+        </div>
+
+        <div style={{ minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
+            <div style={{ minWidth: 0 }}>
+              <div
+                style={{
+                  fontWeight: 950,
+                  fontSize: 16,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  letterSpacing: -0.2,
+                }}
+              >
+                {t.title}
+              </div>
+
+              <div style={{ fontSize: 12, opacity: 0.78, marginTop: 3 }}>
+                {sharedAllowed ? "Shared or Private" : "Private only"}
+              </div>
+            </div>
+
+            {active ? (
+              <div
+                style={{
+                  padding: "7px 11px",
+                  borderRadius: 999,
+                  fontSize: 12,
+                  fontWeight: 950,
+                  background: "rgba(255,255,255,0.10)",
+                  border: `1px solid ${meta.accent}`,
+                  color: "rgba(255,255,255,0.95)",
+                  flex: "0 0 auto",
+                }}
+              >
+                Selected
+              </div>
+            ) : null}
+          </div>
+
+          <div style={{ marginTop: 10, display: "grid", gap: 6 }}>
+            {meta.bullets.slice(0, 3).map((b) => (
+              <div key={b} style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 12, opacity: 0.9 }}>
+                <span
+                  style={{
+                    height: 18,
+                    width: 18,
+                    borderRadius: 6,
+                    display: "grid",
+                    placeItems: "center",
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    background: "rgba(255,255,255,0.06)",
+                    flex: "0 0 auto",
+                    fontWeight: 950,
+                    color: meta.accent,
+                  }}
+                >
+                  ✓
+                </span>
+                <span style={{ lineHeight: 1.2 }}>{b}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+            <div
+              style={{
+                padding: "7px 10px",
+                borderRadius: 999,
+                fontSize: 12,
+                fontWeight: 950,
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.14)",
+              }}
+            >
+              Private: <span style={{ color: meta.accent }}>€{t.pricing.privatePrice}</span>
+            </div>
+
+            <div
+              style={{
+                padding: "7px 10px",
+                borderRadius: 999,
+                fontSize: 12,
+                fontWeight: 950,
+                opacity: sharedAllowed ? 1 : 0.45,
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.14)",
+              }}
+            >
+              Shared:{" "}
+              <span style={{ color: sharedAllowed ? "rgba(98,208,255,0.95)" : "rgba(255,255,255,0.55)" }}>
+                {sharedAllowed ? `€${t.pricing.sharedCouplePrice}/couple` : "Not available"}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+export default function BookingWidget({
+  initialTripId,
+  hideTripSelector,
+}: {
+  initialTripId?: TripId;
+  hideTripSelector?: boolean;
+}) {
+
+
+ const [tripId, setTripId] = useState<TripId>(initialTripId ?? "paleo");
+
   const [bookingMode, setBookingMode] = useState<BookingMode>("shared");
   const [date, setDate] = useState<string>(todayISO());
 
@@ -293,247 +500,66 @@ export default function BookingWidget() {
       {/* Trip */}
       {/* Trip (CARDS) */}
 {/* Trip (STRONGLY DISTINGUISHED CARDS) */}
-<div style={{ marginBottom: 12 }}>
-  <div
-    style={{
-      fontSize: 12,
-      fontWeight: 900,
-      letterSpacing: 0.2,
-      color: "rgba(255,255,255,0.75)",
-      marginBottom: 8,
-    }}
-  >
-    Choose your trip
+{/* Trip */}
+{hideTripSelector ? (
+  <div style={{ marginBottom: 12 }}>
+    <SelectedTripCard t={trip} active={true} />
   </div>
+) : (
+  <div style={{ marginBottom: 12 }}>
+    <div
+      style={{
+        fontSize: 12,
+        fontWeight: 900,
+        letterSpacing: 0.2,
+        color: "rgba(255,255,255,0.75)",
+        marginBottom: 8,
+      }}
+    >
+      Choose your trip
+    </div>
 
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "1fr",
-      gap: 10,
-    }}
-  >
-    {TRIPS.map((t) => {
-      const active = tripId === t.id;
-
-      // --- PER-TRIP VISUAL IDENTITY (edit freely) ---
-      const meta =
-        t.id === "paleo"
-          ? {
-              tag: "Most popular",
-              emoji: "🏝️",
-              accent: "rgba(98,208,255,0.95)",
-              bg: "linear-gradient(135deg, rgba(98,208,255,0.20), rgba(255,255,255,0.04) 55%, rgba(0,0,0,0.12))",
-              thumb: "linear-gradient(135deg, rgba(98,208,255,0.35), rgba(6,18,26,0.15))",
-              bullets: ["Sea caves & turquoise bays", "Best photos & swim stops", "Fast route — premium views"],
-            }
-          : t.id === "ne"
-          ? {
-              tag: "Calm waters",
-              emoji: "🌊",
-              accent: "rgba(120,160,255,0.95)",
-              bg: "linear-gradient(135deg, rgba(120,160,255,0.18), rgba(255,255,255,0.04) 55%, rgba(0,0,0,0.12))",
-              thumb: "linear-gradient(135deg, rgba(120,160,255,0.32), rgba(6,18,26,0.15))",
-              bullets: ["Hidden coves & quiet beaches", "Great for relaxing swims", "Scenic coastline route"],
-            }
-          : {
-              tag: "Private only",
-              emoji: "🛥️",
-              accent: "rgba(209,183,110,0.95)",
-              bg: "linear-gradient(135deg, rgba(209,183,110,0.18), rgba(255,255,255,0.04) 55%, rgba(0,0,0,0.12))",
-              thumb: "linear-gradient(135deg, rgba(209,183,110,0.30), rgba(6,18,26,0.15))",
-              bullets: ["Your route, your time", "Ideal for families / couples", "Message us after booking"],
-            };
-
-      const sharedAllowed = (t.pricing?.maxCouples ?? 0) > 0;
-      const pricePrivate = t.pricing?.privatePrice;
-      const priceShared = t.pricing?.sharedCouplePrice;
-
-      return (
-        <button
-          key={t.id}
-          type="button"
-          onClick={() => {
-            setTripId(t.id);
-            setAvailability(null);
-            setSelectedSlotId("");
-            setHold(null);
-            setConfirmed(null);
-            if (!sharedAllowed) setBookingMode("private");
-            void fetchAvailability(t.id, date);
-          }}
-          style={{
-            textAlign: "left",
-            width: "100%",
-            padding: 0,
-            borderRadius: 18,
-            border: active ? `1px solid ${meta.accent}` : "1px solid rgba(255,255,255,0.14)",
-            background: active ? meta.bg : "rgba(255,255,255,0.05)",
-            color: "rgba(255,255,255,0.95)",
-            cursor: "pointer",
-            overflow: "hidden",
-            boxShadow: active ? "0 18px 45px rgba(0,0,0,0.35)" : "none",
-            transform: active ? "translateY(-1px)" : "none",
-            transition: "transform 140ms ease, box-shadow 140ms ease, filter 140ms ease",
-          }}
-        >
-          {/* top accent strip */}
-          <div
-            style={{
-              height: 3,
-              background: active ? meta.accent : "rgba(255,255,255,0.14)",
+    <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 10 }}>
+      {TRIPS.map((t) => {
+        const active = tripId === t.id;
+        return (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => {
+              setTripId(t.id);
+              setAvailability(null);
+              setSelectedSlotId("");
+              setHold(null);
+              setConfirmed(null);
+              if (t.pricing.maxCouples === 0) setBookingMode("private");
+              void fetchAvailability(t.id, date);
             }}
-          />
-
-          <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "78px 1fr",
-              gap: 12,
-              padding: 14,
-              alignItems: "stretch",
+              textAlign: "left",
+              width: "100%",
+              padding: 0,
+              borderRadius: 18,
+              border: active ? "2px solid rgba(98,208,255,0.9)" : "1px solid rgba(255,255,255,0.14)",
+              background: active ? "rgba(98,208,255,0.14)" : "rgba(255,255,255,0.05)",
+              color: "rgba(255,255,255,0.95)",
+              cursor: "pointer",
+              overflow: "hidden",
             }}
           >
-            {/* Thumbnail panel */}
-            <div
-              style={{
-                borderRadius: 16,
-                background: meta.thumb,
-                border: active ? `1px solid rgba(255,255,255,0.18)` : "1px solid rgba(255,255,255,0.10)",
-                display: "grid",
-                placeItems: "center",
-                position: "relative",
-              }}
-            >
-              <div style={{ fontSize: 26, filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.35))" }}>{meta.emoji}</div>
-
-              {/* tag */}
-              <div
-                style={{
-                  position: "absolute",
-                  left: 8,
-                  bottom: 8,
-                  padding: "5px 9px",
-                  borderRadius: 999,
-                  fontSize: 11,
-                  fontWeight: 950,
-                  background: "rgba(0,0,0,0.28)",
-                  border: "1px solid rgba(255,255,255,0.14)",
-                  color: "rgba(255,255,255,0.92)",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {meta.tag}
+            <div style={{ padding: 14 }}>
+              <div style={{ fontWeight: 950, fontSize: 16 }}>{t.title}</div>
+              <div style={{ fontSize: 12, opacity: 0.78, marginTop: 3 }}>
+                {t.pricing.maxCouples > 0 ? "Shared or Private" : "Private only"}
               </div>
             </div>
-
-            {/* Main content */}
-            <div style={{ minWidth: 0 }}>
-              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
-                <div style={{ minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontWeight: 950,
-                      fontSize: 16,
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      letterSpacing: -0.2,
-                    }}
-                  >
-                    {t.title}
-                  </div>
-
-                  <div style={{ fontSize: 12, opacity: 0.78, marginTop: 3 }}>
-                    {sharedAllowed ? "Shared or Private" : "Private only"}
-                  </div>
-                </div>
-
-                {active ? (
-                  <div
-                    style={{
-                      padding: "7px 11px",
-                      borderRadius: 999,
-                      fontSize: 12,
-                      fontWeight: 950,
-                      background: "rgba(255,255,255,0.10)",
-                      border: `1px solid ${meta.accent}`,
-                      color: "rgba(255,255,255,0.95)",
-                      flex: "0 0 auto",
-                    }}
-                  >
-                    Selected
-                  </div>
-                ) : null}
-              </div>
-
-              {/* Highlights */}
-              <div style={{ marginTop: 10, display: "grid", gap: 6 }}>
-                {meta.bullets.slice(0, 3).map((b) => (
-                  <div key={b} style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 12, opacity: 0.9 }}>
-                    <span
-                      style={{
-                        height: 18,
-                        width: 18,
-                        borderRadius: 6,
-                        display: "grid",
-                        placeItems: "center",
-                        border: "1px solid rgba(255,255,255,0.14)",
-                        background: "rgba(255,255,255,0.06)",
-                        flex: "0 0 auto",
-                        fontWeight: 950,
-                        color: meta.accent,
-                      }}
-                    >
-                      ✓
-                    </span>
-                    <span style={{ lineHeight: 1.2 }}>{b}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Prices */}
-              <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-                <div
-                  style={{
-                    padding: "7px 10px",
-                    borderRadius: 999,
-                    fontSize: 12,
-                    fontWeight: 950,
-                    background: "rgba(255,255,255,0.06)",
-                    border: "1px solid rgba(255,255,255,0.14)",
-                  }}
-                >
-                  Private:{" "}
-                  <span style={{ color: meta.accent }}>
-                    {typeof pricePrivate === "number" ? `€${pricePrivate}` : "—"}
-                  </span>
-                </div>
-
-                <div
-                  style={{
-                    padding: "7px 10px",
-                    borderRadius: 999,
-                    fontSize: 12,
-                    fontWeight: 950,
-                    opacity: sharedAllowed ? 1 : 0.45,
-                    background: "rgba(255,255,255,0.06)",
-                    border: "1px solid rgba(255,255,255,0.14)",
-                  }}
-                >
-                  Shared:{" "}
-                  <span style={{ color: sharedAllowed ? "rgba(98,208,255,0.95)" : "rgba(255,255,255,0.55)" }}>
-                    {sharedAllowed && typeof priceShared === "number" ? `€${priceShared}/couple` : "Not available"}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </button>
-      );
-    })}
+          </button>
+        );
+      })}
+    </div>
   </div>
-</div>
+)}
+
 
 
       {/* Booking mode */}

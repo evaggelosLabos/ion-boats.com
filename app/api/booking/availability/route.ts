@@ -6,8 +6,9 @@ import { Reservation } from "../../../../models/Reservation";
 import { TRIPS, buildSlotsForTrip, type TripId, type Slot, type Trip } from "../../../../lib/booking/catalog";
 
 function isTripId(x: string): x is TripId {
-  return x === "paleo" || x === "ne" || x === "private";
+  return x === "paleo" || x === "ne" || x === "private" || x === "paxos" || x === "blue-lagoon";
 }
+
 function isISODate(x: string): boolean {
   return /^\d{4}-\d{2}-\d{2}$/.test(x);
 }

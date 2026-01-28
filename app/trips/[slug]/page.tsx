@@ -46,7 +46,9 @@ export default async function TripPage({
     boxShadow: "0 30px 80px rgba(0,0,0,0.35)",
   }}
 >
-  <BookingWidget />
+ <BookingWidget initialTripId={trip.bookingTripId} hideTripSelector />
+
+
 </div>
 
       </div>

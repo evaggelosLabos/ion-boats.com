@@ -230,7 +230,8 @@ export async function POST(req: Request) {
     const toName = response.customer?.name;
 
     if (toEmail) {
-      const tripTitle = (TRIPS as any)?.title ?? String(response.tripId);
+     const tripTitle = TRIPS.find(t => t.id === response.tripId)?.title ?? String(response.tripId);
+
 
 const { subject, html, text } = bookingConfirmedTemplate({
   brand: "ION Boats",
