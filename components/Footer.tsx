@@ -108,13 +108,17 @@ export default function Footer() {
         >
           <div>© {new Date().getFullYear()} ION Boats. All rights reserved.</div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <Link href="/terms" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none" }}>
-              Terms
-            </Link>
-            <Link href="/privacy" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none" }}>
-              Privacy
-            </Link>
-          </div>
+  <Link href="/terms-and-conditions" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none" }}>
+    Terms
+  </Link>
+  <Link href="/privacy-policy" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none" }}>
+    Privacy
+  </Link>
+  <Link href="/cookies" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none" }}>
+    Cookies
+  </Link>
+</div>
+
         </div>
       </div>
     </footer>

@@ -4,6 +4,7 @@ import "./globals.css";
 import ChatWidget from "../components/chat/ChatWidget";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import CookieBanner from "../components/CookieBanner"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -34,6 +35,7 @@ export default function RootLayout({
         {children}
         <Footer />
         <ChatWidget />
+        <CookieBanner />
       </body>
     </html>
   );

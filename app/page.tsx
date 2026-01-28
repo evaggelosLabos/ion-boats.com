@@ -15,17 +15,22 @@ export default function HomePage() {
   }}
 >
 
+<div
+  className="oceanMotion"
+  aria-label="ION Boats calm sea"
+  style={{
+    position: "absolute",
+    inset: 0,
+     
+    backgroundImage: "url(/ocean.jpg)",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "50% 50%",
+    transform: "translateZ(0)", // helps smooth animation
+  }}
+/>
 
-        <img
-          src="/ocean.jpg"
-          alt="ION Boats calm sea"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            display: "block",
-          }}
-        />
+
         {/* HERO OVERLAY TEXT */}
 <div
   style={{
@@ -594,6 +599,134 @@ paddingTop: "21vh",
   </div>
 </section>
 
+{/* OUR BOATS (small reassurance block) */}
+<section
+  style={{
+    marginTop: "clamp(34px, 6vw, 54px)",
+    padding: "clamp(22px, 4vw, 34px) 0",
+    borderTop: "1px solid rgba(255,255,255,0.10)",
+    borderBottom: "1px solid rgba(255,255,255,0.10)",
+  }}
+>
+  <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 clamp(14px, 3vw, 20px)" }}>
+    <div
+      style={{
+        padding: "clamp(16px, 3vw, 22px)",
+        borderRadius: 24,
+        border: "1px solid rgba(255,255,255,0.14)",
+        background: "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.18) 100%)",
+        boxShadow: "0 12px 40px rgba(0,0,0,0.25)",
+        display: "grid",
+        gap: 10,
+      }}
+    >
+      <div
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 10,
+          padding: "8px 12px",
+          borderRadius: 999,
+          border: "1px solid rgba(255,255,255,0.14)",
+          background: "rgba(0,0,0,0.18)",
+          width: "fit-content",
+          fontWeight: 950,
+          fontSize: 12,
+          letterSpacing: 0.3,
+          color: "rgba(255,255,255,0.88)",
+        }}
+      >
+        <span style={{ color: "rgba(98,208,255,0.95)" }}>✓</span>
+        Our boats
+      </div>
+
+      {/* IMAGE FRAME */}
+<div
+  style={{
+    marginTop: 16,
+    padding: "14px",                 // ✅ frame thickness
+    borderRadius: 28,
+    background: "rgba(255,255,255,0.06)",
+    border: "1px solid rgba(255,255,255,0.12)",
+  }}
+>
+  <div
+    style={{
+      borderRadius: 20,
+      overflow: "hidden",
+      width: "100%",
+      aspectRatio: "16 / 9",
+      background: "#000",
+      boxShadow: "0 14px 40px rgba(0,0,0,0.35)",
+    }}
+  >
+    <img
+      src="/boat.jpg"
+      alt="ION Boats – comfortable day boat in Corfu"
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "block",
+        objectFit: "cover",
+      }}
+    />
+  </div>
+</div>
+
+
+
+      <div
+        style={{
+          fontFamily: "var(--font-serif)",
+          fontSize: "clamp(18px, 2.6vw, 24px)",
+          fontWeight: 650,
+          letterSpacing: "-0.2px",
+          marginTop: 2,
+        }}
+      >
+        Two identical boats. One consistent experience.
+      </div>
+
+      <div style={{ fontSize: 14, lineHeight: 1.75, color: "rgba(255,255,255,0.76)", maxWidth: 900 }}>
+        All trips are operated with <b>two identical, modern 7-meter boats</b>, ensuring consistent comfort, smooth handling,
+        and reliable departures.
+      </div>
+
+      <div style={{ fontSize: 14, lineHeight: 1.75, color: "rgba(255,255,255,0.76)", maxWidth: 900 }}>
+        Designed for relaxed cruising, safe swimming stops, and a calm experience for couples, families, and private groups.
+      </div>
+
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 6 }}>
+        {[
+          "✓ Reliable departures",
+          "✓ Comfortable cruising",
+          "✓ Calm experience",
+          "✓ Ideal for couples & families",
+        ].map((t) => (
+          <span
+            key={t}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              padding: "8px 12px",
+              borderRadius: 999,
+              border: "1px solid rgba(255,255,255,0.14)",
+              background: "rgba(255,255,255,0.06)",
+              color: "rgba(255,255,255,0.82)",
+              fontSize: 13,
+              fontWeight: 800,
+              lineHeight: 1,
+            }}
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+
   {/* TITLE */}
               <h1
                 style={{
@@ -781,6 +914,27 @@ paddingTop: "21vh",
         </div>
 
         <style>{`
+
+        .oceanMotion{
+  animation: oceanWave 10s ease-in-out infinite;
+  will-change: transform, background-position;
+}
+
+@keyframes oceanWave{
+  0%{
+    transform: scale(1.08) translateY(0px) translateX(0px);
+    background-position: 50% 50%;
+  }
+  50%{
+    transform: scale(1.12) translateY(-18px) translateX(10px);
+    background-position: 55% 45%;
+  }
+  100%{
+    transform: scale(1.08) translateY(0px) translateX(0px);
+    background-position: 50% 50%;
+  }
+}
+
 
         .heroImage{
   height: clamp(260px, 42vh, 520px); /* mobile + default */
