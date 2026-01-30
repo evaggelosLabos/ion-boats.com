@@ -15,35 +15,62 @@ export default function HomePage() {
   }}
 >
 
+{/* HERO BACKGROUND LAYERS */}
 <div
-  className="oceanMotion"
-  aria-label="ION Boats calm sea"
   style={{
     position: "absolute",
     inset: 0,
-     
-    backgroundImage: "url(/ocean.jpg)",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "50% 50%",
-    transform: "translateZ(0)", // helps smooth animation
+    overflow: "hidden",
   }}
-/>
+>
+  {/* Bottom image (revealed after “destroy”) */}
+  <div
+    className="heroBg heroBg--next"
+    aria-label="ION Boats hero background 2"
+    style={{
+      position: "absolute",
+      inset: 0,
+      backgroundImage: "url(/firstimage.webp)", // ✅ change this
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "50% 50%",
+      transform: "translateZ(0)",
+    }}
+  />
+
+  {/* Top ocean image (gets destroyed) */}
+  <div
+    className="heroBg heroBg--ocean"
+    aria-label="ION Boats calm sea"
+    style={{
+      position: "absolute",
+      inset: 0,
+      backgroundImage: "url(/ocean.webp)",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "50% 50%",
+      transform: "translateZ(0)",
+      willChange: "transform, clip-path, filter, opacity, background-position",
+    }}
+  />
+</div>
+
 
 
         {/* HERO OVERLAY TEXT */}
 <div
+  className="heroText"
   style={{
     position: "absolute",
     inset: 0,
     display: "flex",
     alignItems: "flex-start",
-paddingTop: "21vh",
-
+    paddingTop: "21vh",
     justifyContent: "center",
     pointerEvents: "none",
   }}
 >
+
   <h2
     style={{
       fontFamily: "var(--font-serif)",
@@ -289,14 +316,21 @@ paddingTop: "21vh",
       gap: 14,
     }}
   >
-    {[
-      {
-        slug: "paleokastritsa",
-        title: "Paleokastritsa",
-        desc: "Caves, turquoise bays, iconic coastline.",
-        tag: "Most popular",
-        meta: ["Half-day", "Shared or Private", "Benitses"],
+    {[{
+        slug: "paxos-antipaxos",
+        title: "Paxos & Antipaxos Day Cruise",
+        desc: "Emerald waters, Antipaxos beaches and Blue Caves — a full-day island escape.",
+        tag: "Full day",
+        meta: ["Day cruise", "Iconic spots", "Early start"],
       },
+       {
+        slug: "blue-lagoon",
+        title: "Blue Lagoon & Mainland Beach Tour",
+        desc: "Crystal-clear lagoon waters and secluded mainland beaches, ideal for relaxed swimming.",
+        tag: "Swim stops",
+        meta: ["Half/Full", "Relaxed", "Weather-aware"],
+      },
+
       {
         slug: "north-east-corfu",
         title: "North-East Corfu",
@@ -304,6 +338,16 @@ paddingTop: "21vh",
         tag: "Calm waters",
         meta: ["Half-day", "Family-friendly", "Benitses"],
       },
+
+
+      {
+        slug: "paleokastritsa",
+        title: "Paleokastritsa",
+        desc: "Caves, turquoise bays, iconic coastline.",
+        tag: "Most popular",
+        meta: ["Half-day", "Shared or Private", "Benitses"],
+      },
+      
       {
         slug: "custom-private",
         title: "Custom Private Trip",
@@ -311,20 +355,8 @@ paddingTop: "21vh",
         tag: "Private",
         meta: ["Flexible", "Your pace", "Benitses"],
       },
-      {
-        slug: "paxos-antipaxos",
-        title: "Paxos & Antipaxos Day Cruise",
-        desc: "Emerald waters, Antipaxos beaches and Blue Caves — a full-day island escape.",
-        tag: "Full day",
-        meta: ["Day cruise", "Iconic spots", "Early start"],
-      },
-      {
-        slug: "blue-lagoon",
-        title: "Blue Lagoon & Mainland Beach Tour",
-        desc: "Crystal-clear lagoon waters and secluded mainland beaches, ideal for relaxed swimming.",
-        tag: "Swim stops",
-        meta: ["Half/Full", "Relaxed", "Weather-aware"],
-      },
+      
+     
     ].map((x) => (
       <Link key={x.slug} href={`/trips/${x.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
         <div
@@ -661,7 +693,7 @@ paddingTop: "21vh",
     }}
   >
     <img
-      src="/boat.jpg"
+      src="/boat.webp"
       alt="ION Boats – comfortable day boat in Corfu"
       style={{
         width: "100%",
@@ -738,7 +770,7 @@ paddingTop: "21vh",
                   lineHeight: 1.05,
                 }}
               >
-                ION Boats
+                ion boats
               </h1>
 
               {/* DESCRIPTION */}
@@ -934,6 +966,201 @@ paddingTop: "21vh",
     background-position: 50% 50%;
   }
 }
+  /* Base */
+.heroBg--next{
+  transform: scale(1.06);
+  filter: saturate(1.05) contrast(1.02);
+}
+
+/* Top ocean layer: calm → then “destroy” → reveal next image → reset */
+.heroBg--ocean{
+  animation: heroDestroyReveal 6s ease-in-out infinite;
+}
+
+/* The effect timeline:
+   0–45%   calm ocean (subtle motion)
+   45–70%  destruction (tearing / shattering feel)
+   70–90%  second image visible
+   90–100% reset back to full ocean
+*/
+@keyframes heroDestroyReveal{
+  /* Calm ocean */
+  0%{
+    opacity: 1;
+    filter: blur(0px) saturate(1.0) contrast(1.0);
+    transform: scale(1.08) translateY(0px) translateX(0px);
+    background-position: 50% 50%;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+  25%{
+    transform: scale(1.10) translateY(-10px) translateX(6px);
+    background-position: 54% 46%;
+  }
+  45%{
+    transform: scale(1.12) translateY(-18px) translateX(10px);
+    background-position: 55% 45%;
+  }
+
+  /* Destruction starts (looks like it breaks away into jagged chunks) */
+  55%{
+    opacity: 0.95;
+    filter: blur(1.2px) saturate(1.15) contrast(1.08);
+    transform: scale(1.14) rotate(-0.4deg);
+    clip-path: polygon(
+      0% 0%,
+      100% 0%,
+      100% 55%,
+      92% 52%,
+      84% 62%,
+      70% 56%,
+      58% 66%,
+      44% 58%,
+      30% 68%,
+      18% 60%,
+      0% 72%
+    );
+  }
+  62%{
+    opacity: 0.72;
+    filter: blur(2.2px) saturate(1.2) contrast(1.1);
+    transform: scale(1.16) translateX(12px) rotate(0.6deg);
+    clip-path: polygon(
+      0% 0%,
+      100% 0%,
+      100% 34%,
+      86% 46%,
+      72% 30%,
+      60% 48%,
+      46% 30%,
+      34% 52%,
+      20% 34%,
+      0% 48%
+    );
+  }
+  70%{
+    opacity: 0.15;
+    filter: blur(4px) saturate(1.3) contrast(1.12);
+    transform: scale(1.18) translateY(-8px) translateX(20px) rotate(1.2deg);
+    clip-path: polygon(
+      0% 0%,
+      100% 0%,
+      100% 20%,
+      0% 35%
+    );
+  }
+
+  /* Reveal time (second image is now fully visible) */
+  78%{
+    opacity: 0.0;
+    filter: blur(6px);
+    transform: scale(1.18) translateX(26px);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  }
+  88%{
+    opacity: 0.0;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  }
+
+  /* Reset back to full ocean quickly (no one notices) */
+  100%{
+    opacity: 1;
+    filter: blur(0px) saturate(1.0) contrast(1.0);
+    transform: scale(1.08) translateY(0px) translateX(0px);
+    background-position: 50% 50%;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+}
+
+.heroText{
+  animation: heroTextFade 6s ease-in-out infinite;
+  will-change: opacity, transform, filter;
+}
+
+@keyframes heroTextFade{
+  /* Visible during calm ocean */
+  0%{
+    opacity: 1;
+    transform: translateY(0px);
+    filter: blur(0px);
+  }
+  35%{
+    opacity: 1;
+    transform: translateY(0px);
+    filter: blur(0px);
+  }
+
+  /* Fade out as destruction begins */
+  48%{
+    opacity: 0.85;
+    transform: translateY(-6px);
+    filter: blur(0.6px);
+  }
+  58%{
+    opacity: 0.25;
+    transform: translateY(-14px);
+    filter: blur(1.4px);
+  }
+
+  /* Fully hidden while second image is visible */
+  64%{
+    opacity: 0;
+    transform: translateY(-18px);
+    filter: blur(2px);
+  }
+  82%{
+    opacity: 0;
+  }
+
+  /* Return smoothly before loop resets */
+  100%{
+    opacity: 1;
+    transform: translateY(0px);
+    filter: blur(0px);
+  }
+}
+
+@media (max-width: 900px){
+  .heroBg--next{
+    /* keep full image visible */
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+
+    /* premium stripes fill + image on top */
+    background-image:
+      url(/firstimage.webp),
+      radial-gradient(1200px 800px at 20% 10%, rgba(98,208,255,0.20), transparent 60%),
+      radial-gradient(900px 600px at 80% 30%, rgba(209,183,110,0.18), transparent 55%),
+      linear-gradient(180deg, #06121a 0%, #071b25 60%, #06121a 100%) !important;
+
+    /* per-layer sizing & positioning */
+    background-size:
+      contain,
+      cover,
+      cover,
+      cover !important;
+
+    background-position:
+      center,
+      center,
+      center,
+      center !important;
+
+    background-repeat:
+      no-repeat,
+      no-repeat,
+      no-repeat,
+      no-repeat !important;
+  }
+}
+
+
+
+
+
+
+
+
 
 
         .heroImage{
