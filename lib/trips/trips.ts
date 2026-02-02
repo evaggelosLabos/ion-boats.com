@@ -56,7 +56,7 @@ export const TRIP_PAGES: TripPage[] = [
 
   {
     slug: "blue-lagoon",
-    title: "Blue Lagoon & Mainland Beach Tour",
+    title: "Sivota & Blue Lagoon Beach Tour",
     subtitle: "Crystal-clear waters and relaxed swimming",
     duration: "Half day",
     departure: "Benitses Marina",

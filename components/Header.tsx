@@ -17,21 +17,23 @@ function useIsMobile(breakpoint = 860) {
   return isMobile;
 }
 
+type NavItem = { href: string; label: string; cta?: boolean };
+
 export default function Header() {
   const pathname = usePathname();
   const isMobile = useIsMobile(860);
 
-  const nav = [
+  const nav: NavItem[] = [
     { href: "/#trips", label: "Trips" },
-    { href: "/#book", label: "Book" },
+    { href: "/#book", label: "Book now", cta: true },
     { href: "/contact", label: "Contact" },
     { href: "/admin/login", label: "Admin" },
   ];
 
   // ✅ Reserve space for the logo on mobile so nav never goes underneath it
   const LOGO_BLOCK_PX = 84; // white square size
-  const LOGO_LEFT_PX = 12;  // left offset
-  const LOGO_GAP_PX = 12;   // breathing space between logo and nav
+  const LOGO_LEFT_PX = 12; // left offset
+  const LOGO_GAP_PX = 12; // breathing space between logo and nav
   const mobileNavLeftPadding = LOGO_LEFT_PX + LOGO_BLOCK_PX + LOGO_GAP_PX;
 
   return (
@@ -40,10 +42,8 @@ export default function Header() {
         position: "sticky",
         top: 0,
         zIndex: 50,
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        background: "rgba(16, 60, 40, 0.62)",
-        borderBottom: "1px solid rgba(255,255,255,0.10)",
+        background: "#ffffff",
+        borderBottom: "1px solid rgba(0,0,0,0.08)",
       }}
     >
       <div
@@ -66,7 +66,7 @@ export default function Header() {
             alignItems: "center",
             gap: 10,
             textDecoration: "none",
-            color: "rgba(255,255,255,0.92)",
+            color: "#111",
             fontWeight: 950,
             letterSpacing: -0.2,
             whiteSpace: "nowrap",
@@ -81,8 +81,8 @@ export default function Header() {
               display: "grid",
               placeItems: "center",
               background: "#ffffff",
-              border: "2px solid rgba(0,0,0,0.15)",
-              boxShadow: "0 12px 40px rgba(0,0,0,0.45)",
+              border: "2px solid rgba(0,0,0,0.12)",
+              boxShadow: "0 10px 24px rgba(0,0,0,0.18)",
               flex: "0 0 auto",
             }}
           >
@@ -95,15 +95,15 @@ export default function Header() {
                 display: "block",
                 transform: "scale(1.55)",
                 transformOrigin: "center",
-                filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.35))",
+                filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.25))",
               }}
             />
           </div>
 
-          {/* ✅ On mobile hide the text so it doesn’t eat header width */}
+          {/* On mobile hide the text so it doesn’t eat header width */}
           {!isMobile && (
-            <span style={{ fontSize: 15, fontWeight: 900, opacity: 0.85 }}>
-              ion boats
+            <span style={{ fontSize: 15, fontWeight: 900, opacity: 0.9 }}>
+              ion-boats
             </span>
           )}
         </Link>
@@ -134,6 +134,9 @@ export default function Header() {
             }}
           >
             {nav.map((x) => {
+              const isCta = !!x.cta;
+
+              // note: anchor links like "/#book" won't match pathname, so we keep "active" subtle
               const active =
                 pathname === x.href ||
                 (x.href !== "/" && pathname?.startsWith(x.href));
@@ -146,28 +149,45 @@ export default function Header() {
                     height: 38,
                     display: "inline-flex",
                     alignItems: "center",
-                    padding: "0 12px",
+                    padding: isCta ? "0 16px" : "0 12px",
                     borderRadius: 999,
                     textDecoration: "none",
                     fontWeight: 900,
                     fontSize: 13,
-                    color: "rgba(255,255,255,0.88)",
-                    background: active
-                      ? "rgba(98,208,255,0.18)"
-                      : "rgba(255,255,255,0.06)",
-                    border: active
-                      ? "1px solid rgba(98,208,255,0.35)"
-                      : "1px solid rgba(255,255,255,0.12)",
-                    transition: "transform 120ms ease, filter 120ms ease",
                     whiteSpace: "nowrap",
+
+                    color: isCta ? "#fff" : "#111",
+                    background: isCta
+                      ? "linear-gradient(135deg, #1e88ff, #0d5bd7)"
+                      : active
+                      ? "rgba(13,91,215,0.08)"
+                      : "#ffffff",
+
+                    border: isCta
+                      ? "1px solid rgba(0,0,0,0.08)"
+                      : active
+                      ? "1px solid rgba(13,91,215,0.22)"
+                      : "1px solid rgba(0,0,0,0.12)",
+
+                    boxShadow: isCta
+                      ? "0 8px 20px rgba(30,136,255,0.28)"
+                      : "none",
+
+                    transition: "transform 120ms ease, box-shadow 120ms ease",
                   }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.transform =
-                      "scale(1.03)";
+                    e.currentTarget.style.transform = "scale(1.04)";
+                    if (isCta) {
+                      e.currentTarget.style.boxShadow =
+                        "0 10px 26px rgba(30,136,255,0.35)";
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.transform =
-                      "scale(1)";
+                    e.currentTarget.style.transform = "scale(1)";
+                    if (isCta) {
+                      e.currentTarget.style.boxShadow =
+                        "0 8px 20px rgba(30,136,255,0.28)";
+                    }
                   }}
                 >
                   {x.label}
@@ -180,4 +200,3 @@ export default function Header() {
     </header>
   );
 }
-

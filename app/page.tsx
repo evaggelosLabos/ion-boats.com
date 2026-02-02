@@ -308,201 +308,247 @@ export default function HomePage() {
     </a>
   </div>
 
-  <div
-    style={{
-      marginTop: 16,
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-      gap: 14,
-    }}
-  >
-    {[{
-        slug: "paxos-antipaxos",
-        title: "Paxos & Antipaxos Day Cruise",
-        desc: "Emerald waters, Antipaxos beaches and Blue Caves — a full-day island escape.",
-        tag: "Full day",
-        meta: ["Day cruise", "Iconic spots", "Early start"],
-      },
-       {
-        slug: "blue-lagoon",
-        title: "Blue Lagoon & Mainland Beach Tour",
-        desc: "Crystal-clear lagoon waters and secluded mainland beaches, ideal for relaxed swimming.",
-        tag: "Swim stops",
-        meta: ["Half/Full", "Relaxed", "Weather-aware"],
-      },
-
-      {
-        slug: "north-east-corfu",
-        title: "North-East Corfu",
-        desc: "Hidden coves, calm waters, scenic swim stops.",
-        tag: "Calm waters",
-        meta: ["Half-day", "Family-friendly", "Benitses"],
-      },
-
-
-      {
-        slug: "paleokastritsa",
-        title: "Paleokastritsa",
-        desc: "Caves, turquoise bays, iconic coastline.",
-        tag: "Most popular",
-        meta: ["Half-day", "Shared or Private", "Benitses"],
-      },
-      
-      {
-        slug: "custom-private",
-        title: "Custom Private Trip",
-        desc: "Tell us what you want — we plan the route.",
-        tag: "Private",
-        meta: ["Flexible", "Your pace", "Benitses"],
-      },
-      
-     
-    ].map((x) => (
-      <Link key={x.slug} href={`/trips/${x.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+ <div
+  style={{
+    marginTop: 16,
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: 14,
+  }}
+>
+  {[
+    {
+      slug: "paxos-antipaxos",
+      title: "Paxos & Antipaxos Day Cruise",
+      desc: "Emerald waters, Antipaxos beaches and Blue Caves — a full-day island escape.",
+      tag: "Full day",
+      meta: ["Day cruise", "Iconic spots", "Early start"],
+      image: "/trips/paxos2.jpeg",
+    },
+    {
+      slug: "blue-lagoon",
+      title: "Sivota & Blue Lagoon Beach Tour",
+      desc: "Crystal-clear lagoon waters and secluded mainland beaches, ideal for relaxed swimming.",
+      tag: "Swim stops",
+      meta: ["Full day", "Relaxed", "Weather-aware"],
+      image: "/trips/sivota-blue-lagoon.webp",
+    },
+    {
+      slug: "north-east-corfu",
+      title: "North-East Corfu",
+      desc: "Hidden coves, calm waters, scenic swim stops.",
+      tag: "Calm waters",
+      meta: ["Full day", "Family-friendly", "Benitses"],
+      image: "/trips/north-east-corfu.webp",
+    },
+    {
+      slug: "paleokastritsa",
+      title: "Paleokastritsa",
+      desc: "Caves, turquoise bays, iconic coastline.",
+      tag: "Most popular",
+      meta: ["Full-day", "Shared or Private", "Benitses"],
+      image: "/trips/paleokastritsa.webp",
+    },
+    {
+      slug: "custom-private",
+      title: "Custom Private Trip",
+      desc: "Tell us what you want — we plan the route.",
+      tag: "Private",
+      meta: ["Flexible", "Your pace", "Benitses"],
+      image: "/trips/custom-private.webp",
+    },
+  ].map((x) => (
+    <Link
+      key={x.slug}
+      href={`/trips/${x.slug}`}
+      style={{ textDecoration: "none", color: "inherit" }}
+    >
+      <div
+        style={{
+          height: "100%",
+          padding: 18,
+          borderRadius: 22,
+          border: "1px solid rgba(255,255,255,0.14)",
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.20) 100%)",
+          boxShadow: "0 10px 40px rgba(0,0,0,0.25)",
+          cursor: "pointer",
+          position: "relative",
+          overflow: "hidden",
+          transition:
+            "transform 180ms ease, border-color 180ms ease, background 180ms ease",
+        }}
+        className="tripCard"
+      >
+        {/* subtle highlight */}
         <div
           style={{
-            height: "100%",
-            padding: 18,
-            borderRadius: 22,
-            border: "1px solid rgba(255,255,255,0.14)",
+            position: "absolute",
+            inset: -2,
             background:
-              "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.20) 100%)",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.25)",
-            cursor: "pointer",
-            position: "relative",
-            overflow: "hidden",
-            transition: "transform 180ms ease, border-color 180ms ease, background 180ms ease",
+              "radial-gradient(600px 220px at 20% 0%, rgba(98,208,255,0.16), transparent 55%), radial-gradient(520px 220px at 80% 10%, rgba(209,183,110,0.12), transparent 55%)",
+            pointerEvents: "none",
           }}
-          className="tripCard"
+        />
+
+        {/* ✅ PHOTO (16:9 fixed container) */}
+        <div
+          style={{
+            position: "relative",
+            width: "100%",
+            aspectRatio: "16 / 9",
+            borderRadius: 16,
+            overflow: "hidden",
+            marginBottom: 12,
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.10)",
+          }}
         >
-          {/* subtle highlight */}
-          <div
+          <img
+            src={x.image}
+            alt={x.title}
+            loading="lazy"
             style={{
               position: "absolute",
-              inset: -2,
-              background:
-                "radial-gradient(600px 220px at 20% 0%, rgba(98,208,255,0.16), transparent 55%), radial-gradient(520px 220px at 80% 10%, rgba(209,183,110,0.12), transparent 55%)",
-              pointerEvents: "none",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
+              transform: "scale(1.01)",
             }}
           />
 
-          {/* tag */}
+          {/* subtle readability fade */}
           <div
             style={{
-              position: "relative",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "8px 12px",
-              borderRadius: 999,
-              border: "1px solid rgba(255,255,255,0.14)",
-              background: "rgba(0,0,0,0.18)",
-              color: "rgba(255,255,255,0.86)",
-              fontSize: 12,
-              fontWeight: 900,
-              marginBottom: 12,
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.00) 55%, rgba(0,0,0,0.18) 100%)",
+              pointerEvents: "none",
             }}
-          >
-            <span style={{ color: "rgba(98,208,255,0.95)" }}>✓</span>
-            {x.tag}
-          </div>
+          />
+        </div>
 
-          {/* title */}
-          <div
-            style={{
-              position: "relative",
-              fontFamily: "var(--font-serif)",
-              fontWeight: 650,
-              letterSpacing: "-0.25px",
-              fontSize: 18,
-              lineHeight: 1.2,
-              marginBottom: 8,
-            }}
-          >
-            {x.title}
-          </div>
+        {/* tag */}
+        <div
+          style={{
+            position: "relative",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "8px 12px",
+            borderRadius: 999,
+            border: "1px solid rgba(255,255,255,0.14)",
+            background: "rgba(0,0,0,0.18)",
+            color: "rgba(255,255,255,0.86)",
+            fontSize: 12,
+            fontWeight: 900,
+            marginBottom: 12,
+          }}
+        >
+          <span style={{ color: "rgba(98,208,255,0.95)" }}>✓</span>
+          {x.tag}
+        </div>
 
-          {/* desc */}
-          <div
-            style={{
-              position: "relative",
-              color: "rgba(255,255,255,0.72)",
-              lineHeight: 1.55,
-              fontSize: 14,
-              marginBottom: 14,
-            }}
-          >
-            {x.desc}
-          </div>
+        {/* title */}
+        <div
+          style={{
+            position: "relative",
+            fontFamily: "var(--font-serif)",
+            fontWeight: 650,
+            letterSpacing: "-0.25px",
+            fontSize: 18,
+            lineHeight: 1.2,
+            marginBottom: 8,
+          }}
+        >
+          {x.title}
+        </div>
 
-          {/* meta row */}
-          <div
-            style={{
-              position: "relative",
-              display: "flex",
-              gap: 8,
-              flexWrap: "wrap",
-              marginBottom: 14,
-            }}
-          >
-            {x.meta.map((m) => (
-              <span
-                key={m}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  padding: "7px 10px",
-                  borderRadius: 999,
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  background: "rgba(255,255,255,0.05)",
-                  color: "rgba(255,255,255,0.78)",
-                  fontSize: 12,
-                  fontWeight: 800,
-                  lineHeight: 1,
-                }}
-              >
-                {m}
-              </span>
-            ))}
-          </div>
+        {/* desc */}
+        <div
+          style={{
+            position: "relative",
+            color: "rgba(255,255,255,0.72)",
+            lineHeight: 1.55,
+            fontSize: 14,
+            marginBottom: 14,
+          }}
+        >
+          {x.desc}
+        </div>
 
-          {/* bottom CTA */}
-          <div
-            style={{
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 12,
-              marginTop: "auto",
-            }}
-          >
-            <div style={{ color: "rgba(255,255,255,0.62)", fontSize: 12, fontWeight: 800 }}>
-              View route & details
-            </div>
-
+        {/* meta row */}
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            gap: 8,
+            flexWrap: "wrap",
+            marginBottom: 14,
+          }}
+        >
+          {x.meta.map((m) => (
             <span
+              key={m}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 10,
-                padding: "10px 12px",
+                padding: "7px 10px",
                 borderRadius: 999,
-                border: "1px solid rgba(98,208,255,0.45)",
-                background: "rgba(98,208,255,0.14)",
-                color: "rgba(255,255,255,0.95)",
-                fontWeight: 900,
-                fontSize: 13,
-                whiteSpace: "nowrap",
+                border: "1px solid rgba(255,255,255,0.12)",
+                background: "rgba(255,255,255,0.05)",
+                color: "rgba(255,255,255,0.78)",
+                fontSize: 12,
+                fontWeight: 800,
+                lineHeight: 1,
               }}
             >
-              Explore <span style={{ opacity: 0.9 }}>→</span>
+              {m}
             </span>
-          </div>
+          ))}
         </div>
-      </Link>
-    ))}
-  </div>
+
+        {/* bottom CTA */}
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            marginTop: "auto",
+          }}
+        >
+          <div style={{ color: "rgba(255,255,255,0.62)", fontSize: 12, fontWeight: 800 }}>
+            View route & details
+          </div>
+
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "10px 12px",
+              borderRadius: 999,
+              border: "1px solid rgba(98,208,255,0.45)",
+              background: "rgba(98,208,255,0.14)",
+              color: "rgba(255,255,255,0.95)",
+              fontWeight: 900,
+              fontSize: 13,
+              whiteSpace: "nowrap",
+            }}
+          >
+            Explore <span style={{ opacity: 0.9 }}>→</span>
+          </span>
+        </div>
+      </div>
+    </Link>
+  ))}
+</div>
+
 </div>
 
 <style>{`
@@ -720,7 +766,7 @@ export default function HomePage() {
       </div>
 
       <div style={{ fontSize: 14, lineHeight: 1.75, color: "rgba(255,255,255,0.76)", maxWidth: 900 }}>
-        All trips are operated with <b>two identical, modern 7-meter boats</b>, ensuring consistent comfort, smooth handling,
+        All trips are operated with <b>two identical, modern 7.5-meter boats</b>, ensuring consistent comfort, smooth handling,
         and reliable departures.
       </div>
 
@@ -770,7 +816,7 @@ export default function HomePage() {
                   lineHeight: 1.05,
                 }}
               >
-                ion boats
+                ion-boats
               </h1>
 
               {/* DESCRIPTION */}
