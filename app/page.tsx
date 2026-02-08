@@ -1,6 +1,8 @@
 
 import Link from "next/link";
 import BookingWidget from "../components/booking/BookingWidget";
+import CorfuMapSection from "../components/CorfuMapSection";
+
 
 export default function HomePage() {
   return (
@@ -16,44 +18,35 @@ export default function HomePage() {
 >
 
 {/* HERO BACKGROUND LAYERS */}
+{/* HERO VIDEO BACKGROUND */}
+<video
+  autoPlay
+  muted
+  loop
+  playsInline
+  preload="metadata"
+  style={{
+    position: "absolute",
+    inset: 0,
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    pointerEvents: "none",
+  }}
+>
+  <source src="/videos/0250-0674.mp4" type="video/mp4" />
+</video>
+
+{/* subtle dark overlay for readability */}
 <div
   style={{
     position: "absolute",
     inset: 0,
-    overflow: "hidden",
+    background:
+      "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.35) 100%)",
   }}
->
-  {/* Bottom image (revealed after “destroy”) */}
-  <div
-    className="heroBg heroBg--next"
-    aria-label="ION Boats hero background 2"
-    style={{
-      position: "absolute",
-      inset: 0,
-      backgroundImage: "url(/firstimage.webp)", // ✅ change this
-      backgroundSize: "cover",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "50% 50%",
-      transform: "translateZ(0)",
-    }}
-  />
+/>
 
-  {/* Top ocean image (gets destroyed) */}
-  <div
-    className="heroBg heroBg--ocean"
-    aria-label="ION Boats calm sea"
-    style={{
-      position: "absolute",
-      inset: 0,
-      backgroundImage: "url(/ocean.webp)",
-      backgroundSize: "cover",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "50% 50%",
-      transform: "translateZ(0)",
-      willChange: "transform, clip-path, filter, opacity, background-position",
-    }}
-  />
-</div>
 
 
 
@@ -92,6 +85,9 @@ export default function HomePage() {
         {/* soft luxury fade into content */}
         
       </section>
+
+      <CorfuMapSection />
+
 
       {/* TRUST STRIP */}
 {/* TRUST STRIP – hero-safe */}
