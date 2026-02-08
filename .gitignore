@@ -46,3 +46,4 @@ ecosystem.config.cjs
 .env*
 .next/
 node_modules/
+.venv/
