@@ -2,6 +2,7 @@
 import Link from "next/link";
 import BookingWidget from "../components/booking/BookingWidget";
 import CorfuMapSection from "../components/CorfuMapSection";
+import CorfuJewelSection from "../components/CorfuJewelSection";
 
 
 export default function HomePage() {
@@ -85,6 +86,9 @@ export default function HomePage() {
         {/* soft luxury fade into content */}
         
       </section>
+
+      <CorfuJewelSection />
+
 
       <CorfuMapSection />
 
