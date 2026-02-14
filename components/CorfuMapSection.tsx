@@ -54,7 +54,7 @@ export default function CorfuMapSection() {
          "leftPct": 59.971347579300236,
     "topPct": 32.656466734840585,
         desc: "Calm coves and scenic coast.",
-        images: ["/trips/necorfu1.jpeg"],
+        images: ["/trips/northeast.jpeg"],
       },
       {
         id: "paxos",
@@ -62,7 +62,17 @@ export default function CorfuMapSection() {
         "leftPct": 80.74498654778161,
     "topPct": 98.86447818265886,
         desc: "Blue caves and Antipaxos swim stop.",
-        images: ["/trips/paxos1.jpeg"], // ✅ your real file
+        images: ["/trips/paxos1.jpeg",
+           "/trips/paxos1.jpeg",
+    "/trips/paxos2.jpeg",
+    "/trips/paxos3.jpeg",
+     "/trips/paxos4.jpeg",
+    "/trips/paxos5.jpeg",
+    "/trips/paxos6.jpeg",
+     "/trips/paxos7.jpeg",
+    "/trips/paxos8.jpeg",
+    
+         ] // ✅ your real file
       },
       {
         id: "sivota",
@@ -126,10 +136,10 @@ export default function CorfuMapSection() {
   // ======= EDIT MODE + PINS STATE =======
   const [pinsState, setPinsState] = useState<Pin[]>(initialPins);
   const [editMode, setEditMode] = useState(false);
-  const [editPinId, setEditPinId] = useState<string>(initialPins[0]?.id ?? "");
+  const [editPinId, setEditPinId] = useState<string>(initialPins[3]?.id ?? "");
 
   // ======= ACTIVE PIN + IMAGE NAV =======
-  const [activeId, setActiveId] = useState<string>(initialPins[0]?.id ?? "");
+  const [activeId, setActiveId] = useState<string>(initialPins[3]?.id ?? "");
   const active = pinsState.find((p) => p.id === activeId) ?? pinsState[0];
   const [activeImgIdx, setActiveImgIdx] = useState(0);
 

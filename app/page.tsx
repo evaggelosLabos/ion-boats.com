@@ -339,7 +339,7 @@ export default function HomePage() {
       desc: "Hidden coves, calm waters, scenic swim stops.",
       tag: "Calm waters",
       meta: ["Full day", "Family-friendly", "Benitses"],
-      image: "/trips/north-east-corfu.webp",
+      image: "/trips/northeast.jpeg",
     },
     {
       slug: "paleokastritsa",

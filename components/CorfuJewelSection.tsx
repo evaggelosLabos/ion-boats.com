@@ -61,7 +61,7 @@ export default function CorfuJewelSection() {
     {[
       { src: "/trips/Corfutown.jpeg", label: "The Ionian capital of elegance." },
       { src: "/trips/corfuoldtown.png", label: "Timeless old town charm" },
-      { src: "/corfu/sunset.jpg", label: "Golden sunsets" },
+      { src: "/trips/northeast.jpeg", label: "Where the Ionian shines brightest" },
     ].map((img, i) => (
       <div
   key={i}

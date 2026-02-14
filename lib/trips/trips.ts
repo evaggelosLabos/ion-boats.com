@@ -8,7 +8,9 @@ export type TripPage = {
   departure: string;
   description: string[];
   bookingTripId: TripId;
+  images?: string[];   // ✅ ADD THIS
 };
+
 
 
 export const TRIP_PAGES: TripPage[] = [
@@ -52,6 +54,12 @@ export const TRIP_PAGES: TripPage[] = [
       "The route includes scenic cruising, swim stops at Antipaxos, and visits to the Blue Caves, weather permitting.",
       "This trip is best suited for guests seeking a premium, private experience with plenty of time on the water.",
     ],
+    images: [
+    "/trips/paxos1.jpeg",
+    "/trips/paxos2.jpeg",
+    "/trips/paxos3.jpeg",
+    "/trips/paxos4.jpeg",
+  ],
   },
 
   {
