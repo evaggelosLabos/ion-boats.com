@@ -274,19 +274,16 @@ color: "#0b1d26",
 
             {/* ONE booking widget only */}
             <div
-              style={{
-                marginTop: 16,
-                borderRadius: 22,
-                padding: 18,
-                border: "1px solid rgba(255,255,255,0.12)",
-                
-  background:
-  "linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.15) 40%, rgba(255,255,255,0.95) 85%, #ffffff 100%)",
+  style={{
+    marginTop: 16,
+    borderRadius: 22,
+    padding: 18,
+    border: "1px solid rgba(0,0,0,0.10)",
+    background: "linear-gradient(180deg, rgba(6,18,26,0.96) 0%, rgba(7,27,37,0.96) 100%)",
+    boxShadow: "0 30px 80px rgba(0,0,0,0.45)",
+  }}
+>
 
-
-                boxShadow: "0 30px 80px rgba(0,0,0,0.40)",
-              }}
-            >
               <div
                 style={{
                   fontFamily: "var(--font-serif)",

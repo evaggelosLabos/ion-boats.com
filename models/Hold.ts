@@ -21,7 +21,8 @@ export type HoldDoc = {
 
 const HoldSchema = new Schema<HoldDoc>(
   {
-    tripId: { type: String, required: true, enum: ["paleo", "ne", "private"] },
+   tripId: { type: String, required: true, enum: ["paleo", "ne", "private", "paxos", "blue-lagoon"] },
+
     date: { type: String, required: true },
     slotId: { type: String, required: true },
     bookingMode: { type: String, required: true, enum: ["private", "shared"] },

@@ -129,7 +129,8 @@ function SelectedTripCard({
           aspectRatio: "16 / 9", // change to "1 / 1" if you want perfectly square
           position: "relative",
           overflow: "hidden",
-          background: "rgba(255,255,255,0.06)",
+          background: "linear-gradient(180deg, rgba(6,18,26,0.96) 0%, rgba(7,27,37,0.96) 100%)",
+
           borderBottom: "1px solid rgba(255,255,255,0.10)",
         }}
       >
@@ -359,8 +360,8 @@ export default function BookingWidget({
     height: 46,
     padding: "0 14px",
     borderRadius: 14,
-    border: "1px solid rgba(255,255,255,0.14)",
-    background: "rgba(0,0,0,0.25)",
+    border: "1px solid rgba(255,255,255,0.22)",
+    background: "rgba(0,0,0,0.45)",
     color: "rgba(255,255,255,0.95)",
     fontSize: 14,
     outline: "none",
@@ -639,7 +640,8 @@ export default function BookingWidget({
           marginBottom: 12,
           padding: 12,
           borderRadius: 14,
-          background: "rgba(209,183,110,0.12)",
+          background: "rgba(20,30,40,0.75)",
+
           border: "1px solid rgba(209,183,110,0.28)",
         }}
       >
@@ -761,7 +763,7 @@ export default function BookingWidget({
           cursor: loading || !selectedSlotId ? "not-allowed" : "pointer",
         }}
       >
-        {loading ? "Creating hold..." : "Hold this slot"}
+        {loading ? "Creating hold..." : "Secure your spot"}
       </button>
 
       {hold ? (
@@ -770,7 +772,8 @@ export default function BookingWidget({
             marginTop: 12,
             padding: 12,
             borderRadius: 14,
-            background: "rgba(209,183,110,0.14)",
+            background: "rgba(10,20,30,0.65)",
+
             border: "1px solid rgba(209,183,110,0.35)",
             color: "rgba(255,255,255,0.95)",
           }}
@@ -844,6 +847,12 @@ export default function BookingWidget({
 
         /* hide native icon, we use our own */
         input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; display: none; }
+
+        input::placeholder{
+  color: rgba(255,255,255,0.55) !important;
+  opacity: 1 !important;
+}
+
 
         @media (min-width: 720px) {
           .dateCheckGrid {
