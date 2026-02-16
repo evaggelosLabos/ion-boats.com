@@ -3,6 +3,7 @@ import Link from "next/link";
 import BookingWidget from "../components/booking/BookingWidget";
 import CorfuMapSection from "../components/CorfuMapSection";
 import CorfuJewelSection from "../components/CorfuJewelSection";
+import Trial from "../components/Paxos"
 
 
 export default function HomePage() {
@@ -91,6 +92,8 @@ export default function HomePage() {
 
 
       <CorfuMapSection />
+
+      
 
 
       {/* TRUST STRIP */}

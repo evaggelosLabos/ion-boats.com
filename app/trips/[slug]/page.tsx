@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
 import BookingWidget from "../../../components/booking/BookingWidget";
 import { TRIP_PAGES } from "../../../lib/trips/trips";
+import Paxos from "../../../components/Paxos";
+import Paxos1 from "../../../components/Paxos1"
+
 
 export default async function TripPage({
   params,
@@ -15,6 +18,16 @@ export default async function TripPage({
   "/trips/default1.jpeg",
   "/trips/default2.jpeg",
 ];
+
+const TripExtraComponent =
+  slug === "paxos-antipaxos" ? (
+    <>
+      <Paxos />
+      <Paxos1 />
+    </>
+  ) : null;
+
+
 
   const images = trip.images?.length
   ? trip.images
@@ -159,6 +172,9 @@ export default async function TripPage({
         </div>
       </section>
 
+      {TripExtraComponent}
+
+
       {/* CONTENT */}
       <section
         style={{
@@ -207,6 +223,7 @@ export default async function TripPage({
               ))}
             </div>
           </div>
+          
 
           {/* RIGHT — TEXT */}
           <div style={{ minWidth: 0 }}>
@@ -220,6 +237,8 @@ border: "1px solid rgba(0,0,0,0.08)",
                 padding: "clamp(16px, 2.6vw, 22px)",
               }}
             >
+
+              
               <div
                 style={{
                   fontFamily: "var(--font-serif)",
@@ -297,6 +316,9 @@ color: "#0b1d26",
               </div>
 
               <BookingWidget initialTripId={trip.bookingTripId} hideTripSelector />
+
+              
+
 
               <div style={{ marginTop: 10, opacity: 0.78, fontSize: 12, lineHeight: 1.6 }}>
                 Secure request — we’ll confirm availability and details shortly.
