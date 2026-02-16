@@ -73,16 +73,23 @@ export default function PaxosBrochureSection() {
           <div style={rightCol}>
             {/* TOP (logo + image SAME WIDTH AS BOTTOM COLUMN) */}
             <div className="topRowGrid" style={topRowGrid}>
-              <div style={logoBox}>
-                <img
-                  src="/ion-boats-logo.png"
-                  alt="Ion Boats"
-                  style={{ maxWidth: 150, width: "100%", height: "auto" }}
-                />
-              </div>
+             <div style={logoBox}>
+  <img
+  src="/newlogo-transparent.png"
+  alt="Ion Boats"
+  style={{
+    width: "100%",
+    maxWidth: 260,
+    height: "auto",
+    display: "block",
+  }}
+/>
+
+</div>
+
 
               <div style={imgWrapLarge}>
-                <img src="/trips/paxos1.jpeg" alt="" style={img} />
+                <img src="/trips/paxostrip1.jpeg" alt="" style={img} />
               </div>
             </div>
 
@@ -98,11 +105,11 @@ export default function PaxosBrochureSection() {
             {/* BOTTOM IMAGES */}
             <div style={bottomRow}>
               <div style={imgWrapLarge}>
-                <img src="/trips/paxos2.jpeg" alt="" style={img} />
+                <img src="/trips/paxostrip3.jpeg" alt="" style={img} />
               </div>
 
               <div style={imgWrapLarge}>
-                <img src="/trips/paxos3.jpeg" alt="" style={img} />
+                <img src="/trips/paxostrip2.jpeg" alt="" style={img} />
               </div>
             </div>
           </div>
@@ -176,8 +183,11 @@ const logoBox: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  padding: 10,
+  
+  padding: 0,
 };
+
+
 
 const imgWrapLarge: React.CSSProperties = {
   borderRadius: 18,

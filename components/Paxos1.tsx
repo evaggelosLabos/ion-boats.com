@@ -22,21 +22,35 @@ export default function PaxosBrochureSection_Page2() {
         <div className="p2Grid" style={grid}>
           {/* LEFT TITLE */}
           <div>
-            <h2 className="p2Title" style={title}>
-              <span>PAXOS</span>
-              <span>ANTIPAXOS</span>
-              <span>BLUE</span>
-              <span>CAVES</span>
-            </h2>
-          </div>
+  <h2 className="p2Title" style={title}>
+    <span>PAXOS</span>
+    <span>ANTIPAXOS</span>
+    <span>BLUE</span>
+    <span>CAVES</span>
+  </h2>
+
+  <p style={{ ...paragraph, marginTop: 20 }}>
+    Μετά την επιστροφή από τους Παξούς, δεν είναι μόνο οι εικόνες που μένουν — είναι οι αισθήσεις.
+    Η γεύση από τις τοπικές σπεσιαλιτέ, το άρωμα της θάλασσας στο δέρμα και το φως του απογεύματος
+    πάνω στο νερό γίνονται μια ανάμνηση που επιστρέφει ξανά και ξανά στο μυαλό.
+    <br /><br />
+    Ένα τραπέζι δίπλα στο λιμάνι, φρέσκο ψάρι, απλές αυθεντικές συνταγές και ο χρόνος να κυλά πιο αργά.
+    Στιγμές που δεν φωτογραφίζονται μόνο, αλλά αποθηκεύονται μέσα σου.
+    <br /><br />
+    Κάποια ταξίδια τελειώνουν όταν δέσει το σκάφος. Αυτό συνεχίζει κάθε φορά που θυμάσαι τη γεύση,
+    το τοπίο και την ηρεμία των Παξών.
+  </p>
+</div>
+
 
           {/* RIGHT CONTENT */}
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "100%", minWidth: 0 }}>
+
             {/* TOP AREA: left photo + (logo + right photo) */}
             <div className="p2TopRow" style={topRow}>
               <div style={topLeftImgWrap}>
                 <img
-                  src="/trips/paxos-top-left.jpeg"
+                  src="/trips/paxostrip5.jpeg"
                   alt="Paxos street"
                   style={img}
                 />
@@ -45,7 +59,7 @@ export default function PaxosBrochureSection_Page2() {
               <div className="p2TopRight" style={topRightGrid}>
                 <div style={logoWrap}>
                   <img
-                    src="/ion-boats-logo.png"
+                    src="/newlogo-transparent.png"
                     alt="ion-boats"
                     style={logoImg}
                   />
@@ -53,7 +67,7 @@ export default function PaxosBrochureSection_Page2() {
 
                 <div style={topRightImgWrap}>
                   <img
-                    src="/trips/paxos-top-right.jpeg"
+                    src="/trips/paxostrip6.jpeg"
                     alt="Harbor restaurant"
                     style={img}
                   />
@@ -72,23 +86,11 @@ export default function PaxosBrochureSection_Page2() {
 
             {/* BOTTOM AREA: text block + 2 images */}
             <div className="p2BottomRow" style={bottomRow}>
-              <div style={textBlock}>
-                <p style={paragraph}>
-                  Μετά την επιστροφή από τους Παξούς, δεν είναι μόνο οι εικόνες που μένουν — είναι οι αισθήσεις.
-                  Η γεύση από τις τοπικές σπεσιαλιτέ, το άρωμα της θάλασσας στο δέρμα και το φως του απογεύματος
-                  πάνω στο νερό γίνονται μια ανάμνηση που επιστρέφει ξανά και ξανά στο μυαλό.
-                  <br /><br />
-                  Ένα τραπέζι δίπλα στο λιμάνι, φρέσκο ψάρι, απλές αυθεντικές συνταγές και ο χρόνος να κυλά πιο αργά.
-                  Στιγμές που δεν φωτογραφίζονται μόνο, αλλά αποθηκεύονται μέσα σου.
-                  <br /><br />
-                  Κάποια ταξίδια τελειώνουν όταν δέσει το σκάφος. Αυτό συνεχίζει κάθε φορά που θυμάσαι τη γεύση,
-                  το τοπίο και την ηρεμία των Παξών.
-                </p>
-              </div>
+              
 
               <div style={bottomLeftImgWrap}>
                 <img
-                  src="/trips/paxos-bottom-left.jpeg"
+                  src="/trips/paxostrip4.jpeg"
                   alt="Paxos port walk"
                   style={img}
                 />
@@ -96,7 +98,7 @@ export default function PaxosBrochureSection_Page2() {
 
               <div style={bottomRightImgWrap}>
                 <img
-                  src="/trips/paxos-bottom-right.jpeg"
+                  src="/trips/paxostrip7.jpeg"
                   alt="Blue caves aerial"
                   style={img}
                 />
@@ -165,6 +167,7 @@ const topRightGrid: React.CSSProperties = {
   gridTemplateColumns: "160px 1fr",
   gap: 14,
   alignItems: "start",
+  minWidth: 0
 };
 
 const logoWrap: React.CSSProperties = {
@@ -213,12 +216,14 @@ const quoteText: React.CSSProperties = {
 };
 
 const bottomRow: React.CSSProperties = {
-  marginTop: 18,
+  marginTop: 22,
   display: "grid",
-  gridTemplateColumns: "360px 1fr 1.1fr",
-  gap: 18,
-  alignItems: "end",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 22,
+  minWidth: 0
 };
+
+
 
 const textBlock: React.CSSProperties = {
   paddingRight: 6,
@@ -237,14 +242,14 @@ const bottomLeftImgWrap: React.CSSProperties = {
   borderRadius: 22,
   overflow: "hidden",
   background: "#e9e9e9",
-  height: 210,
+  height: 280,
 };
 
 const bottomRightImgWrap: React.CSSProperties = {
   borderRadius: 22,
   overflow: "hidden",
   background: "#e9e9e9",
-  height: 210,
+  height: 280,
 };
 
 const img: React.CSSProperties = {

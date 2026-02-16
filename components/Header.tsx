@@ -73,37 +73,32 @@ export default function Header() {
             pointerEvents: "auto",
           }}
         >
-          <div
-            style={{
-              height: LOGO_BLOCK_PX,
-              width: LOGO_BLOCK_PX,
-              borderRadius: 18,
-              display: "grid",
-              placeItems: "center",
-              background: "#ffffff",
-              border: "2px solid rgba(0,0,0,0.12)",
-              boxShadow: "0 10px 24px rgba(0,0,0,0.18)",
-              flex: "0 0 auto",
-            }}
-          >
-            <img
-              src="/transparent-logo.webp"
-              alt="ion boats"
-              style={{
-                height: 76,
-                width: "auto",
-                display: "block",
-                transform: "scale(1.55)",
-                transformOrigin: "center",
-                filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.25))",
-              }}
-            />
-          </div>
+         <div
+  style={{
+    height: 60,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }}
+>
+  <img
+  src="/newlogo.jpeg"
+  style={{
+    height: 70,
+    width: "auto",
+    display: "block",
+    transform: "scale(1.2)",   // 👈 makes it visually bigger
+    transformOrigin: "center",
+  }}
+/>
+
+</div>
+
 
           {/* On mobile hide the text so it doesn’t eat header width */}
           {!isMobile && (
             <span style={{ fontSize: 15, fontWeight: 900, opacity: 0.9 }}>
-              ion-boats
+              
             </span>
           )}
         </Link>
