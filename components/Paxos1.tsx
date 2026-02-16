@@ -127,6 +127,7 @@ const card: React.CSSProperties = {
   background: "#f5f4f1",
   padding: 28,
   boxSizing: "border-box",
+  overflow: "hidden",
 };
 
 const grid: React.CSSProperties = {

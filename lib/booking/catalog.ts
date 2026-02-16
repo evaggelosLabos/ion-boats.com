@@ -27,7 +27,7 @@ export const TRIPS: Trip[] = [
     durationLabel: "Full day",
     meetingPoint: "Benitses Marina",
     pricing: { privatePrice: 850, sharedCouplePrice: 130, maxCouples: 4 },
-    image: "/trips/paxos2.jpeg",
+    image: "/trips/paxosmainimage.jpeg",
   },
 
   {

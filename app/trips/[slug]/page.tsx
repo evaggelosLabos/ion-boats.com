@@ -37,7 +37,11 @@ const TripExtraComponent =
 
 
 
-  const heroImg = images[0];
+ const heroImg =
+  slug === "paxos-antipaxos"
+    ? "/trips/paxosmainimage.jpeg" // ✅ put your new first image here
+    : images[0];
+
 
   return (
   <main style={{ width: "100%", background: "#ffffff", color: "#0b1d26" }}>

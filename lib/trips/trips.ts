@@ -59,6 +59,8 @@ export const TRIP_PAGES: TripPage[] = [
     "/trips/paxos2.jpeg",
     "/trips/paxos3.jpeg",
     "/trips/paxos4.jpeg",
+    "/trips/paxosmainimage.jpeg",
+
   ],
   },
 

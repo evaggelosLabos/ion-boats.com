@@ -324,7 +324,7 @@ export default function HomePage() {
     {
       slug: "paxos-antipaxos",
       title: "Paxos & Antipaxos Day Cruise",
-      image: "/trips/paxos2.jpeg",
+      image: "/trips/paxosmainimage.jpeg",
     },
     {
       slug: "blue-lagoon",
