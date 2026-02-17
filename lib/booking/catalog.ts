@@ -36,7 +36,7 @@ export const TRIPS: Trip[] = [
     durationLabel: "Half day",
     meetingPoint: "Benitses Marina",
     pricing: { privatePrice: 480, sharedCouplePrice: 130, maxCouples: 4 },
-    image: "/trips/sivota-blue-lagoon.webp",
+    image: "/trips/Sivota.jpeg",
   },
 
   {

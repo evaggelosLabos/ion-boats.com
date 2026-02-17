@@ -3,6 +3,9 @@ import BookingWidget from "../../../components/booking/BookingWidget";
 import { TRIP_PAGES } from "../../../lib/trips/trips";
 import Paxos from "../../../components/Paxos";
 import Paxos1 from "../../../components/Paxos1"
+import Sivota from "../../../components/Sivota";
+import North from "../../../components/North";
+import North2 from "../../../components/North2";
 
 
 export default async function TripPage({
@@ -19,13 +22,23 @@ export default async function TripPage({
   "/trips/default2.jpeg",
 ];
 
-const TripExtraComponent =
-  slug === "paxos-antipaxos" ? (
+const TripExtraComponent = {
+  "paxos-antipaxos": (
     <>
       <Paxos />
       <Paxos1 />
     </>
-  ) : null;
+  ),
+  "blue-lagoon": <Sivota />,
+  "north-east-corfu": (
+    <>
+      <North />
+      <North2 />
+    </>
+  ),
+}[slug] ?? null;
+
+
 
 
 
@@ -39,8 +52,14 @@ const TripExtraComponent =
 
  const heroImg =
   slug === "paxos-antipaxos"
-    ? "/trips/paxosmainimage.jpeg" // ✅ put your new first image here
+    ? "/trips/paxosmainimage.jpeg"
+    : slug === "blue-lagoon"
+    ? "/trips/Sivota.jpeg"
+    : slug === "north-east-corfu"   // 👈 adjust slug if different
+    ? "/trips/Northeastheader.jpeg"
     : images[0];
+
+
 
 
   return (

@@ -329,7 +329,7 @@ export default function HomePage() {
     {
       slug: "blue-lagoon",
       title: "Sivota & Blue Lagoon Beach Tour",
-      image: "/trips/sivota-blue-lagoon.webp",
+      image: "/trips/Sivota.jpeg",
     },
     {
       slug: "north-east-corfu",
