@@ -42,8 +42,28 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="antialiased">
-        <Header />
-        {children}
+        {/* FIXED HEADER */}
+<div
+  style={{
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 9999,
+    background: "rgba(6,18,26,0.55)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    borderBottom: "1px solid rgba(255,255,255,0.10)",
+  }}
+>
+  <Header />
+</div>
+
+{/* Spacer so content doesn't go under the fixed header */}
+<div style={{ height: 74 }} />
+
+{children}
+
         <Footer />
         <ChatWidget />
         <CookieBanner />

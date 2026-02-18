@@ -16,16 +16,22 @@ export type TripPage = {
 export const TRIP_PAGES: TripPage[] = [
   {
     slug: "paleokastritsa",
-    title: "Paleokastritsa Boat Trip",
+    title: "Sunset Cruise",
     subtitle: "Sea caves, turquoise bays and iconic west-coast scenery",
     duration: "2.5 hours",
     departure: "Benitses Marina",
     bookingTripId: "paleo",
     description: [
-      "Paleokastritsa is one of Corfu’s most famous coastal areas, known for its clear waters, dramatic cliffs, and hidden sea caves.",
-      "This trip is designed for guests who want a balanced experience of sightseeing and swimming, with carefully chosen stops depending on sea conditions.",
-      "Our skippers select the smoothest possible route on the day, ensuring a comfortable ride and safe swim stops for couples and families.",
-    ],
+  `Experience the magic of the Ionian Sea at the most beautiful hour of the day.
+The Sunset Cruise aboard the SV699 is not just a boat trip — it’s a moment of calm, color, and pure relaxation on the water.
+
+As the sun slowly sets behind the hills of Corfu, the boat glides gently across tranquil waters while the sky fills with shades of gold, orange, and soft pink. Enjoy your drink, the music, and the refreshing sea breeze, far from crowds and noise.
+
+Perfect for couples, friends, or small groups who want to end their day in a truly special way — with stunning photos, peaceful moments, and unforgettable summer memories.
+
+Sometimes, the best part of your holiday begins exactly when the sun goes down.`,
+],
+
   },
 
   {

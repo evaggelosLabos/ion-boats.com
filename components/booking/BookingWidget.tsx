@@ -597,42 +597,43 @@ export default function BookingWidget({
 
 
       {/* Booking mode */}
-      <div style={{ marginBottom: 12 }}>
-        <button
-          type="button"
-          disabled={trip.pricing.maxCouples === 0}
-          onClick={() => setBookingMode("shared")}
-          style={{
-            marginRight: 8,
-            padding: "10px 14px",
-            borderRadius: 999,
-            fontWeight: 800,
-            opacity: trip.pricing.maxCouples === 0 ? 0.4 : 1,
-            background: bookingMode === "shared" ? "rgba(98,208,255,0.2)" : "rgba(255,255,255,0.06)",
-            border: "1px solid rgba(255,255,255,0.14)",
-            color: "#fff",
-            cursor: trip.pricing.maxCouples === 0 ? "not-allowed" : "pointer",
-          }}
-        >
-          Shared (per couple)
-        </button>
+<div style={{ marginBottom: 12 }}>
+  <button
+    type="button"
+    onClick={() => setBookingMode("private")}
+    style={{
+      marginRight: 8,
+      padding: "10px 14px",
+      borderRadius: 999,
+      fontWeight: 800,
+      background: bookingMode === "private" ? "rgba(98,208,255,0.2)" : "rgba(255,255,255,0.06)",
+      border: "1px solid rgba(255,255,255,0.14)",
+      color: "#fff",
+      cursor: "pointer",
+    }}
+  >
+    Private (full boat)
+  </button>
 
-        <button
-          type="button"
-          onClick={() => setBookingMode("private")}
-          style={{
-            padding: "10px 14px",
-            borderRadius: 999,
-            fontWeight: 800,
-            background: bookingMode === "private" ? "rgba(98,208,255,0.2)" : "rgba(255,255,255,0.06)",
-            border: "1px solid rgba(255,255,255,0.14)",
-            color: "#fff",
-            cursor: "pointer",
-          }}
-        >
-          Private (full boat)
-        </button>
-      </div>
+  <button
+    type="button"
+    disabled={trip.pricing.maxCouples === 0}
+    onClick={() => setBookingMode("shared")}
+    style={{
+      padding: "10px 14px",
+      borderRadius: 999,
+      fontWeight: 800,
+      opacity: trip.pricing.maxCouples === 0 ? 0.4 : 1,
+      background: bookingMode === "shared" ? "rgba(98,208,255,0.2)" : "rgba(255,255,255,0.06)",
+      border: "1px solid rgba(255,255,255,0.14)",
+      color: "#fff",
+      cursor: trip.pricing.maxCouples === 0 ? "not-allowed" : "pointer",
+    }}
+  >
+    Shared (per couple)
+  </button>
+</div>
+
 
       {/* Price */}
       <div

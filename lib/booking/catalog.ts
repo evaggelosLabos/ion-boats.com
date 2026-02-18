@@ -50,7 +50,7 @@ export const TRIPS: Trip[] = [
 
   {
     id: "paleo",
-    title: "Paleokastritsa",
+    title: "Sunset Cruise",
     durationLabel: "2.5 hours",
     meetingPoint: "Benitses Marina",
     pricing: { privatePrice: 480, sharedCouplePrice: 120, maxCouples: 4 },

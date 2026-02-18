@@ -6,6 +6,8 @@ import Paxos1 from "../../../components/Paxos1"
 import Sivota from "../../../components/Sivota";
 import North from "../../../components/North";
 import North2 from "../../../components/North2";
+import Sunset from "../../../components/Sunset";
+import Halfday from "../../../components/Halfday";
 
 
 export default async function TripPage({
@@ -36,8 +38,9 @@ const TripExtraComponent = {
       <North2 />
     </>
   ),
+  "paleokastritsa": <Sunset />,
+  "custom-private": <Halfday />, // ✅ NEW
 }[slug] ?? null;
-
 
 
 
@@ -57,6 +60,11 @@ const TripExtraComponent = {
     ? "/trips/Sivota.jpeg"
     : slug === "north-east-corfu"   // 👈 adjust slug if different
     ? "/trips/Northeastheader.jpeg"
+    : slug === "paleokastritsa"
+    ? "/trips/sunsetheader.jpg"
+    : slug === "custom-private"
+    ? "/trips/halfdayheader.jpg"
+    
     : images[0];
 
 

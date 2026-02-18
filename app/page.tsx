@@ -91,7 +91,7 @@ export default function HomePage() {
       <CorfuJewelSection />
 
 
-      <CorfuMapSection />
+      //////////////
 
       
 
@@ -338,13 +338,13 @@ export default function HomePage() {
     },
     {
       slug: "paleokastritsa",
-      title: "Paleokastritsa",
-      image: "/trips/paleokastritsa.webp",
+      title: "Halfday Sunset Cruise",
+      image: "/trips/sunsetheader.jpg",
     },
     {
       slug: "custom-private",
-      title: "Custom Private Trip",
-      image: "/trips/custom-private.webp",
+      title: "Halfday Beach Cruise",
+      image: "/trips/halfdayheader.jpg",
     },
   ].map((x) => (
     <Link key={x.slug} href={`/trips/${x.slug}`} style={{ textDecoration: "none" }}>
