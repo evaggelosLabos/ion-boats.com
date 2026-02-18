@@ -255,7 +255,14 @@ export default function HomePage() {
             
 
           {/* TRIPS */}
-<div id="trips" style={{ marginTop: "clamp(34px, 6vw, 54px)" }}>
+<div
+  id="trips"
+  style={{
+    marginTop: "clamp(34px, 6vw, 54px)",
+    scrollMarginTop: 190, // same offset as booking
+  }}
+>
+
   <div
     style={{
       display: "flex",
@@ -830,8 +837,12 @@ export default function HomePage() {
             {/* RIGHT COLUMN — BOOKING */}
             {/* QUICK BOOKING (full-width section) */}
 <section
+id="book"
+
   style={{
+     
     width: "100%",
+    scrollMarginTop: 190,
     marginTop: "clamp(18px, 3vw, 26px)",
     padding: "clamp(18px, 3vw, 26px) 0",
     background:
@@ -840,6 +851,7 @@ export default function HomePage() {
 >
   <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 clamp(14px, 3vw, 20px)" }}>
     <div
+   
   style={{
     width: "100%",
     maxWidth: "none",        // IMPORTANT
@@ -866,7 +878,7 @@ export default function HomePage() {
 
 
           {/* BOOKING ANCHOR */}
-          <div id="book" style={{ marginTop: "clamp(34px, 6vw, 54px)", paddingBottom: 40 }} />
+          
         </div>
 
         <style>{`
