@@ -26,44 +26,44 @@ export const TRIPS: Trip[] = [
     title: "Paxos & Antipaxos Day Cruise",
     durationLabel: "Full day",
     meetingPoint: "Benitses Marina",
-    pricing: { privatePrice: 850, sharedCouplePrice: 130, maxCouples: 4 },
+    pricing: { privatePrice: 85, sharedCouplePrice: 130, maxCouples: 4 },
     image: "/trips/paxosmainimage.jpeg",
   },
 
   {
     id: "blue-lagoon",
     title: "Sivota & Blue Lagoon Beach Tour",
-    durationLabel: "Half day",
+    durationLabel: "Full day",
     meetingPoint: "Benitses Marina",
-    pricing: { privatePrice: 480, sharedCouplePrice: 130, maxCouples: 4 },
+    pricing: { privatePrice: 85, sharedCouplePrice: 130, maxCouples: 4 },
     image: "/trips/Sivota.jpeg",
   },
 
   {
     id: "ne",
     title: "North-East Corfu",
-    durationLabel: "3 hours",
+    durationLabel: "flexible",
     meetingPoint: "Benitses Marina",
-    pricing: { privatePrice: 520, sharedCouplePrice: 130, maxCouples: 4 },
-    image: "/trips/north-east-corfu.webp",
+    pricing: { privatePrice: 85, sharedCouplePrice: 130, maxCouples: 4 },
+    image: "/trips/northeast.jpeg",
   },
 
   {
     id: "paleo",
     title: "Sunset Cruise",
-    durationLabel: "2.5 hours",
+    durationLabel: "4 hours",
     meetingPoint: "Benitses Marina",
     pricing: { privatePrice: 480, sharedCouplePrice: 120, maxCouples: 4 },
-    image: "/trips/paleokastritsa.webp",
+    image: "/trips/sunsetheader.jpg",
   },
 
   {
     id: "private",
-    title: "Custom Private Trip",
-    durationLabel: "Flexible",
+    title: "Half Day Cruise",
+    durationLabel: "4 hours",
     meetingPoint: "To be confirmed",
     pricing: { privatePrice: 650, sharedCouplePrice: 130, maxCouples: 4 },
-    image: "/trips/custom-private.webp",
+    image: "/trips/halfdayheader.jpg",
   },
 
   // ➕ NEW TRIPS
@@ -73,21 +73,33 @@ export type Slot = {
   id: string;
   label: string;
   start: string;
-  end: string;
+  end?: string; // ✅ optio
   remaining: number;
 };
 
 export function buildSlotsForTrip(tripId: TripId): Slot[] {
-  const base: Slot[] = [
-    { id: `${tripId}-morning`, label: "09:00", start: "09:00", end: "12:00", remaining: 6 },
-    { id: `${tripId}-midday`, label: "12:30", start: "12:30", end: "15:30", remaining: 4 },
-    { id: `${tripId}-sunset`, label: "16:30", start: "16:30", end: "19:00", remaining: 5 },
-  ];
+  let start = "09:00";
+  let end: string | undefined;
 
-  // Private-only trips
-  if (tripId === "private" || tripId === "paxos") {
-    return [{ id: `${tripId}-slot-1`, label: "09:00", start: "09:00", end: "15:00", remaining: 1 }];
+  if (tripId === "paleo") {
+    start = "18:30";        // Sunset
+    end = "22:30";
+  } else if (tripId === "private") {
+    start = "10:00";        // Half day
+    end = "14:30";
   }
 
-  return base;
+  return [
+    {
+      id: `${tripId}-slot-1`,
+      label: start,
+      start,
+      end, // undefined = open-ended
+      remaining:
+        tripId === "paleo" || tripId === "private" || tripId === "paxos"
+          ? 1
+          : 6,
+    },
+  ];
 }
+

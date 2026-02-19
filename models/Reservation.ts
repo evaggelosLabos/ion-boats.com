@@ -1,3 +1,4 @@
+
 // models/Reservation.ts
 import mongoose, { Schema, type Model } from "mongoose";
 import type { TripId, BookingMode } from "../lib/booking/catalog";
@@ -10,8 +11,9 @@ export type ReservationDoc = {
   slotId: string;
 
   bookingMode: BookingMode; // "private" | "shared"
-  quantity: 1; // shared=1 couple, private=1 boat
-  priceEur: number;
+  quantity: number; // private = #people, shared = #couples
+
+  priceEur: number; // ✅ store TOTAL price for this reservation (quantity included)
 
   status: ReservationStatus;
 
@@ -32,8 +34,10 @@ const ReservationSchema = new Schema<ReservationDoc>(
     slotId: { type: String, required: true },
 
     bookingMode: { type: String, required: true, enum: ["private", "shared"] },
-    quantity: { type: Number, required: true, enum: [1], default: 1 },
-    priceEur: { type: Number, required: true },
+    quantity: { type: Number, required: true, min: 1, default: 1 },
+
+    // ✅ Option B: total price for group reservation
+    priceEur: { type: Number, required: true, min: 0 },
 
     status: {
       type: String,
@@ -43,25 +47,20 @@ const ReservationSchema = new Schema<ReservationDoc>(
     },
 
     customer: {
-      name: { type: String, required: true },
-      phone: { type: String, required: true },
-      email: { type: String, required: false },
+      name: { type: String, required: true, trim: true },
+      phone: { type: String, required: true, trim: true },
+      email: { type: String, required: false, trim: true },
     },
   },
   { timestamps: true }
 );
 
-// Prevent multiple CONFIRMED PRIVATE reservations for same slot
-ReservationSchema.index(
-  { tripId: 1, date: 1, slotId: 1, bookingMode: 1, status: 1 },
-  {
-    unique: true,
-    partialFilterExpression: {
-      status: "confirmed",
-      bookingMode: "private",
-    },
-  }
-);
+// ✅ Query performance (availability sums by slot/date/status a lot)
+ReservationSchema.index({ tripId: 1, date: 1, slotId: 1, status: 1, bookingMode: 1 });
+
+// Optional: If you frequently list bookings by email/phone
+// ReservationSchema.index({ "customer.email": 1, createdAt: -1 });
+// ReservationSchema.index({ "customer.phone": 1, createdAt: -1 });
 
 export const Reservation: Model<ReservationDoc> =
   (mongoose.models.Reservation as Model<ReservationDoc>) ||

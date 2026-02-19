@@ -8,12 +8,15 @@ type SlotAvailability = {
   id: string;
   label: string;
   start: string;
-  end: string;
-  remaining: number;
-  isPrivateHeld: boolean;
-  sharedMaxCouples: number;
-  remainingCouples: number;
+  end?: string;
+
+  // ✅ Option B fields (from new availability API)
+  totalSeats: number;
+  remainingSeats: number;
+  maxIndividualsBookable: number; // = remainingSeats
+  maxCouplesBookable: number;     // = floor(remainingSeats/2)
 };
+
 
 type AvailabilityResponse = {
   trip: Trip;
@@ -28,6 +31,8 @@ type HoldResponse = {
 };
 
 type BookingMode = "private" | "shared";
+
+
 
 type ConfirmResponse =
   | { ok: true; reservationId: string; message: string; priceEur: number }
@@ -71,7 +76,7 @@ function SelectedTripCard({
           tag: "Most popular",
           accent: "rgba(98,208,255,0.95)",
           bg: "linear-gradient(135deg, rgba(98,208,255,0.18), rgba(255,255,255,0.04) 55%, rgba(0,0,0,0.12))",
-          bullets: ["Sea caves & turquoise bays", "Iconic coastline views", "Great for photos & swim stops"],
+          bullets: ["18:30–22:30","Sea caves & turquoise bays", "Iconic coastline views", "Great for photos & swim stops"],
         }
       : t.id === "ne"
       ? {
@@ -98,7 +103,7 @@ function SelectedTripCard({
           tag: "Private only",
           accent: "rgba(209,183,110,0.95)",
           bg: "linear-gradient(135deg, rgba(209,183,110,0.16), rgba(255,255,255,0.04) 55%, rgba(0,0,0,0.12))",
-          bullets: ["Your route, your time", "Ideal for families / couples", "Message us after booking"],
+          bullets: ["10:00–14:30","Your route, your time", "Ideal for families / couples", "Message us after booking"],
         };
 
   const sharedAllowed = (t.pricing?.maxCouples ?? 0) > 0;
@@ -300,6 +305,8 @@ export default function BookingWidget({
  const [tripId, setTripId] = useState<TripId>(initialTripId ?? "ne");
 
   const [bookingMode, setBookingMode] = useState<BookingMode>("private");
+  const [quantity, setQuantity] = useState<number>(1);
+
   const [date, setDate] = useState<string>(todayISO());
 
   const [loading, setLoading] = useState(false);
@@ -328,6 +335,25 @@ export default function BookingWidget({
     const t = window.setInterval(() => setNowTick(Date.now()), 500);
     return () => window.clearInterval(t);
   }, [hold]);
+
+  useEffect(() => {
+  if (!availability?.slots?.length) return;
+
+  const sel =
+    availability.slots.find((x) => x.id === selectedSlotId) ??
+    availability.slots[0];
+
+  const max =
+    bookingMode === "private"
+      ? (sel?.maxIndividualsBookable ?? 0)
+      : (sel?.maxCouplesBookable ?? 0);
+
+  const safeMax = Math.max(0, max);
+  const next = Math.min(quantity, safeMax || 1);
+
+  if (next !== quantity) setQuantity(next);
+}, [availability, selectedSlotId, bookingMode, quantity]);
+
 
   const slotBtn = (active: boolean, disabled: boolean): React.CSSProperties => ({
     height: 44,
@@ -420,9 +446,16 @@ export default function BookingWidget({
   }
 
   useEffect(() => {
-    void fetchAvailability(tripId, date);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  void fetchAvailability(tripId, date);
+}, [tripId, date]);
+
+useEffect(() => {
+  if (availability?.slots?.length && !selectedSlotId) {
+    setSelectedSlotId(availability.slots[0].id);
+  }
+}, [availability]);
+
+
 
   async function onCheck() {
     void fetchAvailability(tripId, date);
@@ -442,16 +475,18 @@ export default function BookingWidget({
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          tripId,
-          date,
-          slotId: selectedSlotId,
-          bookingMode,
-          customer: {
-            name: name.trim(),
-            phone: phone.trim(),
-            ...(email.trim() ? { email: email.trim() } : {}),
-          },
-        }),
+  tripId,
+  date,
+  slotId: selectedSlotId,
+  bookingMode,
+  quantity, // ✅ NEW
+  customer: {
+    name: name.trim(),
+    phone: phone.trim(),
+    ...(email.trim() ? { email: email.trim() } : {}),
+  },
+}),
+
       });
 
       const dataUnknown: unknown = await res.json();
@@ -515,7 +550,9 @@ export default function BookingWidget({
 
   const trip = TRIPS.find((t) => t.id === tripId)!;
 
-  const price = bookingMode === "private" ? trip.pricing.privatePrice : trip.pricing.sharedCouplePrice;
+  const unitPrice = bookingMode === "private" ? trip.pricing.privatePrice : trip.pricing.sharedCouplePrice;
+const price = unitPrice * quantity;
+
 
   return (
     <div
@@ -600,7 +637,11 @@ export default function BookingWidget({
 <div style={{ marginBottom: 12 }}>
   <button
     type="button"
-    onClick={() => setBookingMode("private")}
+    onClick={() => {
+  setBookingMode("private");
+  setQuantity(1);
+}}
+
     style={{
       marginRight: 8,
       padding: "10px 14px",
@@ -612,7 +653,7 @@ export default function BookingWidget({
       cursor: "pointer",
     }}
   >
-    Private (full boat)
+    Individual (per person)
   </button>
 
   <button
@@ -634,6 +675,60 @@ export default function BookingWidget({
   </button>
 </div>
 
+{/* Quantity (group booking) */}
+{availability ? (
+  <div style={{ marginBottom: 12 }}>
+    <div style={{ fontSize: 12, fontWeight: 900, letterSpacing: 0.2, color: "rgba(255,255,255,0.75)", marginBottom: 6 }}>
+      {bookingMode === "private" ? "People" : "Couples"}
+    </div>
+
+    {(() => {
+      const sel =
+  availability.slots.find((x) => x.id === selectedSlotId) ??
+  availability.slots[0];
+
+      const max =
+        bookingMode === "private"
+          ? (sel?.maxIndividualsBookable ?? 0)
+          : (sel?.maxCouplesBookable ?? 0);
+
+      const safeMax = Math.max(0, max);
+      const safeValue = Math.min(quantity, safeMax || 1);
+
+      // keep quantity in range automatically
+   
+
+      return (
+        <select
+          value={safeValue}
+          onChange={(e) => setQuantity(Number(e.target.value))}
+          disabled={!selectedSlotId || safeMax <= 0}
+          style={{
+            height: 46,
+            padding: "0 14px",
+            borderRadius: 14,
+            border: "1px solid rgba(255,255,255,0.22)",
+            background: "rgba(0,0,0,0.45)",
+            color: "rgba(255,255,255,0.95)",
+            fontSize: 14,
+            outline: "none",
+            width: "100%",
+            opacity: !selectedSlotId || safeMax <= 0 ? 0.55 : 1,
+            cursor: !selectedSlotId || safeMax <= 0 ? "not-allowed" : "pointer",
+          }}
+        >
+          {Array.from({ length: safeMax }, (_, i) => i + 1).map((n) => (
+            <option key={n} value={n}>
+              {n}
+            </option>
+          ))}
+        </select>
+      );
+    })()}
+  </div>
+) : null}
+
+
 
       {/* Price */}
       <div
@@ -646,7 +741,14 @@ export default function BookingWidget({
           border: "1px solid rgba(209,183,110,0.28)",
         }}
       >
-        <b>€{price}</b> <span style={{ fontSize: 12 }}>{bookingMode === "private" ? "full boat" : "per couple"}</span>
+       <b>€{price}</b>{" "}
+<span style={{ fontSize: 12 }}>
+  {bookingMode === "private"
+    ? `${quantity} × €${trip.pricing.privatePrice} per person`
+    : `${quantity} × €${trip.pricing.sharedCouplePrice} per couple`}
+</span>
+
+
       </div>
 
       {/* Date + Check */}
@@ -657,10 +759,15 @@ export default function BookingWidget({
             type="date"
             value={date}
             onChange={(e) => {
-              setDate(e.target.value);
-              setHold(null);
-              setConfirmed(null);
-            }}
+  const next = e.target.value;
+  setDate(next);
+  setHold(null);
+  setConfirmed(null);
+  setAvailability(null);
+  setSelectedSlotId("");
+  void fetchAvailability(tripId, next); // ✅ instant refresh
+}}
+
             style={{
               ...fieldInput,
               paddingRight: 52,
@@ -719,13 +826,21 @@ export default function BookingWidget({
         {availability ? (
           availability.slots.map((s) => {
             const active = selectedSlotId === s.id;
-            const disabled = s.isPrivateHeld || (bookingMode === "shared" && s.remainingCouples <= 0);
+          const disabled =
+  (bookingMode === "shared" && s.maxCouplesBookable <= 0) ||
+  (bookingMode === "private" && s.maxIndividualsBookable <= 0);
+
 
             return (
               <button key={s.id} type="button" disabled={disabled} onClick={() => setSelectedSlotId(s.id)} style={slotBtn(active, disabled)}>
-                <span>{s.label}</span>
+              <span>{s.start && s.end ? `${s.start}–${s.end}` : (s.label || s.start)}</span>
+
                 <span style={{ fontSize: 12, opacity: 0.75, whiteSpace: "nowrap" }}>
-                  {s.isPrivateHeld ? "private" : bookingMode === "shared" ? `${s.remainingCouples}/${s.sharedMaxCouples} couples` : ""}
+                 {bookingMode === "shared"
+  ? `${s.maxCouplesBookable} couples max (${s.remainingSeats}/${s.totalSeats} seats left)`
+  : `${s.maxIndividualsBookable} people max (${s.remainingSeats}/${s.totalSeats} seats left)`}
+
+
                 </span>
               </button>
             );

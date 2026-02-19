@@ -18,7 +18,7 @@ export const TRIP_PAGES: TripPage[] = [
     slug: "paleokastritsa",
     title: "Sunset Cruise",
     subtitle: "Sea caves, turquoise bays and iconic west-coast scenery",
-    duration: "2.5 hours",
+    duration: "4 hours",
     departure: "Benitses Marina",
     bookingTripId: "paleo",
     description: [
@@ -38,7 +38,7 @@ Sometimes, the best part of your holiday begins exactly when the sun goes down.`
     slug: "north-east-corfu",
     title: "North-East Corfu Boat Trip",
     subtitle: "Calm waters, hidden coves and relaxed swimming",
-    duration: "3 hours",
+    duration: "Full day",
     departure: "Benitses Marina",
     bookingTripId: "ne",
     description: [
@@ -74,7 +74,7 @@ Sometimes, the best part of your holiday begins exactly when the sun goes down.`
     slug: "blue-lagoon",
     title: "Sivota & Blue Lagoon Beach Tour",
     subtitle: "Crystal-clear waters and relaxed swimming",
-    duration: "Half day",
+    duration: "Full day",
     departure: "Benitses Marina",
     bookingTripId: "blue-lagoon",
     description: [
@@ -88,13 +88,14 @@ Sometimes, the best part of your holiday begins exactly when the sun goes down.`
     slug: "custom-private",
     title: "Custom Private Boat Trip",
     subtitle: "Your route, your pace, your experience",
-    duration: "Flexible",
+    duration: "4 hours",
     departure: "To be arranged",
     bookingTripId: "private",
-    description: [
-      "A fully private experience designed around your preferences.",
-      "Choose your route, duration, and swim stops with guidance from our local skippers.",
-      "Perfect for families, couples, or special occasions where flexibility and privacy matter most.",
-    ],
+   description: [
+  "Leave the shore behind for a while and treat yourself to an experience that few truly have the chance to enjoy in Corfu — being out on a boat and swimming in waters that can only be reached from the sea.",
+  "Our half-day cruise is more than just a trip; it’s a peaceful escape into the Ionian Sea. Away from the crowds, your boat takes you to hidden coves with crystal-clear waters, where time seems to slow down and the scenery remains untouched.",
+  "Departures are available from Gouvia Marina or Benitses Marina.",
+],
+
   },
 ];

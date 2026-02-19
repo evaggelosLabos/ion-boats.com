@@ -13,12 +13,43 @@ function isISODate(x: string): boolean {
   return /^\d{4}-\d{2}-\d{2}$/.test(x);
 }
 
+function toPositiveInt(x: unknown, fallback: number) {
+  const n = typeof x === "number" ? x : typeof x === "string" ? Number(x) : NaN;
+  if (!Number.isFinite(n)) return fallback;
+  const i = Math.floor(n);
+  return i > 0 ? i : fallback;
+}
+
+function seatsFor(mode: string, quantity: number) {
+  return mode === "shared" ? quantity * 2 : quantity; // shared=couples => 2 seats each
+}
+
 type SlotAvailability = Slot & {
+  // ✅ Option B fields (use these in UI)
+  totalSeats: number;
+  usedSeats: number;
+  remainingSeats: number;
+  maxIndividualsBookable: number; // 1..remainingSeats
+  maxCouplesBookable: number; // 1..floor(remainingSeats/2)
+
+  // Optional helpful breakdown/debug
+  heldSeats: number;
+  reservedSeats: number;
+  heldCouples: number;
+  reservedCouples: number;
+  heldIndividuals: number;
+  reservedIndividuals: number;
+
+  // Legacy fields (keep for compatibility; always false / non-blocking)
   isPrivateHeld: boolean;
   isPrivateReserved: boolean;
   hasAnySharedReserved: boolean;
   sharedMaxCouples: number;
   remainingCouples: number;
+
+  // Legacy people fields (derived from seats)
+  maxPeople: number;
+  remainingPeople: number;
 };
 
 export async function GET(req: Request) {
@@ -38,6 +69,12 @@ export async function GET(req: Request) {
 
   const now = new Date();
 
+  // ✅ Option B: seat pool per slot (defaults to 2 boats * 10 seats = 20)
+  const seatsPerBoat = toPositiveInt((trip.pricing as any)?.seatsPerBoat, 10);
+  const boatsPerSlot = toPositiveInt((trip.pricing as any)?.boatsPerSlot, 2);
+  const totalSeats = seatsPerBoat * boatsPerSlot;
+
+  // Active holds for this date (not expired)
   const activeHolds = await Hold.find({
     tripId: tripIdRaw,
     date: dateRaw,
@@ -47,6 +84,7 @@ export async function GET(req: Request) {
     .select({ slotId: 1, bookingMode: 1, quantity: 1 })
     .lean();
 
+  // Confirmed reservations for this date
   const reservations = await Reservation.find({
     tripId: tripIdRaw,
     date: dateRaw,
@@ -55,67 +93,99 @@ export async function GET(req: Request) {
     .select({ slotId: 1, bookingMode: 1, quantity: 1 })
     .lean();
 
-  const privateHeld = new Set<string>();
-  const sharedHeldQty = new Map<string, number>();
+  // ---- Aggregate holds by slot ----
+  const heldCouples = new Map<string, number>();
+  const heldIndividuals = new Map<string, number>();
+  const heldSeatsBySlot = new Map<string, number>();
 
   for (const h of activeHolds) {
-    const slotId = String(h.slotId);
-    const mode = String(h.bookingMode);
+    const slotId = String((h as any).slotId);
+    const mode = String((h as any).bookingMode);
+    const qtyRaw = (h as any).quantity;
+    const qty = typeof qtyRaw === "number" && Number.isFinite(qtyRaw) ? Math.max(1, Math.floor(qtyRaw)) : 1;
 
-    if (mode === "private") {
-      privateHeld.add(slotId);
-    } else if (mode === "shared") {
-      const qty = typeof h.quantity === "number" ? h.quantity : 1;
-      sharedHeldQty.set(slotId, (sharedHeldQty.get(slotId) ?? 0) + qty);
+    if (mode === "shared") {
+      heldCouples.set(slotId, (heldCouples.get(slotId) ?? 0) + qty);
+    } else if (mode === "private") {
+      heldIndividuals.set(slotId, (heldIndividuals.get(slotId) ?? 0) + qty);
     }
+
+    heldSeatsBySlot.set(slotId, (heldSeatsBySlot.get(slotId) ?? 0) + seatsFor(mode, qty));
   }
 
-  const privateReserved = new Set<string>();
-  const sharedReservedQty = new Map<string, number>();
+  // ---- Aggregate reservations by slot ----
+  const reservedCouples = new Map<string, number>();
+  const reservedIndividuals = new Map<string, number>();
+  const reservedSeatsBySlot = new Map<string, number>();
   const hasSharedReserved = new Set<string>();
 
   for (const r of reservations) {
-    const slotId = String(r.slotId);
-    const mode = String(r.bookingMode);
-
-    if (mode === "private") {
-      privateReserved.add(slotId);
-      continue;
-    }
+    const slotId = String((r as any).slotId);
+    const mode = String((r as any).bookingMode);
+    const qtyRaw = (r as any).quantity;
+    const qty = typeof qtyRaw === "number" && Number.isFinite(qtyRaw) ? Math.max(1, Math.floor(qtyRaw)) : 1;
 
     if (mode === "shared") {
       hasSharedReserved.add(slotId);
-      const qty = typeof r.quantity === "number" ? r.quantity : 1;
-      sharedReservedQty.set(slotId, (sharedReservedQty.get(slotId) ?? 0) + qty);
+      reservedCouples.set(slotId, (reservedCouples.get(slotId) ?? 0) + qty);
+    } else if (mode === "private") {
+      reservedIndividuals.set(slotId, (reservedIndividuals.get(slotId) ?? 0) + qty);
     }
-  }
 
-  const maxCouples = trip.pricing.maxCouples;
+    reservedSeatsBySlot.set(slotId, (reservedSeatsBySlot.get(slotId) ?? 0) + seatsFor(mode, qty));
+  }
 
   const slots: SlotAvailability[] = baseSlots.map((s) => {
     const slotId = s.id;
 
-    const isPrivateHeld = privateHeld.has(slotId);
-    const isPrivateReserved = privateReserved.has(slotId);
-    const hasAnySharedReserved = hasSharedReserved.has(slotId);
+    const hs = heldSeatsBySlot.get(slotId) ?? 0;
+    const rs = reservedSeatsBySlot.get(slotId) ?? 0;
 
-    const hardBlocked = isPrivateHeld || isPrivateReserved;
+    const usedSeats = hs + rs;
+    const remainingSeats = Math.max(0, totalSeats - usedSeats);
 
-    const heldShared = sharedHeldQty.get(slotId) ?? 0;
-    const reservedShared = sharedReservedQty.get(slotId) ?? 0;
+    const maxIndividualsBookable = remainingSeats; // ✅ individuals can pick 1..remainingSeats
+    const maxCouplesBookable = Math.floor(remainingSeats / 2); // ✅ couples can pick 1..floor(remaining/2)
 
-    const remainingCouples =
-      maxCouples > 0 && !hardBlocked ? Math.max(0, maxCouples - (heldShared + reservedShared)) : 0;
+    // Legacy compatibility fields:
+    const maxPeople = totalSeats;
+    const remainingPeople = remainingSeats;
+    const remainingCouplesLegacy = Math.floor(remainingSeats / 2);
+
+    // If you still need something resembling "sharedMaxCouples" for old UI, derive from totalSeats
+    const sharedMaxCouplesLegacy = Math.floor(totalSeats / 2);
 
     return {
       ...s,
-      isPrivateHeld,
-      isPrivateReserved,
-      hasAnySharedReserved,
-      sharedMaxCouples: maxCouples,
-      remainingCouples,
+
+      totalSeats,
+      usedSeats,
+      remainingSeats,
+      maxIndividualsBookable,
+      maxCouplesBookable,
+
+      heldSeats: hs,
+      reservedSeats: rs,
+      heldCouples: heldCouples.get(slotId) ?? 0,
+      reservedCouples: reservedCouples.get(slotId) ?? 0,
+      heldIndividuals: heldIndividuals.get(slotId) ?? 0,
+      reservedIndividuals: reservedIndividuals.get(slotId) ?? 0,
+
+      // Legacy: always non-blocking in Option B
+      isPrivateHeld: false,
+      isPrivateReserved: false,
+      hasAnySharedReserved: hasSharedReserved.has(slotId),
+      sharedMaxCouples: sharedMaxCouplesLegacy,
+      remainingCouples: remainingCouplesLegacy,
+
+      maxPeople,
+      remainingPeople,
     };
   });
 
-  return NextResponse.json({ trip, date: dateRaw, slots });
+  return NextResponse.json({
+    trip,
+    date: dateRaw,
+    slots,
+  });
 }
