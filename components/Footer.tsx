@@ -84,7 +84,7 @@ export default function Footer() {
           <div>
             <div style={{ fontWeight: 950, fontSize: 14, marginBottom: 8 }}>Admin</div>
             <div style={{ display: "grid", gap: 8, fontSize: 13 }}>
-              <Link href="/admin" style={{ color: "rgba(255,255,255,0.82)", textDecoration: "none" }}>
+              <Link href="/admin/login" style={{ color: "rgba(255,255,255,0.82)", textDecoration: "none" }}>
                 Reservations dashboard
               </Link>
               <Link href="/admin/login" style={{ color: "rgba(255,255,255,0.82)", textDecoration: "none" }}>

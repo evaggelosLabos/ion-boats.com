@@ -177,7 +177,8 @@ export default function AgentDashboardPage() {
 
 
   return (
-    <main style={{ minHeight: "100vh", background: "#fff", padding: 16 }}>
+   <main style={{ minHeight: "100vh", background: "#fff", padding: 16, paddingTop: 40 }}>
+
       <div style={{ maxWidth: 980, margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
           <div>
