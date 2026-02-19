@@ -72,7 +72,7 @@ Sometimes, the best part of your holiday begins exactly when the sun goes down.`
 
   {
     slug: "blue-lagoon",
-    title: "Sivota & Blue Lagoon Beach Tour",
+    title: "Sivota & Blue Lagoon Beach Cruise",
     subtitle: "Crystal-clear waters and relaxed swimming",
     duration: "Full day",
     departure: "Benitses Marina",

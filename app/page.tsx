@@ -335,7 +335,7 @@ export default function HomePage() {
     },
     {
       slug: "blue-lagoon",
-      title: "Sivota & Blue Lagoon Beach Tour",
+      title: "Sivota & Blue Lagoon Beach Cruise",
       image: "/trips/Sivota.jpeg",
     },
     {

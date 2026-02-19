@@ -32,7 +32,7 @@ export const TRIPS: Trip[] = [
 
   {
     id: "blue-lagoon",
-    title: "Sivota & Blue Lagoon Beach Tour",
+    title: "Sivota & Blue Lagoon Beach Cruise",
     durationLabel: "Full day",
     meetingPoint: "Benitses Marina",
     pricing: { privatePrice: 85, sharedCouplePrice: 130, maxCouples: 4 },
