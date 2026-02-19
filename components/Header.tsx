@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+  
+
+
 function useIsMobile(breakpoint = 860) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -17,18 +20,34 @@ function useIsMobile(breakpoint = 860) {
   return isMobile;
 }
 
+
+
 type NavItem = { href: string; label: string; cta?: boolean };
 
 export default function Header() {
   const pathname = usePathname();
   const isMobile = useIsMobile(860);
 
-  const nav: NavItem[] = [
+  const [agentLoggedIn, setAgentLoggedIn] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/agent/me", { cache: "no-store", credentials: "same-origin" })
+      .then((r) => setAgentLoggedIn(r.ok))
+      .catch(() => {});
+  }, []);
+
+    const nav: NavItem[] = [
     { href: "/#trips", label: "Trips" },
     { href: "/#book", label: "Book now", cta: true },
     { href: "/contact", label: "Contact" },
+
+    agentLoggedIn
+      ? { href: "/agent", label: "Agent Dashboard" }
+      : { href: "/agent/login", label: "Agents" },
+
     { href: "/admin/login", label: "Admin" },
   ];
+
 
   // ✅ Reserve space for the logo on mobile so nav never goes underneath it
   const LOGO_BLOCK_PX = 84; // white square size

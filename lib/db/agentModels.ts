@@ -94,5 +94,39 @@ export const AgentModel: Model<Agent> =
 export const AgentSessionModel: Model<AgentSession> =
   (mongoose.models.AgentSession as Model<AgentSession>) || mongoose.model<AgentSession>("AgentSession", AgentSessionSchema);
 
+  type AgentInvite = {
+  name: string;
+  email: string;
+  inviteTokenHash: string;
+  expiresAt: Date;
+  usedAt?: Date | null;
+  usedByAgentId?: mongoose.Types.ObjectId | null;
+  createdAt: Date;
+};
+
+const AgentInviteSchema = new Schema<AgentInvite>(
+  {
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, trim: true, lowercase: true, index: true },
+
+    inviteTokenHash: { type: String, required: true, index: true, unique: true },
+    expiresAt: { type: Date, required: true, index: true },
+
+    usedAt: { type: Date, required: false, default: null },
+    usedByAgentId: { type: Schema.Types.ObjectId, required: false, default: null, ref: "Agent" },
+
+    createdAt: { type: Date, required: true, default: () => new Date() },
+  },
+  { collection: "agent_invites" }
+);
+
+// TTL index (Mongo will auto-delete expired invites)
+AgentInviteSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
+export const AgentInviteModel: Model<AgentInvite> =
+  (mongoose.models.AgentInvite as Model<AgentInvite>) ||
+  mongoose.model<AgentInvite>("AgentInvite", AgentInviteSchema);
+
+
 export const ReservationModel: Model<Reservation> =
   (mongoose.models.Reservation as Model<Reservation>) || mongoose.model<Reservation>("Reservation", ReservationSchema);
