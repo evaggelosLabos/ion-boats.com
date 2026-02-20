@@ -32,6 +32,15 @@ Perfect for couples, friends, or small groups who want to end their day in a tru
 Sometimes, the best part of your holiday begins exactly when the sun goes down.`,
 ],
 
+images: [
+    "/trips/sunset1.jpg",
+    "/trips/sunset2.jpg",
+    "/trips/sunset3.jpg",
+    "/trips/sunsetheader.jpg",
+    
+
+  ],
+
   },
 
   {
@@ -46,6 +55,15 @@ Sometimes, the best part of your holiday begins exactly when the sun goes down.`
       "This route is ideal for families, relaxed cruising, and longer swim stops in calm conditions.",
       "It’s a perfect choice if you value comfort, privacy, and a slower pace on the water.",
     ],
+
+    images: [
+    "/trips/north1.jpeg",
+    "/trips/north2.jpeg",
+    "/trips/north3.jpeg",
+    "/trips/north21.jpeg",
+    
+
+  ],
   },
 
   {
@@ -82,6 +100,15 @@ Sometimes, the best part of your holiday begins exactly when the sun goes down.`
       "Ideal for families and guests who prefer easy swimming and relaxed cruising.",
       "Routes are adjusted based on weather conditions to ensure comfort and safety throughout the trip.",
     ],
+
+    images: [
+    "/trips/Sivota1.jpeg",
+    "/trips/Sivota2.jpeg",
+    "/trips/Sivota3.jpeg",
+    "/trips/Sivota.jpeg",
+    
+
+  ],
   },
 
   {
@@ -96,6 +123,15 @@ Sometimes, the best part of your holiday begins exactly when the sun goes down.`
   "Our half-day cruise is more than just a trip; it’s a peaceful escape into the Ionian Sea. Away from the crowds, your boat takes you to hidden coves with crystal-clear waters, where time seems to slow down and the scenery remains untouched.",
   "Departures are available from Gouvia Marina or Benitses Marina.",
 ],
+
+images: [
+    "/trips/halfday1.jpg",
+    "/trips/halfdayheader.jpg",
+    "/trips/halfday2.jpeg",
+    "/trips/halfday3.jpeg",
+    
+
+  ],
 
   },
 ];

@@ -48,30 +48,29 @@ export default function SunsetCruiseSection() {
             </div>
 
             {/* TEXT */}
-            <p style={paragraph}>
-              Ζήστε τη μαγεία του Ιονίου την πιο όμορφη ώρα της ημέρας. Το Sunset
-              Cruise με το SV699 δεν είναι απλώς μια βόλτα — είναι μια εμπειρία
-              ηρεμίας, χρωμάτων και απόλυτης χαλάρωσης πάνω στη θάλασσα.
-              <br />
-              <br />
-              Καθώς ο ήλιος χαμηλώνει πίσω από τους λόφους της Κέρκυρας, το
-              σκάφος γλιστρά απαλά στα ήρεμα νερά και ο ουρανός γεμίζει
-              αποχρώσεις πορτοκαλί, ροζ και χρυσού.
-              <br />
-              <br />
-              Απολαύστε το ποτό σας, τη μουσική και τη δροσιά της θάλασσας,
-              μακριά από πολυκοσμία και θόρυβο.
-              <br />
-              <br />
-              Ιδανικό για ζευγάρια, φίλους ή μικρές παρέες που θέλουν να κλείσουν
-              την ημέρα τους με έναν πραγματικά ξεχωριστό τρόπο — φωτογραφίες,
-              χαλάρωση και καλοκαιρινές αναμνήσεις που μένουν.
-              <br />
-              <br />
-              <span style={paragraphEmph}>
-                Η καλύτερη στιγμή των διακοπών ξεκινά όταν δύει ο ήλιος.
-              </span>
-            </p>
+<p style={paragraph}>
+  Experience the magic of the Ionian at the most beautiful hour of the day. 
+  The Sunset Cruise with SV699 is not just a ride — it is an experience of 
+  tranquility, colors, and complete relaxation on the sea.
+  <br />
+  <br />
+  As the sun sets behind the hills of Corfu, the boat glides gently across 
+  the calm waters while the sky fills with shades of orange, pink, and gold.
+  <br />
+  <br />
+  Enjoy your drink, the music, and the refreshing sea breeze, far from 
+  crowds and noise.
+  <br />
+  <br />
+  Perfect for couples, friends, or small groups who want to end their day 
+  in a truly special way — with photos, relaxation, and summer memories 
+  that last.
+  <br />
+  <br />
+  <span style={paragraphEmph}>
+    The best moment of your holiday begins when the sun goes down.
+  </span>
+</p>
 
             {/* BOTTOM 2 IMAGES */}
             <div className="sunBottomImgs" style={bottomImgs}>

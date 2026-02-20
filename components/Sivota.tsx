@@ -73,25 +73,24 @@ export default function SivotaBlueLagoonSection() {
             </div>
 
             {/* Paragraph block */}
-            <div style={textBlock}>
-              <p style={paragraph}>
-                Τα νερά εδώ θυμίζουν Καραϊβική — φωτεινό τιρκουάζ, λευκός βυθός
-                και απόλυτη διαύγεια. Θα κολυμπήσετε σε εξωτικούς όρμους, θα
-                εξερευνήσετε σπηλιές και θα χαλαρώσετε σε ήρεμες παραλίες
-                προσβάσιμες μόνο με σκάφος. Η στάση στη Blue Lagoon είναι η
-                στιγμή που όλοι περιμένουν: απέραντα γαλάζια λιμνοθάλασσα,
-                ιδανική για βουτιές και φωτογραφίες.
-                <br />
-                
-                Στα Σύβοτα θα έχετε χρόνο να περπατήσετε το γραφικό λιμανάκι, να
-                απολαύσετε καφέ ή φαγητό δίπλα στο κύμα ή ένα ποτό με θέα τα
-                σμαραγδένια νερά.
-                <br />
-                
-                Με τον ιδιωτικό σας skipper να αναλαμβάνει τα πάντα, εσείς
-                απλώς χαλαρώνετε και απολαμβάνετε την ημέρα στη θάλασσα.
-              </p>
-            </div>
+<div style={textBlock}>
+  <p style={paragraph}>
+    The waters here resemble the Caribbean — bright turquoise tones, a white
+    seabed, and exceptional clarity. You’ll swim in exotic coves, explore sea
+    caves, and relax on peaceful beaches accessible only by boat. The stop at
+    the Blue Lagoon is the highlight everyone looks forward to: endless blue
+    lagoon waters, perfect for swimming and unforgettable photos.
+    <br />
+
+    In Sivota, you’ll have time to stroll around the picturesque harbor,
+    enjoy a coffee or meal by the sea, or sip a drink while admiring the
+    emerald waters.
+    <br />
+
+    With your private skipper taking care of everything, all you need to do
+    is relax and enjoy your day at sea.
+  </p>
+</div>
 
             {/* Bottom two photos */}
             <div className="bottomRightImgs" style={bottomRightImgs}>

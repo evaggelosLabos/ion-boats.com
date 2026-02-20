@@ -59,22 +59,20 @@ export default function NorthEastCoastCruiseBrochure() {
             </div>
 
             <p style={paragraphBig}>
-              Ζήστε την πιο όμορφη πλευρά της Κέρκυρας… από τη θάλασσα.
-              <br /><br />
-              Η κρουαζιέρα μας ξεκινά από τη Μαρίνα Γουβιών και από την πρώτη
-              κιόλας στιγμή αφήνετε πίσω σας την ξηρά και πλέετε σε έναν κόσμο
-              από σμαραγδένια νερά και καταπράσινες ακτές. Περνάμε μπροστά από
-              τον Ύψο και το Μπαρμπάτι και συνεχίζουμε προς τα Λιμνά και το
-              Νησάκι — μικρούς, ήσυχους όρμους που επισκέπτονται μόνο όσοι
-              ταξιδεύουν με σκάφος.
-              <br /><br />
-              Το Αχίλλειο υποδέχεται με γαλήνια νερά και αυθεντικές παραθαλάσσιες
-              εικόνες. Κρυμμένες για το φρέσκο ψάρι και την παραδοσιακή κουζίνα
-              του, λίγο πιο πέρα ο Άγιος Αρσένιος και η Κερασία οδηγούν στον
-              Ερημίτη — τοπίο άγριο και εντυπωσιακό, όπου η βόρεια Κέρκυρα σε
-              υποδέχεται με ακτές, σπηλιές και νερά σε απίθανες αποχρώσεις του
-              μπλε.
-            </p>
+  Experience the most beautiful side of Corfu… from the sea.
+  <br /><br />
+  Our cruise begins at Gouvia Marina, and from the very first moment you
+  leave the shore behind, sailing into a world of emerald waters and lush
+  green coastline. We pass by Ipsos and Barbati before continuing toward
+  Limni and Nissaki — small, peaceful coves visited only by those who
+  travel by boat.
+  <br /><br />
+  Kalami welcomes you with calm waters and authentic seaside charm, known
+  for its fresh fish and traditional cuisine. A little further on, Agios
+  Arsenios and Kerasia lead the way to Erimitis — a wild and breathtaking
+  landscape where North Corfu greets you with dramatic shores, sea caves,
+  and waters in extraordinary shades of blue.
+</p>
           </div>
 
           {/* RIGHT COLUMN: logo + 2 small images + paragraph + big aerial */}

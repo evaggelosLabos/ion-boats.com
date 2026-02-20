@@ -37,15 +37,15 @@ export default function NorthEastCruiseAlt() {
 
             {/* Paragraph */}
             <p style={paragraph}>
-              Ταξιδέψτε μαζί μας κατά μήκος της συναρπαστικής ακτογραμμής της
-              Βόρειας Κέρκυρας προς το Κασσιόπη, ένα μέρος όπου το Ιόνιο γίνεται
-              κρυστάλλινο και το τοπίο πραγματικά μαγευτικό. Καθώς πλησιάζουμε,
-              τα πολύχρωμα σπίτια αγκαλιάζουν τον φυσικό κόλπο σε σχήμα
-              πετάλου, ενώ το παλιό βυζαντινό κάστρο δεσπόζει στο ύψωμα.
-              <br /><br />
-              Θα έχετε ευκαιρίες για στάσεις, κολύμπι σε τιρκουάζ νερά,
-              εξερεύνηση όρμων και χαλάρωση σε παραθαλάσσια σημεία.
-            </p>
+  Travel with us along the captivating coastline of North Corfu toward
+  Kassiopi — a place where the Ionian turns crystal clear and the scenery
+  becomes truly enchanting. As we approach, colorful houses embrace the
+  natural horseshoe-shaped bay, while the old Byzantine castle stands
+  proudly on the hillside above.
+  <br /><br />
+  You’ll have opportunities for stops, swimming in turquoise waters,
+  exploring hidden coves, and relaxing at beautiful seaside spots.
+</p>
           </div>
 
           {/* RIGHT COLUMN */}

@@ -37,36 +37,36 @@ export default function PaxosBrochureSection() {
             <div style={goldLine} />
 
             <p style={paragraph}>
-              Η ημέρα ξεκινά . Σας υποδέχεται το SV699 της Ion-Boats — ένα άνετο
-              και ασφαλές σκάφος, ιδανικό για ημερήσια εξερεύνηση στο Ιόνιο.
-              <br />
-              
-              Με την αναχώρηση, η ακτογραμμή της Κέρκυρας απομακρύνεται και η
-              θάλασσα ανοίγει μπροστά σας, προετοιμάζοντας το ταξίδι προς τα πιο
-              ξεχωριστά σημεία της περιοχής.
-              <br />
-              
-              Πρώτος εντυπωσιακός σταθμός οι περίφημες Blue Caves των Παξών. Το
-              σκάφος πλησιάζει τους λευκούς βράχους και τις θαλάσσιες σπηλιές,
-              όπου το φως δημιουργεί μοναδικές αποχρώσεις του μπλε και του
-              σμαραγδί — μια εμπειρία που μπορείς να ζήσεις μόνο από τη θάλασσα.
-              <br />
-              
-              Στη συνέχεια είσοδος στο γραφικό λιμάνι του Γάιου για περίπατο στα
-              καντούνια, καφέ ή φαγητό δίπλα στο νερό και χρόνο να απολαύσετε την
-              αυθεντική ατμόσφαιρα των Παξών.
-              <br />
-              
-              Ακολουθεί πλεύση προς τους Αντίπαξους. Αγκυροβολούμε σε παραλίες με
-              ρηχά τιρκουάζ νερά και λευκή άμμο για μπάνιο και χαλάρωση.
-              Ελεύθερος χρόνος για κολύμπι, φωτογραφίες και απόλαυση του τοπίου
-              που θυμίζει εξωτικό προορισμό.
-              <br />
-              
-              Το απόγευμα ξεκινά η επιστροφή με χαλαρή πλεύση στο Ιόνιο και άφιξη
-              στη Μαρίνα Γουβιών περίπου στις 18:00, ολοκληρώνοντας μια πλήρη
-              θαλάσσια εμπειρία με την υπογραφή της Ion-Boats.
-            </p>
+  The day begins as you are welcomed aboard the SV699 by Ion Boats — a
+  comfortable and safe vessel, ideal for a full-day exploration of the
+  Ionian Sea.
+  <br />
+  
+  As we depart, Corfu’s coastline gradually fades into the distance and the
+  open sea stretches before you, setting the stage for a journey to some of
+  the region’s most remarkable destinations.
+  <br />
+  
+  Our first impressive stop is the famous Blue Caves of Paxos. The boat
+  approaches the striking white cliffs and sea caves, where the light creates
+  extraordinary shades of blue and emerald — an experience that can only be
+  truly appreciated from the sea.
+  <br />
+  
+  Next, we enter the picturesque harbor of Gaios, where you’ll have time to
+  stroll through the narrow alleys, enjoy a coffee or lunch by the water,
+  and experience the authentic atmosphere of Paxos.
+  <br />
+  
+  We then sail toward Antipaxos, anchoring at beaches with shallow turquoise
+  waters and white sand for swimming and relaxation. Free time to swim,
+  take photos, and soak in scenery reminiscent of an exotic destination.
+  <br />
+  
+  In the afternoon, we begin our relaxed return cruise across the Ionian,
+  arriving at Gouvia Marina at approximately 18:00, completing a full
+  sea experience signed by Ion Boats.
+</p>
           </div>
 
           {/* RIGHT CONTENT */}

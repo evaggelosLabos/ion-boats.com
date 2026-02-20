@@ -30,16 +30,18 @@ export default function PaxosBrochureSection_Page2() {
   </h2>
 
   <p style={{ ...paragraph, marginTop: 20 }}>
-    Μετά την επιστροφή από τους Παξούς, δεν είναι μόνο οι εικόνες που μένουν — είναι οι αισθήσεις.
-    Η γεύση από τις τοπικές σπεσιαλιτέ, το άρωμα της θάλασσας στο δέρμα και το φως του απογεύματος
-    πάνω στο νερό γίνονται μια ανάμνηση που επιστρέφει ξανά και ξανά στο μυαλό.
-    <br /><br />
-    Ένα τραπέζι δίπλα στο λιμάνι, φρέσκο ψάρι, απλές αυθεντικές συνταγές και ο χρόνος να κυλά πιο αργά.
-    Στιγμές που δεν φωτογραφίζονται μόνο, αλλά αποθηκεύονται μέσα σου.
-    <br /><br />
-    Κάποια ταξίδια τελειώνουν όταν δέσει το σκάφος. Αυτό συνεχίζει κάθε φορά που θυμάσαι τη γεύση,
-    το τοπίο και την ηρεμία των Παξών.
-  </p>
+  After returning from Paxos, it’s not only the images that stay with you — 
+  it’s the sensations. The taste of local specialties, the scent of the sea 
+  on your skin, and the afternoon light reflecting on the water become a 
+  memory that comes back again and again.
+  <br /><br />
+  A table by the harbor, fresh fish, simple authentic recipes, and time 
+  flowing a little slower. Moments that aren’t just photographed, but 
+  truly felt and kept within you.
+  <br /><br />
+  Some journeys end when the boat docks. This one continues every time 
+  you remember the flavors, the scenery, and the serenity of Paxos.
+</p>
 </div>
 
 
