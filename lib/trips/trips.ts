@@ -90,7 +90,7 @@ images: [
 
   {
     slug: "blue-lagoon",
-    title: "Sivota & Blue Lagoon Beach Tour",
+    title: "Sivota & Blue Lagoon Beach Cruise",
     subtitle: "Crystal-clear waters and relaxed swimming",
     duration: "Full day",
     departure: "Benitses Marina",
