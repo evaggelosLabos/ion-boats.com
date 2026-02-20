@@ -461,52 +461,67 @@ useEffect(() => {
     void fetchAvailability(tripId, date);
   }
 
-  async function onHold() {
-    setError("");
-    setConfirmed(null);
+async function onBookNow() {
+  setError("");
+  setConfirmed(null);
 
-    if (!selectedSlotId) return setError("Select a time slot first.");
-    if (name.trim().length < 2) return setError("Enter your name.");
-    if (phone.trim().length < 6) return setError("Enter your phone.");
+  if (!selectedSlotId) return setError("Select a time slot first.");
+  if (name.trim().length < 2) return setError("Enter your name.");
+  if (phone.trim().length < 6) return setError("Enter your phone.");
 
-    setLoading(true);
-    try {
-      const res = await fetch("/api/booking/hold", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-  tripId,
-  date,
-  slotId: selectedSlotId,
-  bookingMode,
-  quantity, // ✅ NEW
-  customer: {
-    name: name.trim(),
-    phone: phone.trim(),
-    ...(email.trim() ? { email: email.trim() } : {}),
-  },
-}),
+  setLoading(true);
 
-      });
+  try {
+    // 1) Create hold
+    const holdRes = await fetch("/api/booking/hold", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        tripId,
+        date,
+        slotId: selectedSlotId,
+        bookingMode,
+        quantity,
+        customer: {
+          name: name.trim(),
+          phone: phone.trim(),
+          ...(email.trim() ? { email: email.trim() } : {}),
+        },
+      }),
+    });
 
-      const dataUnknown: unknown = await res.json();
+    const holdDataUnknown: unknown = await holdRes.json();
+    if (!holdRes.ok) throw new Error(parseError(holdDataUnknown, "Could not book"));
 
-      if (!res.ok) {
-        throw new Error(parseError(dataUnknown, "Could not create hold"));
-      }
+    const holdData = holdDataUnknown as HoldResponse;
 
-      const holdData = dataUnknown as HoldResponse;
-      setHold(holdData);
+    // 2) Immediately confirm
+    const confirmRes = await fetch("/api/booking/confirm", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ holdId: holdData.holdId }),
+    });
 
-      // ✅ Refresh counts without nuking the hold:
-      // call availability endpoint directly but DO NOT clear hold in fetchAvailability.
-      void fetchAvailability(tripId, date);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
-    } finally {
-      setLoading(false);
+    const confirmDataUnknown: unknown = await confirmRes.json();
+    if (!confirmRes.ok) throw new Error(parseError(confirmDataUnknown, "Could not confirm booking"));
+
+    const confirmData = confirmDataUnknown as ConfirmResponse;
+    if (!("ok" in confirmData) || confirmData.ok !== true) {
+      throw new Error(parseError(confirmDataUnknown, "Could not confirm booking"));
     }
+
+    // ✅ Success UI
+    setConfirmed({ reservationId: confirmData.reservationId, priceEur: confirmData.priceEur });
+    setHold(null);
+    setSelectedSlotId("");
+
+    void fetchAvailability(tripId, date);
+  } catch (e: unknown) {
+    setError(e instanceof Error ? e.message : "Something went wrong");
+  } finally {
+    setLoading(false);
   }
+}
 
   async function onConfirm() {
     setError("");
@@ -870,52 +885,19 @@ const price = unitPrice * quantity;
 
       {/* Hold */}
       <button
-        type="button"
-        onClick={onHold}
-        disabled={loading || !selectedSlotId}
-        style={{
-          ...primaryBtn,
-          opacity: loading || !selectedSlotId ? 0.55 : 1,
-          cursor: loading || !selectedSlotId ? "not-allowed" : "pointer",
-        }}
-      >
-        {loading ? "Creating hold..." : "Secure your spot"}
-      </button>
+  type="button"
+  onClick={onBookNow}
+  disabled={loading || !selectedSlotId}
+  style={{
+    ...primaryBtn,
+    opacity: loading || !selectedSlotId ? 0.55 : 1,
+    cursor: loading || !selectedSlotId ? "not-allowed" : "pointer",
+  }}
+>
+  {loading ? "Booking..." : "Book now"}
+</button>
 
-      {hold ? (
-        <div
-          style={{
-            marginTop: 12,
-            padding: 12,
-            borderRadius: 14,
-            background: "rgba(10,20,30,0.65)",
-
-            border: "1px solid rgba(209,183,110,0.35)",
-            color: "rgba(255,255,255,0.95)",
-          }}
-        >
-          <div style={{ fontWeight: 900 }}>
-            Hold active — expires in <span style={{ color: "#d1b76e" }}>{formatMMSS(remainingMs)}</span>
-          </div>
-          <div style={{ marginTop: 6, fontSize: 12, opacity: 0.8, fontWeight: 700 }}>
-            Hold ID: <b>{hold.holdId}</b>
-          </div>
-
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={confirming}
-            style={{
-              ...confirmBtn,
-              marginTop: 10,
-              opacity: confirming ? 0.7 : 1,
-              cursor: confirming ? "not-allowed" : "pointer",
-            }}
-          >
-            {confirming ? "Confirming..." : "Confirm booking"}
-          </button>
-        </div>
-      ) : null}
+     
 
       {confirmed ? (
         <div

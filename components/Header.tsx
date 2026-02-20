@@ -42,7 +42,7 @@ export default function Header() {
     { href: "/contact", label: "Contact" },
 
     agentLoggedIn
-      ? { href: "/agent", label: "Agent Dashboard" }
+      ? { href: "/agent/login", label: "Agent Dashboard" }
       : { href: "/agent/login", label: "Agents" },
 
     { href: "/admin/login", label: "Admin" },

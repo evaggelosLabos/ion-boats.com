@@ -91,7 +91,7 @@ export default function HomePage() {
       <CorfuJewelSection />
 
 
-      //////////////
+      
 
       
 
@@ -320,10 +320,11 @@ export default function HomePage() {
 
  
 <div
+  id="tripsGrid"
   style={{
     marginTop: 16,
     display: "grid",
-    gridTemplateColumns: "repeat(5, 1fr)",
+    gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
     gap: 14,
   }}
 >
@@ -430,6 +431,17 @@ export default function HomePage() {
     transform: translateY(-2px);
     border-color: rgba(98,208,255,0.32);
     background: rgba(255,255,255,0.08);
+  }
+
+  /* ✅ Mobile friendly grid */
+  @media (max-width: 1100px){
+    #tripsGrid{ grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  }
+  @media (max-width: 820px){
+    #tripsGrid{ grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  }
+  @media (max-width: 520px){
+    #tripsGrid{ grid-template-columns: 1fr !important; }
   }
 `}</style>
 

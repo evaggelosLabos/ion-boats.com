@@ -62,6 +62,23 @@ ReservationSchema.index({ tripId: 1, date: 1, slotId: 1, status: 1, bookingMode:
 // ReservationSchema.index({ "customer.email": 1, createdAt: -1 });
 // ReservationSchema.index({ "customer.phone": 1, createdAt: -1 });
 
+const MODEL_NAME = "Reservation";
+
+// ✅ If an old model is cached (with old required fields), kill it
+const existing = mongoose.models[MODEL_NAME] as Model<any> | undefined;
+if (existing) {
+  const paths = Object.keys(existing.schema.paths || {});
+  const isOld =
+    paths.includes("customerName") ||
+    paths.includes("customerPhone") ||
+    paths.includes("source") ||
+    paths.includes("paymentStatus");
+
+  if (isOld) {
+    delete mongoose.models[MODEL_NAME];
+  }
+}
+
 export const Reservation: Model<ReservationDoc> =
-  (mongoose.models.Reservation as Model<ReservationDoc>) ||
-  mongoose.model<ReservationDoc>("Reservation", ReservationSchema);
+  (mongoose.models[MODEL_NAME] as Model<ReservationDoc>) ||
+  mongoose.model<ReservationDoc>(MODEL_NAME, ReservationSchema);
