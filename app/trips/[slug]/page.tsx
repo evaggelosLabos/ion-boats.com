@@ -8,7 +8,7 @@ import North from "../../../components/North";
 import North2 from "../../../components/North2";
 import Sunset from "../../../components/Sunset";
 import Halfday from "../../../components/Halfday";
-
+import Boatsspecifics from "../../../components/Boatspecifics";
 
 export default async function TripPage({
   params,

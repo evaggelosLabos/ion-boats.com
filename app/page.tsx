@@ -3,7 +3,7 @@ import Link from "next/link";
 import BookingWidget from "../components/booking/BookingWidget";
 import CorfuMapSection from "../components/CorfuMapSection";
 import CorfuJewelSection from "../components/CorfuJewelSection";
-import Trial from "../components/Paxos"
+import Boatsspecifics from "../components/Boatspecifics"
 
 
 export default function HomePage() {
@@ -845,6 +845,8 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
+
+            <Boatsspecifics />
 
             {/* RIGHT COLUMN — BOOKING */}
             {/* QUICK BOOKING (full-width section) */}
