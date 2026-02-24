@@ -75,23 +75,31 @@ export default function Header() {
       >
         {/* LOGO (absolute, always left) */}
         <Link
-          href="/"
-          style={{
-            position: "absolute",
-            left: LOGO_LEFT_PX,
-            top: "50%",
-            transform: "translateY(-50%)",
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            textDecoration: "none",
-            color: "#111",
-            fontWeight: 950,
-            letterSpacing: -0.2,
-            whiteSpace: "nowrap",
-            pointerEvents: "auto",
-          }}
-        >
+  href="/"
+  onClick={(e) => {
+    // If you're already on "/", Next won't "navigate", so force scroll anyway
+    e.preventDefault();
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    // also ensure URL is "/"
+    window.history.pushState({}, "", "/");
+  }}
+  style={{
+    position: "absolute",
+    left: LOGO_LEFT_PX,
+    top: "50%",
+    transform: "translateY(-50%)",
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    textDecoration: "none",
+    color: "#111",
+    fontWeight: 950,
+    letterSpacing: -0.2,
+    whiteSpace: "nowrap",
+    pointerEvents: "auto",
+    zIndex: 5, // ✅ make sure it stays above nav
+  }}
+>
          <div
   style={{
     height: 60,

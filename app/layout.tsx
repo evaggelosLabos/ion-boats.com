@@ -19,7 +19,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "ION Boats | Corfu Boat Trips",
+  title: "ion Boats | Corfu Boat Trips",
   description: "Premium boat trips in Corfu with instant booking",
 
   icons: {

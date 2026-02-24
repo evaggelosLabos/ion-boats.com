@@ -50,7 +50,7 @@ export default function CorfuJewelSection() {
 <div
   style={{
     marginTop: "clamp(20px, 3vw, 40px)",
-    width: "100vw",
+    width: "min(1600px, 100vw)",
     marginLeft: "50%",
     transform: "translateX(-50%)",
     display: "grid",
@@ -59,9 +59,9 @@ export default function CorfuJewelSection() {
 >
   <div className="corfuJewelGrid">
     {[
-      { src: "/trips/Corfutown.jpeg", label: "The Ionian capital of elegance." },
-      { src: "/trips/corfuoldtown.png", label: "Timeless old town charm" },
-      { src: "/trips/northeast.jpeg", label: "Where the Ionian shines brightest" },
+      { src: "/trips/hpcity.jpg", label: "The Ionian capital of elegance." },
+      { src: "/trips/hp1.jpg", label: "Timeless old town charm" },
+      { src: "/trips/hp2.jpg", label: "Where the Ionian shines brightest" },
     ].map((img, i) => (
       <div
   key={i}
@@ -79,8 +79,10 @@ export default function CorfuJewelSection() {
           style={{
             width: "100%",
             height: "100%",
-            objectFit: "cover",
-            display: "block",
+            
+
+display: "block",
+
             
           }}
         />
@@ -164,24 +166,30 @@ export default function CorfuJewelSection() {
     gap: 18px;
   }
 
-  /* DESKTOP — much taller */
   .corfuJewelTile {
-    height: clamp(550px, 45vw, 820px);
-
+    aspect-ratio: 16 / 9,1;
   }
 
+  /* Desktop default */
+  .corfuJewelTile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Mobile: no crop */
   @media (max-width: 900px) {
     .corfuJewelGrid {
       grid-template-columns: 1fr;
     }
 
-    /* MOBILE — also tall */
-    .corfuJewelTile {
-      height: clamp(590px, 70vw, 650px);
+    .corfuJewelTile img {
+      object-fit: contain !important;
+      background: #fff;
     }
   }
 `}</style>
-
 
 
     </section>

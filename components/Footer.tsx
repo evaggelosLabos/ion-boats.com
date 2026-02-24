@@ -27,7 +27,7 @@ export default function Footer() {
           }}
         >
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontWeight: 950, fontSize: 16 }}>ION Boats</div>
+            <div style={{ fontWeight: 950, fontSize: 16 }}>ion Boats</div>
             <div style={{ marginTop: 8, opacity: 0.75, lineHeight: 1.55, fontSize: 13 }}>
               Premium boat trips in Corfu. Fast booking, clear time slots, and instant confirmation.
             </div>
