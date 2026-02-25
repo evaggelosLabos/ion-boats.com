@@ -38,7 +38,7 @@ const TripExtraComponent = {
       <North2 />
     </>
   ),
-  "paleokastritsa": <Sunset />,
+  "sunset": <Sunset />,
   "custom-private": <Halfday />, // ✅ NEW
 }[slug] ?? null;
 
@@ -60,7 +60,7 @@ const TripExtraComponent = {
     ? "/trips/Sivota.jpeg"
     : slug === "north-east-corfu"   // 👈 adjust slug if different
     ? "/trips/Northeastheader.jpeg"
-    : slug === "paleokastritsa"
+    : slug === "sunset"
     ? "/trips/sunsetheader.jpg"
     : slug === "custom-private"
     ? "/trips/halfdayheader.jpg"

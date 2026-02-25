@@ -1,11 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-  
-
 
 function useIsMobile(breakpoint = 860) {
   const [isMobile, setIsMobile] = useState(false);
@@ -20,12 +17,11 @@ function useIsMobile(breakpoint = 860) {
   return isMobile;
 }
 
-
-
 type NavItem = { href: string; label: string; cta?: boolean };
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const isMobile = useIsMobile(860);
 
   const [agentLoggedIn, setAgentLoggedIn] = useState(false);
@@ -36,23 +32,19 @@ export default function Header() {
       .catch(() => {});
   }, []);
 
-    const nav: NavItem[] = [
+  const nav: NavItem[] = [
     { href: "/#trips", label: "Trips" },
     { href: "/#book", label: "Book now", cta: true },
     { href: "/contact", label: "Contact" },
-
     agentLoggedIn
       ? { href: "/agent/login", label: "Agent Dashboard" }
       : { href: "/agent/login", label: "Agents" },
-
     { href: "/admin/login", label: "Admin" },
   ];
 
-
-  // ✅ Reserve space for the logo on mobile so nav never goes underneath it
-  const LOGO_BLOCK_PX = 84; // white square size
-  const LOGO_LEFT_PX = 12; // left offset
-  const LOGO_GAP_PX = 12; // breathing space between logo and nav
+  const LOGO_BLOCK_PX = 84;
+  const LOGO_LEFT_PX = 12;
+  const LOGO_GAP_PX = 12;
   const mobileNavLeftPadding = LOGO_LEFT_PX + LOGO_BLOCK_PX + LOGO_GAP_PX;
 
   return (
@@ -65,72 +57,59 @@ export default function Header() {
         borderBottom: "1px solid rgba(0,0,0,0.08)",
       }}
     >
-      <div
-        style={{
-          position: "relative",
-          height: 100,
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        {/* LOGO (absolute, always left) */}
+      <div style={{ position: "relative", height: 100, display: "flex", alignItems: "center" }}>
+        {/* LOGO */}
         <Link
-  href="/"
-  onClick={(e) => {
-    // If you're already on "/", Next won't "navigate", so force scroll anyway
-    e.preventDefault();
-    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-    // also ensure URL is "/"
-    window.history.pushState({}, "", "/");
-  }}
-  style={{
-    position: "absolute",
-    left: LOGO_LEFT_PX,
-    top: "50%",
-    transform: "translateY(-50%)",
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    textDecoration: "none",
-    color: "#111",
-    fontWeight: 950,
-    letterSpacing: -0.2,
-    whiteSpace: "nowrap",
-    pointerEvents: "auto",
-    zIndex: 5, // ✅ make sure it stays above nav
-  }}
->
-         <div
-  style={{
-    height: 60,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  }}
->
-  <img
-  src="/newlogo.jpeg"
-  style={{
-    height: 70,
-    width: "auto",
-    display: "block",
-    transform: "scale(1.2)",   // 👈 makes it visually bigger
-    transformOrigin: "center",
-  }}
-/>
+          href="/"
+          onClick={(e) => {
+            // If already on homepage, just scroll to top smoothly
+            if (pathname === "/") {
+              e.preventDefault();
+              window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+              return;
+            }
+            // If not on homepage, let Link do the navigation.
+            // Then scroll to top after route change.
+            // (Small delay so it happens after navigation)
+            setTimeout(() => {
+              window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+            }, 0);
+          }}
+          style={{
+            position: "absolute",
+            left: LOGO_LEFT_PX,
+            top: "50%",
+            transform: "translateY(-50%)",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            textDecoration: "none",
+            color: "#111",
+            fontWeight: 950,
+            letterSpacing: -0.2,
+            whiteSpace: "nowrap",
+            pointerEvents: "auto",
+            zIndex: 5,
+          }}
+        >
+          <div style={{ height: 60, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <img
+              src="/newlogo.jpeg"
+              alt="Ion Boats"
+              style={{
+                height: 70,
+                width: "auto",
+                display: "block",
+                transform: "scale(1.2)",
+                transformOrigin: "center",
+              }}
+            />
+          </div>
 
-</div>
-
-
-          {/* On mobile hide the text so it doesn’t eat header width */}
-          {!isMobile && (
-            <span style={{ fontSize: 15, fontWeight: 900, opacity: 0.9 }}>
-              
-            </span>
-          )}
+          {!isMobile && <span style={{ fontSize: 15, fontWeight: 900, opacity: 0.9 }} />}
         </Link>
 
-        {/* NAV CONTAINER */}
+        {/* NAV */}
         <div
           style={{
             maxWidth: 1100,
@@ -140,28 +119,14 @@ export default function Header() {
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-end",
-
-            // ✅ key: push nav to the right on mobile so it never sits under the logo
             paddingLeft: isMobile ? mobileNavLeftPadding : 14,
             boxSizing: "border-box",
           }}
         >
-          <nav
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              flexWrap: "wrap",
-              justifyContent: "flex-end",
-            }}
-          >
+          <nav style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
             {nav.map((x) => {
               const isCta = !!x.cta;
-
-              // note: anchor links like "/#book" won't match pathname, so we keep "active" subtle
-              const active =
-                pathname === x.href ||
-                (x.href !== "/" && pathname?.startsWith(x.href));
+              const active = pathname === x.href || (x.href !== "/" && pathname?.startsWith(x.href));
 
               return (
                 <a
@@ -177,39 +142,27 @@ export default function Header() {
                     fontWeight: 900,
                     fontSize: 13,
                     whiteSpace: "nowrap",
-
                     color: isCta ? "#fff" : "#111",
                     background: isCta
                       ? "linear-gradient(135deg, #1e88ff, #0d5bd7)"
                       : active
                       ? "rgba(13,91,215,0.08)"
                       : "#ffffff",
-
                     border: isCta
                       ? "1px solid rgba(0,0,0,0.08)"
                       : active
                       ? "1px solid rgba(13,91,215,0.22)"
                       : "1px solid rgba(0,0,0,0.12)",
-
-                    boxShadow: isCta
-                      ? "0 8px 20px rgba(30,136,255,0.28)"
-                      : "none",
-
+                    boxShadow: isCta ? "0 8px 20px rgba(30,136,255,0.28)" : "none",
                     transition: "transform 120ms ease, box-shadow 120ms ease",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = "scale(1.04)";
-                    if (isCta) {
-                      e.currentTarget.style.boxShadow =
-                        "0 10px 26px rgba(30,136,255,0.35)";
-                    }
+                    if (isCta) e.currentTarget.style.boxShadow = "0 10px 26px rgba(30,136,255,0.35)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = "scale(1)";
-                    if (isCta) {
-                      e.currentTarget.style.boxShadow =
-                        "0 8px 20px rgba(30,136,255,0.28)";
-                    }
+                    if (isCta) e.currentTarget.style.boxShadow = "0 8px 20px rgba(30,136,255,0.28)";
                   }}
                 >
                   {x.label}

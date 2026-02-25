@@ -345,7 +345,7 @@ export default function HomePage() {
       image: "/trips/northeast.jpeg",
     },
     {
-      slug: "paleokastritsa",
+      slug: "sunset",
       title: "Halfday Sunset Cruise",
       image: "/trips/sunsetheader.jpg",
     },

@@ -15,7 +15,7 @@ export type TripPage = {
 
 export const TRIP_PAGES: TripPage[] = [
   {
-    slug: "paleokastritsa",
+    slug: "sunset",
     title: "Sunset Cruise",
     subtitle: "Sea caves, turquoise bays and iconic west-coast scenery",
     duration: "4 hours",
