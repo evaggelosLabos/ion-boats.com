@@ -107,7 +107,7 @@ export async function POST(req: Request) {
 
     // ✅ compute priceEur from catalog
     const trip = TRIPS.find((t: Trip) => t.id === tripId)!;
-    const priceEur = bookingMode === "private" ? trip.pricing.privatePrice : trip.pricing.sharedCouplePrice;
+    const priceEur = bookingMode === "private" ? trip.pricing.privatePrice : trip.pricing.sharedPersonPrice;
 
     await connectMongoose();
 

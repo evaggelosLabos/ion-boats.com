@@ -30,7 +30,7 @@ export default function AgentDashboardPage() {
 
   const [agentName, setAgentName] = useState<string>("");
 
-  const [tripId, setTripId] = useState<TripId>("paleo");
+  const [tripId, setTripId] = useState<TripId>("sunset");
   const [date, setDate] = useState<string>(formatTodayISO());
 
   const [bookingMode, setBookingMode] = useState<BookingMode>("shared");
@@ -237,23 +237,34 @@ export default function AgentDashboardPage() {
           </div>
 
           <div style={{ marginTop: 10, display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <button
-              type="button"
-              onClick={() => setBookingMode("shared")}
-              disabled={trip.pricing.maxCouples === 0}
-              style={{
-                padding: "10px 12px",
-                borderRadius: 999,
-                border: "1px solid #ddd",
-                background: bookingMode === "shared" ? "#111" : "#fff",
-                color: bookingMode === "shared" ? "#fff" : "#111",
-                cursor: trip.pricing.maxCouples === 0 ? "not-allowed" : "pointer",
-                fontWeight: 800,
-                opacity: trip.pricing.maxCouples === 0 ? 0.5 : 1,
-              }}
-            >
-              Shared (€{trip.pricing.sharedCouplePrice}/couple)
-            </button>
+           <button
+  type="button"
+  onClick={() => setBookingMode("shared")}
+  disabled={
+    trip.pricing.maxPeopleShared === 0 ||
+    trip.pricing.sharedPersonPrice === 0
+  }
+  style={{
+    padding: "10px 12px",
+    borderRadius: 999,
+    border: "1px solid #ddd",
+    background: bookingMode === "shared" ? "#111" : "#fff",
+    color: bookingMode === "shared" ? "#fff" : "#111",
+    cursor:
+      trip.pricing.maxPeopleShared === 0 ||
+      trip.pricing.sharedPersonPrice === 0
+        ? "not-allowed"
+        : "pointer",
+    fontWeight: 800,
+    opacity:
+      trip.pricing.maxPeopleShared === 0 ||
+      trip.pricing.sharedPersonPrice === 0
+        ? 0.5
+        : 1,
+  }}
+>
+  Shared (€{trip.pricing.sharedPersonPrice}/person)
+</button>
 
             <button
               type="button"

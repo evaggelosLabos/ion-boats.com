@@ -113,15 +113,15 @@ export default function NorthEastCoastCruiseBrochure() {
          <div style={{ marginTop: "auto", paddingBottom: 26 }}>
 
   <div style={topParagraphWrap}>
-    <p style={paragraphSmall}>
-      Καθώς προχωράς βορειοανατολικά εμφανίζονται μικροί κρυμμένοι
-      παράδεισοι: Λιμνοπούλα, Ψαρόπουλα, Σπιτσοπούλια…
-      μέρη που δεν υπάρχουν σε οδηγούς, μόνο σε εμπειρίες.
-      Η διαδρομή ολοκληρώνεται στην Κασσιώπη, με τους
-      πευκόφυτους σχηματισμούς και τα βαθιά κρυστάλλινα νερά.
-      Δεν υπάρχει πρόγραμμα, δεν υπάρχουν υποχρεώσεις —
-      μόνο θάλασσα και ελευθερία.
-    </p>
+   <p style={paragraphSmall}>
+  As you cruise northeast, small hidden paradises begin to appear:
+  Limnopoula, Psaropoula, Spitsopoulia…
+  places that don’t exist in guidebooks — only in lived experiences.
+  The journey concludes in Kassiopi, with its pine-covered formations
+  and deep crystal-clear waters.
+  There is no schedule, no obligations —
+  only sea and freedom.
+</p>
   </div>
 
   <div className="neBottom" style={{ marginTop: 14, minWidth: 0 }}>

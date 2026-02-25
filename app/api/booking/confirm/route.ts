@@ -1,3 +1,4 @@
+// app/api/booking/confirm/route.ts
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import { dbConnect } from "../../../../lib/db/mongoose";
@@ -16,8 +17,8 @@ type ConfirmResponse =
       date: string;
       slotId: string;
       bookingMode: "private" | "shared";
-      quantity: number;
-      seats: number;
+      quantity: number; // party size (people)
+      seats: number; // seats consumed from inventory
       totalSeats: number;
       remainingSeatsAfter: number;
       message: string;
@@ -50,33 +51,43 @@ function toPositiveInt(x: unknown, fallback: number) {
   return i > 0 ? i : fallback;
 }
 
-function seatsFor(mode: BookingMode, quantity: number) {
-  return mode === "shared" ? quantity * 2 : quantity; // shared=couples => 2 seats each
+function seatsPerBoatForTrip(trip: any) {
+  return toPositiveInt(trip?.pricing?.seatsPerBoat, 10);
 }
 
 function totalSeatsForTrip(trip: any) {
-  // Option B defaults: 2 boats x 10 seats = 20
-  const seatsPerBoat = toPositiveInt(trip?.pricing?.seatsPerBoat, 10);
+  const seatsPerBoat = seatsPerBoatForTrip(trip);
   const boatsPerSlot = toPositiveInt(trip?.pricing?.boatsPerSlot, 2);
   return seatsPerBoat * boatsPerSlot;
 }
 
-function computeTotalPriceEur(trip: any, bookingMode: BookingMode, quantity: number) {
-  // total price for the group booking
+function seatsFor(mode: BookingMode, partySize: number, seatsPerBoat: number) {
+  // Shared = consumes seats equal to number of people
+  if (mode === "shared") return partySize;
+
+  // Private = consumes a whole boat regardless of party size
+  if (mode === "private") return seatsPerBoat;
+
+  return 0;
+}
+
+function computeTotalPriceEur(trip: any, bookingMode: BookingMode, partySize: number) {
   if (bookingMode === "shared") {
-    const perCouple = Number(trip?.pricing?.sharedCouplePrice ?? 0);
-    return perCouple * quantity;
+    // Shared = per person
+    const perPerson = Number(trip?.pricing?.sharedPersonPrice ?? trip?.pricing?.sharedCouplePrice ?? 0);
+    return perPerson * partySize;
   }
-  const perPerson = Number(trip?.pricing?.privatePrice ?? 0);
-  return perPerson * quantity;
+
+  // Private = per boat (full boat price)
+  const perBoat = Number(trip?.pricing?.privatePrice ?? 0);
+  return perBoat;
 }
 
 export async function POST(req: Request) {
   await dbConnect();
 
   const bodyUnknown: unknown = await req.json();
-  const holdId =
-    isObj(bodyUnknown) && typeof bodyUnknown.holdId === "string" ? bodyUnknown.holdId : "";
+  const holdId = isObj(bodyUnknown) && typeof bodyUnknown.holdId === "string" ? bodyUnknown.holdId : "";
 
   if (!holdId) {
     const r: ConfirmResponse = { ok: false, error: "Missing holdId" };
@@ -103,12 +114,19 @@ export async function POST(req: Request) {
       const trip = getTripOrThrow((hold as any).tripId as TripId);
 
       const bookingMode = String((hold as any).bookingMode) as BookingMode;
-      const quantity = toPositiveInt((hold as any).quantity, 1);
+      const quantity = toPositiveInt((hold as any).quantity, 1); // party size (people)
 
+      const seatsPerBoat = seatsPerBoatForTrip(trip);
       const totalSeats = totalSeatsForTrip(trip);
-      const seatsNeeded = seatsFor(bookingMode, quantity);
 
-      // 1) Sum CONFIRMED seats for this slot (both modes)
+      // ✅ SAFETY: never allow > seatsPerBoat people on a private boat
+      if (bookingMode === "private" && quantity > seatsPerBoat) {
+        return { ok: false, error: `Max ${seatsPerBoat} people on a private boat.` };
+      }
+
+      const seatsNeeded = seatsFor(bookingMode, quantity, seatsPerBoat);
+
+      // 1) CONFIRMED seats for this slot
       const confirmedAgg = await Reservation.aggregate<{ total: number }>([
         {
           $match: {
@@ -122,9 +140,9 @@ export async function POST(req: Request) {
           $project: {
             seats: {
               $cond: [
-                { $eq: ["$bookingMode", "shared"] },
-                { $multiply: ["$quantity", 2] },
-                "$quantity",
+                { $eq: ["$bookingMode", "private"] },
+                { $literal: seatsPerBoat }, // private = full boat
+                "$quantity", // shared = people
               ],
             },
           },
@@ -134,7 +152,7 @@ export async function POST(req: Request) {
 
       const confirmedSeats = confirmedAgg[0]?.total ?? 0;
 
-      // 2) Sum OTHER active hold seats for this slot (exclude this hold)
+      // 2) OTHER active holds for this slot (exclude this hold)
       const otherHoldsAgg = await Hold.aggregate<{ total: number }>([
         {
           $match: {
@@ -150,9 +168,9 @@ export async function POST(req: Request) {
           $project: {
             seats: {
               $cond: [
-                { $eq: ["$bookingMode", "shared"] },
-                { $multiply: ["$quantity", 2] },
-                "$quantity",
+                { $eq: ["$bookingMode", "private"] },
+                { $literal: seatsPerBoat }, // private = full boat
+                "$quantity", // shared = people
               ],
             },
           },
@@ -180,12 +198,10 @@ export async function POST(req: Request) {
             date: (hold as any).date,
             slotId: (hold as any).slotId,
             bookingMode,
-            quantity, // ✅ group quantity preserved
-            priceEur, // ✅ total price for the group
+            quantity, // party size stored
+            priceEur,
             status: "confirmed",
             customer: (hold as any).customer,
-            // Optional if your schema allows it:
-            // seats: seatsNeeded,
           },
         ],
         { session }
@@ -234,7 +250,7 @@ export async function POST(req: Request) {
       return NextResponse.json(response, { status });
     }
 
-    // ✅ NON-BLOCKING EMAIL (after successful transaction)
+    // ✅ NON-BLOCKING EMAIL after success
     const toEmail = response.customer?.email;
     const toName = response.customer?.name;
 

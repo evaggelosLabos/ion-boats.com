@@ -11,9 +11,14 @@ export type ReservationDoc = {
   slotId: string;
 
   bookingMode: BookingMode; // "private" | "shared"
-  quantity: number; // private = #people, shared = #couples
 
-  priceEur: number; // ✅ store TOTAL price for this reservation (quantity included)
+  // ✅ Party size (number of people) for BOTH modes:
+  // - shared  => seats consumed = quantity
+  // - private => seats consumed = seatsPerBoat (full boat), quantity is passenger count only
+  quantity: number;
+
+  // ✅ store TOTAL price for this reservation (quantity included for shared; private is full-boat price)
+  priceEur: number;
 
   status: ReservationStatus;
 
@@ -29,14 +34,20 @@ export type ReservationDoc = {
 
 const ReservationSchema = new Schema<ReservationDoc>(
   {
-    tripId: { type: String, required: true, enum: ["paleo", "ne", "private", "paxos", "blue-lagoon"] },
+    tripId: {
+      type: String,
+      required: true,
+      enum: ["sunset", "ne", "private", "paxos", "blue-lagoon"],
+    },
     date: { type: String, required: true },
     slotId: { type: String, required: true },
 
     bookingMode: { type: String, required: true, enum: ["private", "shared"] },
+
+    // ✅ Party size (people)
     quantity: { type: Number, required: true, min: 1, default: 1 },
 
-    // ✅ Option B: total price for group reservation
+    // ✅ total price for reservation
     priceEur: { type: Number, required: true, min: 0 },
 
     status: {

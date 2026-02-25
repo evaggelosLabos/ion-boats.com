@@ -816,13 +816,14 @@ export default function HomePage() {
                 }}
               >
                 {[
-                  "Departures from Benitses Marina",
-                  "Skipper included",
-                  "Wind-safe route planning",
-                  "WhatsApp support",
-                  "Snorkeling masks available",
-                  "Bring sunscreen & water",
-                ].map((t) => (
+  "Departures from Benitses Marina",
+  "Departures from Gouvia Marina",
+  "Skipper included",
+  "Wind-safe route planning",
+  "WhatsApp support",
+  "Snorkeling masks available",
+  "Bring sunscreen & water",
+].map((t) => (
                   <span
                     key={t}
                     style={{

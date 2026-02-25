@@ -19,8 +19,8 @@ export const TRIP_PAGES: TripPage[] = [
     title: "Sunset Cruise",
     subtitle: "Sea caves, turquoise bays and iconic west-coast scenery",
     duration: "4 hours",
-    departure: "Benitses Marina",
-    bookingTripId: "paleo",
+    departure: "Benitses Marina · Gouvia Marina",
+    bookingTripId: "sunset",
     description: [
   `Experience the magic of the Ionian Sea at the most beautiful hour of the day.
 The Sunset Cruise aboard the SV699 is not just a boat trip — it’s a moment of calm, color, and pure relaxation on the water.
@@ -48,7 +48,7 @@ images: [
     title: "North-East Corfu Boat Trip",
     subtitle: "Calm waters, hidden coves and relaxed swimming",
     duration: "Full day",
-    departure: "Benitses Marina",
+    departure: "Benitses Marina · Gouvia Marina",
     bookingTripId: "ne",
     description: [
       "The north-east coast of Corfu is known for its sheltered waters and peaceful bays.",
@@ -71,7 +71,7 @@ images: [
     title: "Paxos & Antipaxos Day Cruise",
     subtitle: "Emerald waters, Blue Caves and island beaches",
     duration: "Full day",
-    departure: "Benitses Marina",
+    departure: "Benitses Marina · Gouvia Marina",
     bookingTripId: "paxos",
     description: [
       "A full-day private cruise to the islands of Paxos and Antipaxos, famous for their emerald waters and white-sand beaches.",
@@ -93,7 +93,7 @@ images: [
     title: "Sivota & Blue Lagoon Beach Cruise",
     subtitle: "Crystal-clear waters and relaxed swimming",
     duration: "Full day",
-    departure: "Benitses Marina",
+    departure: "Benitses Marina · Gouvia Marina",
     bookingTripId: "blue-lagoon",
     description: [
       "This trip focuses on calm lagoon waters and secluded mainland beaches.",
