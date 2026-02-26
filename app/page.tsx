@@ -4,6 +4,7 @@ import BookingWidget from "../components/booking/BookingWidget";
 import CorfuMapSection from "../components/CorfuMapSection";
 import CorfuJewelSection from "../components/CorfuJewelSection";
 import Boatsspecifics from "../components/Boatspecifics"
+import HomeAnnouncement from "../components/HomeAnnouncement";
 
 
 export default function HomePage() {
@@ -89,6 +90,7 @@ export default function HomePage() {
       </section>
 
       <CorfuJewelSection />
+      <HomeAnnouncement />
 
 
       
