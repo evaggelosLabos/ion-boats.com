@@ -4,7 +4,7 @@ import { TRIP_PAGES } from "../lib/trips/trips";
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://ion-boats.com";
 
-  const staticRoutes = ["", "/trips", "/contact", "/about", "/destinations"];
+  const staticRoutes = ["", "/#trips", "/contact", "/about", "/destinations"];
 
   const staticEntries = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,

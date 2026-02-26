@@ -36,6 +36,8 @@ export default function Header() {
     { href: "/#trips", label: "Trips" },
     { href: "/#book", label: "Book now", cta: true },
     { href: "/contact", label: "Contact" },
+     { href: "/boat", label: "Our Boats" },
+    
     agentLoggedIn
       ? { href: "/agent/login", label: "Agent Dashboard" }
       : { href: "/agent/login", label: "Agents" },
