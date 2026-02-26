@@ -47,7 +47,7 @@ export default function ContactPage() {
             letterSpacing: -0.6,
           }}
         >
-          Contact ION Boats
+          Contact ion-boats
         </h1>
 
         <p
