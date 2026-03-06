@@ -5,7 +5,7 @@ import CorfuMapSection from "../components/CorfuMapSection";
 import CorfuJewelSection from "../components/CorfuJewelSection";
 import Boatsspecifics from "../components/Boatspecifics"
 import HomeAnnouncement from "../components/HomeAnnouncement";
-
+import Boatspecifics2 from "../components/Boatspecifics2"
 
 export default function HomePage() {
   return (
@@ -850,6 +850,7 @@ export default function HomePage() {
             </div>
 
             <Boatsspecifics />
+            <Boatspecifics2 />
 
             {/* RIGHT COLUMN — BOOKING */}
             {/* QUICK BOOKING (full-width section) */}
