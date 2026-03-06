@@ -1,3 +1,4 @@
+import Homeannouncement1 from "../../components/Homeannouncement1";
 export const metadata = {
   title: "Contact — ION Boats",
   description: "Contact ION Boats for boat trips in Corfu. Phone, WhatsApp and email support.",
@@ -182,6 +183,8 @@ export default function ContactPage() {
             </div>
           </div>
         </div>
+
+        <Homeannouncement1 />
 
         {/* Small FAQ */}
         <div style={{ marginTop: 28 }}>
