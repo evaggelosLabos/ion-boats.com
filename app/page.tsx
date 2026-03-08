@@ -6,6 +6,7 @@ import CorfuJewelSection from "../components/CorfuJewelSection";
 import Boatsspecifics from "../components/Boatspecifics"
 import Homeannouncement1 from "../components/Homeannouncement1";
 import HomeAnnouncement from "../components/HomeAnnouncement"
+import Boatspecifics3 from "../components/Boatspecifics3"
 
 export default function HomePage() {
   return (
@@ -852,6 +853,7 @@ export default function HomePage() {
             </div>
 
             <Boatsspecifics />
+            <Boatspecifics3 />
             
 
             {/* RIGHT COLUMN — BOOKING */}
