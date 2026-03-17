@@ -88,11 +88,16 @@ export default function Footer() {
                 Reservations dashboard
               </Link>
               <Link href="/admin/login" style={{ color: "rgba(255,255,255,0.82)", textDecoration: "none" }}>
-                Admin login
+                Admin 
+              </Link>
+              <Link href="/agent/login" style={{ color: "rgba(255,255,255,0.82)", textDecoration: "none" }}>
+                Agent 
               </Link>
             </div>
           </div>
         </div>
+
+        
 
         <div
           style={{

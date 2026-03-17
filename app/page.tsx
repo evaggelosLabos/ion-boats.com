@@ -7,7 +7,8 @@ import Boatsspecifics from "../components/Boatspecifics"
 import Homeannouncement1 from "../components/Homeannouncement1";
 import HomeAnnouncement from "../components/HomeAnnouncement"
 import Boatspecifics3 from "../components/Boatspecifics3"
-
+import Corfu2JewelSection from "../components/Corfu2JewelSection";
+import OurBoats from "../components/OurBoats"
 export default function HomePage() {
   return (
     <>
@@ -90,8 +91,9 @@ export default function HomePage() {
         
       </section>
 
-      <CorfuJewelSection />
-      <HomeAnnouncement />
+      
+      <Corfu2JewelSection />
+      
 
       <Homeannouncement1 />
 
@@ -286,7 +288,7 @@ export default function HomePage() {
           letterSpacing: "-0.3px",
         }}
       >
-        Popular trips
+        Our Cruises
       </h2>
       <div
         style={{
@@ -707,41 +709,8 @@ export default function HomePage() {
 </section>
 
 
-  {/* TITLE */}
-              <h1
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontWeight: 600,
-                  letterSpacing: "-0.4px",
-                  margin: "0 0 14px 0",
-                  fontSize: "clamp(30px, 5.2vw, 48px)",
-                  lineHeight: 1.05,
-                }}
-              >
-                ion-boats
-              </h1>
-
-              {/* DESCRIPTION */}
-              <p
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "clamp(16px, 2.1vw, 18px)",
-                  lineHeight: 1.7,
-                  letterSpacing: "0.1px",
-                  color: "rgba(255,255,255,0.78)",
-                  
-                  margin: 0,
-                }}
-              >
-                Experience Corfu by boat with a focus on comfort, privacy, and thoughtful planning. Our trips are designed for
-                guests who value a relaxed pace, well-chosen routes, and the feeling of having everything taken care of from
-                the moment they arrive. Departing from Benitses Marina, each journey is planned with weather conditions, smooth
-                sailing, and quality swim stops in mind, making it ideal for couples, families, and private groups alike.
-                Fixed departure times, experienced skippers, and clear pricing ensure a predictable and stress-free experience,
-                while flexible options allow you to choose between shared outings or fully private cruises. Check real-time
-                availability, select your preferred time slot, and confirm your trip in minutes — with instant confirmation,
-                local support, and a strong emphasis on safety, comfort, and peace of mind.
-              </p>
+<OurBoats />
+ 
 
               {/* CTA BUTTONS */}
               <div
@@ -852,8 +821,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            <Boatsspecifics />
             <Boatspecifics3 />
+            <Boatsspecifics />
+            
             
 
             {/* RIGHT COLUMN — BOOKING */}

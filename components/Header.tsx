@@ -47,19 +47,26 @@ export default function Header() {
     return () => window.removeEventListener("keydown", onKey);
   }, [mobileOpen]);
 
-  const nav: NavItem[] = useMemo(
-    () => [
-      { href: "/#trips", label: "Trips" },
-      { href: "/boat", label: "Our Boats" },
-      { href: "/#book", label: "Book now", cta: true },
-      { href: "/contact", label: "Contact" },
+  const nav: NavItem[] = useMemo(() => {
+  const base = [
+    { href: "/#trips", label: "Trips" },
+    { href: "/boat", label: "Our Boats" },
+    { href: "/#book", label: "Book now", cta: true },
+    { href: "/contact", label: "Contact" },
+  ];
+
+  // 👇 hide these on homepage
+  if (pathname !== "/") {
+    base.push(
       agentLoggedIn
         ? { href: "/agent/login", label: "Agent Dashboard" }
         : { href: "/agent/login", label: "Agents" },
-      { href: "/admin/login", label: "Admin" },
-    ],
-    [agentLoggedIn]
-  );
+      { href: "/admin/login", label: "Admin" }
+    );
+  }
+
+  return base;
+}, [agentLoggedIn, pathname]);
 
   function isActive(href: string) {
     // hash links should only be "active" when on homepage
