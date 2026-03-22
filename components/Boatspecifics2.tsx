@@ -55,7 +55,7 @@ export default function EnhanceYourExperienceSection() {
 
             <div style={bottomLeftPhotoWrap}>
               <img
-                src="/boating.png"
+                src="/boating.jpg"
                 alt="Couple on Ion Boats at sunset"
                 style={img}
               />
@@ -68,7 +68,7 @@ export default function EnhanceYourExperienceSection() {
             <div className="enhanceTop" style={topRow}>
               <div style={topMainPhotoWrap}>
                 <img
-                  src="/champagne.png"
+                  src="/champagne.jpg"
                   alt="Premium snack platter at sunset"
                   style={img}
                 />
@@ -86,7 +86,7 @@ export default function EnhanceYourExperienceSection() {
 
                 <div style={topRightPhotoWrap}>
                   <img
-                    src="/glasses.png"
+                    src="/glasses.jpg"
                     alt="Champagne glasses on board"
                     style={img}
                   />
@@ -128,7 +128,7 @@ export default function EnhanceYourExperienceSection() {
 
               <div style={bottomRightPhotoWrap}>
                 <img
-                  src="/couple.png"
+                  src="/couple.jpg"
                   alt="Romantic couple on boat at sunset"
                   style={img}
                 />
@@ -195,9 +195,9 @@ const bottomLeftPhotoWrap: React.CSSProperties = {
   padding: 12,
   background: "#163848",
   width: "100%",
+  height: 260, // 🔥 add this
   boxSizing: "border-box",
 };
-
 const rightCol: React.CSSProperties = {
   minWidth: 0,
 };
@@ -217,12 +217,11 @@ const topMainPhotoWrap: React.CSSProperties = {
 
 const topRightCol: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "1fr 1fr",
+ gridTemplateColumns: "0.7fr 1.3fr",
   gap: 18,
   alignItems: "center",
   minWidth: 0,
 };
-
 const logoWrap: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
@@ -243,7 +242,7 @@ const topRightPhotoWrap: React.CSSProperties = {
   padding: 8,
   background: "#244856",
   boxSizing: "border-box",
-  height: 310,
+  height: 240,
 };
 
 const bottomRow: React.CSSProperties = {
@@ -271,7 +270,7 @@ const text: React.CSSProperties = {
 
 const bottomRightPhotoWrap: React.CSSProperties = {
   minWidth: 0,
-  height: 350,
+  height: 270,
 };
 
 const img: React.CSSProperties = {

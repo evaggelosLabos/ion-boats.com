@@ -625,37 +625,40 @@ export default function HomePage() {
       </div>
 
       {/* IMAGE FRAME */}
-<div
-  style={{
-    marginTop: 16,
-    padding: "14px",                 // ✅ frame thickness
-    borderRadius: 28,
-    background: "rgba(255,255,255,0.06)",
-    border: "1px solid rgba(255,255,255,0.12)",
-  }}
->
+<Link href="/boat" style={{ textDecoration: "none" }}>
   <div
     style={{
-      borderRadius: 20,
-      overflow: "hidden",
-      width: "100%",
-      aspectRatio: "16 / 9",
-      background: "#000",
-      boxShadow: "0 14px 40px rgba(0,0,0,0.35)",
+      marginTop: 16,
+      padding: "14px",
+      borderRadius: 28,
+      background: "rgba(255,255,255,0.06)",
+      border: "1px solid rgba(255,255,255,0.12)",
+      cursor: "pointer",
     }}
   >
-    <img
-      src="/boat.webp"
-      alt="ION Boats – comfortable day boat in Corfu"
+    <div
       style={{
+        borderRadius: 20,
+        overflow: "hidden",
         width: "100%",
-        height: "100%",
-        display: "block",
-        objectFit: "cover",
+        aspectRatio: "16 / 9",
+        background: "#000",
+        boxShadow: "0 14px 40px rgba(0,0,0,0.35)",
       }}
-    />
+    >
+      <img
+        src="/boat.webp"
+        alt="ION Boats – comfortable day boat in Corfu"
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "block",
+          objectFit: "cover",
+        }}
+      />
+    </div>
   </div>
-</div>
+</Link>
 
 
 

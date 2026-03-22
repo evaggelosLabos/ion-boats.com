@@ -53,15 +53,20 @@ export default function SV699OffshoreSpecsSection() {
             <div style={brandRow}>
               {/* replace with your actual sponsor/brand logos if needed */}
               <img
-                src="/brands/nikita.png"
+                src="/nikita.png"
                 alt="Nikita"
                 style={brandLogo}
               />
               <img
-                src="/brands/suzuki.png"
-                alt="Suzuki"
-                style={brandLogo}
-              />
+  src="/suzuki.jpg"
+  alt="Suzuki"
+  style={{
+    height: 40,
+    width: "auto",
+    display: "block",
+    transform: "scaleX(1.6)", // 🔥 strong horizontal stretch
+  }}
+/>
             </div>
           </div>
 
@@ -69,7 +74,7 @@ export default function SV699OffshoreSpecsSection() {
           <div style={centerCol}>
             <div style={mainLogoWrap}>
               <img
-                src="/newlogo-cropped.jpeg"
+                src="/newlogo-transparent.png"
                 alt="ion-boats"
                 style={mainLogo}
               />
@@ -200,7 +205,7 @@ const title: React.CSSProperties = {
 
 const brandRow: React.CSSProperties = {
   display: "flex",
-  gap: 14,
+  gap: 28,
   alignItems: "center",
   flexWrap: "wrap",
 };
@@ -228,7 +233,7 @@ const mainLogoWrap: React.CSSProperties = {
 };
 
 const mainLogo: React.CSSProperties = {
-  height: 62,
+  height: 92,
   width: "auto",
   display: "block",
 };

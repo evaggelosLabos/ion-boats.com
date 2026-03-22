@@ -17,7 +17,7 @@ export const options = {
 };
 
 export default function () {
-  const TARGET_URL = 'https://lordtravelcorfu.gr/'; // <--- UPDATE THIS
+  const TARGET_URL = 'https://cavatzortzatos.gr/en/'; // <--- UPDATE THIS
 
   const params = {
     headers: {
