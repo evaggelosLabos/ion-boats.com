@@ -1,10 +1,12 @@
 "use client";
 
 import React from "react";
+import Boatspecifics from "./Boatspecifics";
 
 export default function OurBoatsSV699Section() {
-  return (
-    <section style={outer}>
+    return (
+    <>
+      <section style={outer}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap');
 
@@ -117,7 +119,10 @@ export default function OurBoatsSV699Section() {
           </div>
         </div>
       </div>
-    </section>
+         </section>
+
+      
+    </>
   );
 }
 

@@ -7,28 +7,35 @@ export type TripId = "sunset" | "ne" | "private" | "paxos" | "blue-lagoon";
  * - shared = "join others" priced PER PERSON
  * - private = full boat price
  *
- * Rules you asked:
+ * Rules:
  * - Shared: 48h cutoff (enforced in API; UI should just display it)
  * - Shared: minimum 6 people to run (informational in UI for phase 1)
- * - Private: can still book even last day IF a full boat is available (API uses seatsPerBoat logic)
+ * - Private: can still book even last day IF a full boat is available
  */
 
 export type BookingMode = "private" | "shared";
 
-export type TripPricing = {
-  privatePrice: number; // full boat price
+export type SeasonalPriceRule = {
+  start: string; // YYYY-MM-DD
+  end: string;   // YYYY-MM-DD
+  price: number;
+  label?: string;
+};
 
-  // ✅ NEW: shared is per PERSON (no couples anymore)
+export type TripPricing = {
+  // Default / fallback private full-boat price
+  privatePrice: number;
+
+  // Optional seasonal private pricing by date range
+  privateSeasonalPrices?: SeasonalPriceRule[];
+
+  // Shared is per PERSON
   sharedPersonPrice: number;
 
-  // ✅ Keep this as the switch for shared availability
   // 0 = shared disabled
   maxPeopleShared: number;
 
-  /**
-   * ✅ Option B inventory knobs (used by availability/hold/confirm APIs)
-   * You already coded fallbacks, but define them here to be explicit.
-   */
+  // Inventory knobs
   seatsPerBoat?: number; // default 10
   boatsPerSlot?: number; // default 2
 };
@@ -39,9 +46,35 @@ export type Trip = {
   durationLabel: string;
   meetingPoint: string;
   pricing: TripPricing;
-
   image: string; // path in /public
 };
+
+const PRIVATE_SEASONAL_PRICES: SeasonalPriceRule[] = [
+  {
+    start: "2026-05-01",
+    end: "2026-05-31",
+    price: 1200,
+    label: "May",
+  },
+  {
+    start: "2026-06-01",
+    end: "2026-06-30",
+    price: 1350,
+    label: "June",
+  },
+  {
+    start: "2026-07-01",
+    end: "2026-07-15",
+    price: 1400,
+    label: "July 1-15",
+  },
+  {
+    start: "2026-07-16",
+    end: "2026-08-20",
+    price: 1500,
+    label: "July 16 - August 20",
+  },
+];
 
 export const TRIPS: Trip[] = [
   {
@@ -51,8 +84,9 @@ export const TRIPS: Trip[] = [
     meetingPoint: "Benitses Marina",
     pricing: {
       privatePrice: 850,
-      sharedPersonPrice: 65, // ✅ example: 130 per couple => 65 per person
-      maxPeopleShared: 20,   // ✅ any non-zero enables shared in UI + API (you can tune)
+      privateSeasonalPrices: PRIVATE_SEASONAL_PRICES,
+      sharedPersonPrice: 65,
+      maxPeopleShared: 20,
       seatsPerBoat: 10,
       boatsPerSlot: 2,
     },
@@ -66,6 +100,7 @@ export const TRIPS: Trip[] = [
     meetingPoint: "Benitses Marina",
     pricing: {
       privatePrice: 850,
+      privateSeasonalPrices: PRIVATE_SEASONAL_PRICES,
       sharedPersonPrice: 65,
       maxPeopleShared: 20,
       seatsPerBoat: 10,
@@ -81,6 +116,7 @@ export const TRIPS: Trip[] = [
     meetingPoint: "Benitses Marina",
     pricing: {
       privatePrice: 850,
+      privateSeasonalPrices: PRIVATE_SEASONAL_PRICES,
       sharedPersonPrice: 65,
       maxPeopleShared: 20,
       seatsPerBoat: 10,
@@ -96,7 +132,8 @@ export const TRIPS: Trip[] = [
     meetingPoint: "Benitsese Marina",
     pricing: {
       privatePrice: 480,
-      sharedPersonPrice: 60, // ✅ was 120/couple => 60/person
+      privateSeasonalPrices: PRIVATE_SEASONAL_PRICES,
+      sharedPersonPrice: 60,
       maxPeopleShared: 20,
       seatsPerBoat: 10,
       boatsPerSlot: 2,
@@ -111,8 +148,9 @@ export const TRIPS: Trip[] = [
     meetingPoint: "To be confirmed",
     pricing: {
       privatePrice: 650,
-      sharedPersonPrice: 0,  // ✅ disable shared for this one if you want
-      maxPeopleShared: 0,    // ✅ shared disabled
+      privateSeasonalPrices: PRIVATE_SEASONAL_PRICES,
+      sharedPersonPrice: 0,
+      maxPeopleShared: 0,
       seatsPerBoat: 10,
       boatsPerSlot: 2,
     },
@@ -148,4 +186,3 @@ export function buildSlotsForTrip(tripId: TripId): Slot[] {
     },
   ];
 }
-

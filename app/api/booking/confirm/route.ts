@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import { dbConnect } from "../../../../lib/db/mongoose";
 import { Hold } from "../../../../models/Hold";
 import { Reservation } from "../../../../models/Reservation";
-import { TRIPS, type TripId, type BookingMode } from "../../../../lib/booking/catalog";
+import { TRIPS, buildSlotsForTrip, type TripId, type BookingMode } from "../../../../lib/booking/catalog";
 import { sendBrevoEmail } from "../../../../lib/email/brevo";
 import { bookingConfirmedTemplate } from "../../../../lib/email/templates/bookingConfirmed";
 
@@ -71,17 +71,7 @@ function seatsFor(mode: BookingMode, partySize: number, seatsPerBoat: number) {
   return 0;
 }
 
-function computeTotalPriceEur(trip: any, bookingMode: BookingMode, partySize: number) {
-  if (bookingMode === "shared") {
-    // Shared = per person
-    const perPerson = Number(trip?.pricing?.sharedPersonPrice ?? trip?.pricing?.sharedCouplePrice ?? 0);
-    return perPerson * partySize;
-  }
 
-  // Private = per boat (full boat price)
-  const perBoat = Number(trip?.pricing?.privatePrice ?? 0);
-  return perBoat;
-}
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -189,23 +179,32 @@ export async function POST(req: Request) {
         };
       }
 
-      const priceEur = computeTotalPriceEur(trip, bookingMode, quantity);
+      const unitPriceEur = Number((hold as any).unitPriceEur ?? 0);
+const totalPriceEur = Number((hold as any).totalPriceEur ?? 0);
 
-      const created = await Reservation.create(
-        [
-          {
-            tripId: (hold as any).tripId,
-            date: (hold as any).date,
-            slotId: (hold as any).slotId,
-            bookingMode,
-            quantity, // party size stored
-            priceEur,
-            status: "confirmed",
-            customer: (hold as any).customer,
-          },
-        ],
-        { session }
-      );
+if (!Number.isFinite(unitPriceEur) || unitPriceEur < 0) {
+  return { ok: false, error: "Invalid hold unit price." };
+}
+
+if (!Number.isFinite(totalPriceEur) || totalPriceEur < 0) {
+  return { ok: false, error: "Invalid hold total price." };
+}
+
+    const created = await Reservation.create(
+  [
+    {
+      tripId: (hold as any).tripId,
+      date: (hold as any).date,
+      slotId: (hold as any).slotId,
+      bookingMode,
+      quantity,
+      priceEur: totalPriceEur,
+      status: "confirmed",
+      customer: (hold as any).customer,
+    },
+  ],
+  { session }
+);
 
       await Hold.deleteOne({ _id: holdId }).session(session);
 
@@ -214,7 +213,7 @@ export async function POST(req: Request) {
       return {
         ok: true,
         reservationId: String(created[0]._id),
-        priceEur,
+        priceEur: totalPriceEur,
         tripId: (hold as any).tripId as TripId,
         date: (hold as any).date,
         slotId: (hold as any).slotId,
@@ -255,21 +254,30 @@ export async function POST(req: Request) {
     const toName = response.customer?.name;
 
     if (toEmail) {
-      const tripTitle = TRIPS.find((t) => t.id === response.tripId)?.title ?? String(response.tripId);
+  const tripObj = TRIPS.find((t) => t.id === response.tripId);
+  const tripTitle = tripObj?.title ?? String(response.tripId);
 
-      const { subject, html, text } = bookingConfirmedTemplate({
-        brand: "ION Boats",
-        tripTitle,
-        tripId: response.tripId,
-        date: response.date,
-        slotId: response.slotId,
-        bookingMode: response.bookingMode,
-        priceEur: response.priceEur,
-        reservationId: response.reservationId,
-        customerName: toName || undefined,
-        supportEmail: "bookings@ion-boats.com",
-      });
+  const slotObj = buildSlotsForTrip(response.tripId).find((s) => s.id === response.slotId);
+  const slotLabel =
+    slotObj?.start && slotObj?.end
+      ? `${slotObj.start}–${slotObj.end}`
+      : slotObj?.label || slotObj?.start || response.slotId;
 
+  const { subject, html, text } = bookingConfirmedTemplate({
+    brand: "ION Boats",
+    tripTitle,
+    tripId: response.tripId,
+    date: response.date,
+    slotId: response.slotId,
+    slotLabel,
+    bookingMode: response.bookingMode,
+    priceEur: response.priceEur,
+    reservationId: response.reservationId,
+    customerName: toName || undefined,
+    supportEmail: "bookings@ion-boats.com",
+    meetingPoint: tripObj?.meetingPoint,
+    quantity: response.quantity,
+  });
       void sendBrevoEmail({
         toEmail,
         toName: toName || undefined,

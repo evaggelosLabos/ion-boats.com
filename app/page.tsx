@@ -93,10 +93,10 @@ export default function HomePage() {
 
       
       <Corfu2JewelSection />
+      <OurBoats />
       
 
-      <Homeannouncement1 />
-
+      
 
       
 
@@ -580,6 +580,8 @@ export default function HomePage() {
     </div>
   </div>
 </section>
+<Homeannouncement1 />
+
 
 {/* OUR BOATS (small reassurance block) */}
 <section
@@ -709,7 +711,7 @@ export default function HomePage() {
 </section>
 
 
-<OurBoats />
+
  
 
               {/* CTA BUTTONS */}
@@ -822,7 +824,7 @@ export default function HomePage() {
             </div>
 
             <Boatspecifics3 />
-            <Boatsspecifics />
+            
             
             
 

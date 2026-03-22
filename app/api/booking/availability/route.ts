@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { dbConnect } from "../../../../lib/db/mongoose";
 import { Hold } from "../../../../models/Hold";
 import { Reservation } from "../../../../models/Reservation";
+
 import {
   TRIPS,
   buildSlotsForTrip,
@@ -10,6 +11,7 @@ import {
   type Slot,
   type Trip,
 } from "../../../../lib/booking/catalog";
+import { getPrivatePriceForDate } from "../../../../lib/booking/pricing";
 
 function isTripId(x: string): x is TripId {
   return (
@@ -136,11 +138,16 @@ export async function GET(req: Request) {
       { status: 400 }
     );
 
-  const trip = TRIPS.find((t: Trip) => t.id === tripIdRaw);
-  if (!trip) return NextResponse.json({ error: "Trip not found" }, { status: 404 });
+ const trip = TRIPS.find((t: Trip) => t.id === tripIdRaw);
+if (!trip) return NextResponse.json({ error: "Trip not found" }, { status: 404 });
 
-  const baseSlots: Slot[] = buildSlotsForTrip(tripIdRaw);
+const privatePriceForDate = getPrivatePriceForDate(
+  dateRaw,
+  trip.pricing.privatePrice,
+  trip.pricing.privateSeasonalPrices
+);
 
+const baseSlots: Slot[] = buildSlotsForTrip(tripIdRaw);
   await dbConnect();
 
   const now = new Date();
@@ -297,8 +304,14 @@ export async function GET(req: Request) {
   });
 
   return NextResponse.json({
-    trip,
-    date: dateRaw,
-    slots,
-  });
+  trip: {
+    ...trip,
+    pricing: {
+      ...trip.pricing,
+      privatePriceForDate,
+    },
+  },
+  date: dateRaw,
+  slots,
+});
 }

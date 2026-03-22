@@ -1,103 +1,104 @@
 "use client";
 
 import React from "react";
+import Boatspecifics from "../../components/Boatspecifics";
 
 export default function MyBoatsSection() {
   return (
-    <section style={outer}>
-      <style>{`
-        @media (max-width: 900px) {
-          .boatsGrid {
-            grid-template-columns: 1fr !important;
+    <>
+      <section style={outer}>
+        <style>{`
+          @media (max-width: 900px) {
+            .boatsGrid {
+              grid-template-columns: 1fr !important;
+            }
+            .imgBox {
+              height: 190px !important;
+            }
           }
-          .imgBox {
-            height: 190px !important;
-          }
-        }
-      `}</style>
+        `}</style>
 
-      <div style={container}>
-        <div style={topRow}>
-          <div>
-            <div style={kicker}>OUR BOATS</div>
-            <h2 style={title}>Our Fleet</h2>
-            <p style={subtitle}>
-              A premium selection of boats designed for comfort, safety, and unforgettable moments at sea.
-            </p>
+        <div style={container}>
+          <div style={topRow}>
+            <div>
+              <div style={kicker}>OUR BOATS</div>
+              <h2 style={title}>Our Fleet</h2>
+              <p style={subtitle}>
+                A premium selection of boats designed for comfort, safety, and unforgettable moments at sea.
+              </p>
+            </div>
+          </div>
+
+          {/* 4 BOAT PHOTOS */}
+          <div className="boatsGrid" style={grid}>
+            <div style={imgCard}>
+              <div className="imgBox" style={imgBox}>
+                <img src="/bp.jpeg" alt="Boat 1" style={img} />
+                <div style={imgLabel}>SV699</div>
+              </div>
+            </div>
+
+            <div style={imgCard}>
+              <div className="imgBox" style={imgBox}>
+                <img src="/bp1.jpeg" alt="Boat 2" style={img} />
+                <div style={imgLabel}>SV699</div>
+              </div>
+            </div>
+
+            <div style={imgCard}>
+              <div className="imgBox" style={imgBox}>
+                <img src="/bp2.jpeg" alt="Boat 3" style={img} />
+                <div style={imgLabel}>SV699</div>
+              </div>
+            </div>
+
+            <div style={imgCard}>
+              <div className="imgBox" style={imgBox}>
+                <img src="/bp3.jpeg" alt="Boat 4" style={img} />
+                <div style={imgLabel}>SV699</div>
+              </div>
+            </div>
+          </div>
+
+          {/* CLIENT REQUEST TEXT */}
+          <div style={infoCard}>
+            <div style={infoIcon}>🥂</div>
+            <div>
+              <div style={infoTitle}>Onboard Comfort & Personal Requests</div>
+              <div style={infoText}>
+                Our boats are fully equipped to provide a comfortable and premium
+                experience at sea. However, if you would like something more
+                personalized, you are always welcome to request it.
+                <br />
+                <br />
+                Whether it’s a <b>specific wine or champagne</b>, special
+                <b> snacks, meals, or drinks</b>, or any extra onboard service
+                that will make your experience more personal, our team will do its
+                best to arrange it for you.
+                <br />
+                <br />
+                <b>
+                  👉 Our goal is to make your experience exactly the way you
+                  imagine it.
+                </b>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div style={ctaRow}>
+            <a href="/contact" style={{ ...btn, ...btnPrimary }}>
+              Request Extras
+            </a>
+            <a href="/#trips" style={{ ...btn, ...btnGhost }}>
+              View Trips
+            </a>
           </div>
         </div>
+      </section>
 
-        {/* 4 BOAT PHOTOS */}
-        <div className="boatsGrid" style={grid}>
-          <div style={imgCard}>
-            <div className="imgBox" style={imgBox}>
-              <img src="/bp.jpeg" alt="Boat 1" style={img} />
-              
-              <div style={imgLabel}>SV699</div>
-            </div>
-          </div>
-
-          <div style={imgCard}>
-            <div className="imgBox" style={imgBox}>
-              <img src="/bp1.jpeg" alt="Boat 2" style={img} />
-              
-              <div style={imgLabel}>SV699</div>
-            </div>
-          </div>
-
-          <div style={imgCard}>
-            <div className="imgBox" style={imgBox}>
-              <img src="/bp2.jpeg" alt="Boat 3" style={img} />
-              
-              <div style={imgLabel}>SV699</div>
-            </div>
-          </div>
-
-          <div style={imgCard}>
-            <div className="imgBox" style={imgBox}>
-              <img src="/bp3.jpeg" alt="Boat 4" style={img} />
-              
-              <div style={imgLabel}>SV699</div>
-            </div>
-          </div>
-        </div>
-
-        {/* CLIENT REQUEST TEXT */}
-        <div style={infoCard}>
-          <div style={infoIcon}>🥂</div>
-          <div>
-            <div style={infoTitle}>Onboard Comfort & Personal Requests</div>
-            <div style={infoText}>
-              Our boats are fully equipped to provide a comfortable and premium
-              experience at sea. However, if you would like something more
-              personalized, you are always welcome to request it.
-              <br />
-              <br />
-              Whether it’s a <b>specific wine or champagne</b>, special
-              <b> snacks, meals, or drinks</b>, or any extra onboard service
-              that will make your experience more personal, our team will do its
-              best to arrange it for you.
-              <br />
-              <br />
-              <b>
-                👉 Our goal is to make your experience exactly the way you
-                imagine it.
-              </b>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div style={ctaRow}>
-          <a href="/contact" style={{ ...btn, ...btnPrimary }}>
-            Request Extras
-          </a>
-          <a href="/#trips" style={{ ...btn, ...btnGhost }}>
-            View Trips
-          </a>
-        </div>
-      </div>
-    </section>
+      <Boatspecifics />
+    </>
   );
 }
 
@@ -154,7 +155,7 @@ const grid: React.CSSProperties = {
 };
 
 const imgCard: React.CSSProperties = {
-   gridColumn: "span 6",
+  gridColumn: "span 6",
   borderRadius: 18,
   overflow: "hidden",
   border: "1px solid rgba(255,255,255,0.10)",

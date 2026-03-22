@@ -6,9 +6,12 @@ export function bookingConfirmedTemplate(opts: {
   tripId: TripId;
   date: string;
   slotId: string;
+  slotLabel?: string;
   bookingMode: "private" | "shared";
   priceEur: number;
   reservationId: string;
+  quantity?: number;
+  meetingPoint?: string;
   customerName?: string;
   supportEmail: string;
 }) {
@@ -56,26 +59,38 @@ export function bookingConfirmedTemplate(opts: {
                               <div style="color:#111827;font-size:14px;font-weight:700;">${opts.date}</div>
                             </td>
                             <td style="padding:10px 0;">
-                              <div style="color:#6b7280;font-size:12px;">Slot</div>
-                              <div style="color:#111827;font-size:14px;font-weight:700;">${opts.slotId}</div>
+                              <div style="color:#6b7280;font-size:12px;">Departure time</div>
+<div style="color:#111827;font-size:14px;font-weight:700;">${opts.slotLabel ?? opts.slotId}</div>
                             </td>
                           </tr>
                           <tr>
-                            <td style="padding:10px 0;border-top:1px solid #eef0f4;">
-                              <div style="color:#6b7280;font-size:12px;">Mode</div>
-                              <div style="color:#111827;font-size:14px;font-weight:700;text-transform:capitalize;">${opts.bookingMode}</div>
-                            </td>
-                            <td style="padding:10px 0;border-top:1px solid #eef0f4;">
-                              <div style="color:#6b7280;font-size:12px;">Total</div>
-                              <div style="color:#111827;font-size:14px;font-weight:700;">€${opts.priceEur}</div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td colspan="2" style="padding:10px 0;border-top:1px solid #eef0f4;">
-                              <div style="color:#6b7280;font-size:12px;">Reservation ID</div>
-                              <div style="color:#111827;font-size:13px;font-weight:700;">${opts.reservationId}</div>
-                            </td>
-                          </tr>
+  <td style="padding:10px 0;border-top:1px solid #eef0f4;">
+    <div style="color:#6b7280;font-size:12px;">Booking type</div>
+    <div style="color:#111827;font-size:14px;font-weight:700;">
+      ${opts.bookingMode === "private" ? "Private boat" : "Shared trip"}
+    </div>
+  </td>
+  <td style="padding:10px 0;border-top:1px solid #eef0f4;">
+    <div style="color:#6b7280;font-size:12px;">Guests</div>
+    <div style="color:#111827;font-size:14px;font-weight:700;">${opts.quantity ?? "-"}</div>
+  </td>
+</tr>
+<tr>
+  <td style="padding:10px 0;border-top:1px solid #eef0f4;">
+    <div style="color:#6b7280;font-size:12px;">Meeting point</div>
+    <div style="color:#111827;font-size:14px;font-weight:700;">${opts.meetingPoint ?? "To be confirmed"}</div>
+  </td>
+  <td style="padding:10px 0;border-top:1px solid #eef0f4;">
+    <div style="color:#6b7280;font-size:12px;">Total</div>
+    <div style="color:#111827;font-size:14px;font-weight:700;">€${opts.priceEur}</div>
+  </td>
+</tr>
+<tr>
+  <td colspan="2" style="padding:10px 0;border-top:1px solid #eef0f4;">
+    <div style="color:#6b7280;font-size:12px;">Reservation ID</div>
+    <div style="color:#111827;font-size:13px;font-weight:700;">${opts.reservationId}</div>
+  </td>
+</tr>
                         </table>
                       </td>
                     </tr>
@@ -105,15 +120,16 @@ export function bookingConfirmedTemplate(opts: {
   </html>
   `;
 
-  const text =
-    `Booking confirmed.\n` +
-    `Trip: ${opts.tripTitle}\n` +
-    `Date: ${opts.date}\n` +
-    `Slot: ${opts.slotId}\n` +
-    `Mode: ${opts.bookingMode}\n` +
-    `Total: €${opts.priceEur}\n` +
-    `Reservation ID: ${opts.reservationId}\n` +
-    `Support: ${opts.supportEmail}\n`;
-
+ const text =
+  `Booking confirmed.\n` +
+  `Trip: ${opts.tripTitle}\n` +
+  `Date: ${opts.date}\n` +
+  `Departure time: ${opts.slotLabel ?? opts.slotId}\n` +
+  `Booking type: ${opts.bookingMode === "private" ? "Private boat" : "Shared trip"}\n` +
+  `Guests: ${opts.quantity ?? "-"}\n` +
+  `Meeting point: ${opts.meetingPoint ?? "To be confirmed"}\n` +
+  `Total: €${opts.priceEur}\n` +
+  `Reservation ID: ${opts.reservationId}\n` +
+  `Support: ${opts.supportEmail}\n`;
   return { subject, html, text };
 }

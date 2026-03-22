@@ -10,6 +10,7 @@ import {
   type TripId,
   type BookingMode,
 } from "../../../../lib/booking/catalog";
+import { getPrivatePriceForDate } from "../../../../lib/booking/pricing";
 
 type HoldRequest = {
   tripId: TripId;
@@ -321,27 +322,47 @@ if (b.bookingMode === "shared" && quantity > seatsPerBoat) {
     );
   }
 
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+  const unitPriceEur =
+  b.bookingMode === "private"
+    ? getPrivatePriceForDate(
+        b.date,
+        trip.pricing.privatePrice,
+        trip.pricing.privateSeasonalPrices
+      )
+    : Number(trip.pricing.sharedPersonPrice ?? 0);
+
+const totalPriceEur =
+  b.bookingMode === "private"
+    ? unitPriceEur
+    : unitPriceEur * quantity;
+
+const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
   try {
     const doc = await Hold.create({
-      tripId: b.tripId,
-      date: b.date,
-      slotId: b.slotId,
-      bookingMode: b.bookingMode,
-      quantity,
-      status: "hold",
-      customer: { name, phone, ...(email ? { email } : {}) },
-      expiresAt,
-    });
+  tripId: b.tripId,
+  date: b.date,
+  slotId: b.slotId,
+  bookingMode: b.bookingMode,
+  quantity,
+  status: "hold",
+  customer: { name, phone, ...(email ? { email } : {}) },
+  currency: "EUR",
+  unitPriceEur,
+  totalPriceEur,
+  expiresAt,
+});
 
     return NextResponse.json({
-      holdId: String(doc._id),
-      expiresAt: doc.expiresAt.getTime(),
-      seatsHeld: seatsNeeded,
-      remainingSeatsAfterHold: Math.max(0, remainingSeats - seatsNeeded),
-      message: "Hold created. Complete booking before it expires.",
-    });
+  holdId: String(doc._id),
+  expiresAt: doc.expiresAt.getTime(),
+  seatsHeld: seatsNeeded,
+  remainingSeatsAfterHold: Math.max(0, remainingSeats - seatsNeeded),
+  currency: doc.currency,
+  unitPriceEur: doc.unitPriceEur,
+  totalPriceEur: doc.totalPriceEur,
+  message: "Hold created. Complete booking before it expires.",
+});
   } catch (e: unknown) {
     const err = e as { code?: unknown };
     if (err && err.code === 11000) {

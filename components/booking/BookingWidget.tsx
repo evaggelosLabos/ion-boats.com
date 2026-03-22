@@ -285,7 +285,7 @@ function SelectedTripCard({
               border: "1px solid rgba(255,255,255,0.14)",
             }}
           >
-            Private: <span style={{ color: meta.accent }}>€{t.pricing.privatePrice}</span>
+            Private: <span style={{ color: meta.accent }}>€{(t.pricing as any)?.privatePriceForDate ?? t.pricing.privatePrice}</span>
           </div>
 
           <div
@@ -340,6 +340,7 @@ export default function BookingWidget({
 
   // ---- Derived helpers ----
   const trip = TRIPS.find((t) => t.id === tripId)!;
+const tripForDisplay = availability?.trip ?? trip;
 
   const sharedPerPerson = safeNumber((trip.pricing as any)?.sharedPersonPrice ?? (trip.pricing as any)?.sharedCouplePrice, 0);
   const sharedAllowed = sharedPerPerson > 0;
@@ -355,10 +356,13 @@ export default function BookingWidget({
   ;
 
   // Price
-  const price =
-    bookingMode === "private"
-      ? trip.pricing.privatePrice // full boat
-      : sharedPerPerson * quantity; // per person
+  const dynamicPrivatePrice =
+  (tripForDisplay.pricing as any)?.privatePriceForDate ?? tripForDisplay.pricing.privatePrice;
+
+const price =
+  bookingMode === "private"
+    ? dynamicPrivatePrice
+    : sharedPerPerson * quantity;
 
   // Clamp quantity to allowed values based on availability
   useEffect(() => {
@@ -593,7 +597,7 @@ return Number(sel?.maxCouplesBookable ?? 0);
       {/* Trip selector */}
       {hideTripSelector ? (
         <div style={{ marginBottom: 12 }}>
-          <SelectedTripCard t={trip} active={true} />
+          <SelectedTripCard t={tripForDisplay as Trip} active={true} />
         </div>
       ) : (
         <div style={{ marginBottom: 12 }}>
@@ -777,12 +781,12 @@ return Number(sel?.maxCouplesBookable ?? 0);
           border: "1px solid rgba(209,183,110,0.28)",
         }}
       >
-        <b>€{price}</b>{" "}
-        <span style={{ fontSize: 12 }}>
-          {bookingMode === "private"
-            ? `Private boat: €${trip.pricing.privatePrice}`
-            : `${quantity} × €${sharedPerPerson} per person`}
-        </span>
+       <b>€{price}</b>{" "}
+<span style={{ fontSize: 12 }}>
+  {bookingMode === "private"
+    ? `Private boat: €${dynamicPrivatePrice}`
+    : `${quantity} × €${sharedPerPerson} per person`}
+</span>
       </div>
 
       {/* Date + Check */}

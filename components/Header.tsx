@@ -93,7 +93,7 @@ export default function Header() {
           maxWidth: 1100,
           margin: "0 auto",
           padding: "10px 12px",
-          height: 76,
+          height: 86,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -129,16 +129,14 @@ export default function Header() {
           }}
         >
           <img
-            src="/newlogo.jpeg"
-            alt="Ion Boats"
-            style={{
-              height: 56,
-              width: "auto",
-              display: "block",
-              transform: "scale(1.08)",
-              transformOrigin: "left center",
-            }}
-          />
+  src="/newlogo.jpeg"
+  alt="Ion Boats"
+  style={{
+    height: 86,
+    width: "auto",
+    display: "block",
+  }}
+/>
         </Link>
 
         {/* DESKTOP NAV */}

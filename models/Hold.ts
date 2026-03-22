@@ -9,7 +9,7 @@ export type HoldDoc = {
 
   bookingMode: BookingMode; // "private" | "shared"
 
-  // ✅ Party size (number of people) for BOTH modes:
+  // Party size (number of people) for BOTH modes:
   // - shared  => seats consumed = quantity
   // - private => seats consumed = seatsPerBoat (full boat), quantity is passenger count only
   quantity: number;
@@ -21,6 +21,11 @@ export type HoldDoc = {
     phone: string;
     email?: string;
   };
+
+  // ✅ price snapshot at hold time
+  currency: "EUR";
+  unitPriceEur: number;
+  totalPriceEur: number;
 
   expiresAt: Date;
   createdAt: Date;
@@ -44,7 +49,6 @@ const HoldSchema = new Schema<HoldDoc>(
       enum: ["private", "shared"],
     },
 
-    // ✅ Party size (people)
     quantity: {
       type: Number,
       required: true,
@@ -65,15 +69,35 @@ const HoldSchema = new Schema<HoldDoc>(
       email: { type: String, trim: true },
     },
 
+    // ✅ stored pricing snapshot
+    currency: {
+      type: String,
+      required: true,
+      enum: ["EUR"],
+      default: "EUR",
+    },
+
+    unitPriceEur: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+
+    totalPriceEur: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+
     expiresAt: { type: Date, required: true },
   },
   { timestamps: true }
 );
 
-// ✅ TTL index → automatically removes expired holds
+// TTL index → automatically removes expired holds
 HoldSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-// ✅ Query performance index (availability checks)
+// Query performance index (availability checks)
 HoldSchema.index({ tripId: 1, date: 1, slotId: 1, status: 1, expiresAt: 1 });
 
 export const Hold: Model<HoldDoc> =
