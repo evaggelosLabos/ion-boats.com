@@ -27,7 +27,7 @@ export default function Footer() {
           }}
         >
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontWeight: 950, fontSize: 16 }}>ion Boats</div>
+            <div style={{ fontWeight: 950, fontSize: 16 }}>ion-boats</div>
             <div style={{ marginTop: 8, opacity: 0.75, lineHeight: 1.55, fontSize: 13 }}>
               Premium boat trips in Corfu. Fast booking, clear time slots, and instant confirmation.
             </div>
@@ -111,7 +111,7 @@ export default function Footer() {
             paddingTop: 14,
           }}
         >
-          <div>© {new Date().getFullYear()} ION Boats. All rights reserved.</div>
+          <div>© {new Date().getFullYear()} ion-boats. All rights reserved.</div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
   <Link href="/terms-and-conditions" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none" }}>
     Terms
