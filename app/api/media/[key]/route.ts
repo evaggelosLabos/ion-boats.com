@@ -33,9 +33,9 @@ export async function GET(
 
   await dbConnect();
 
-  const asset = await MediaAsset.findOne({ key }).lean();
+  const asset = await MediaAsset.findOne({ key });
   if (asset?.data) {
-    const bytes = new Uint8Array(asset.data as unknown as Buffer);
+    const bytes = new Uint8Array(asset.data);
     return new NextResponse(bytes, {
       headers: {
         "Content-Type": asset.contentType,
