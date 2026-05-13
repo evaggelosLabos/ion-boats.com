@@ -40,7 +40,7 @@ export async function GET(
       headers: {
         "Content-Type": asset.contentType,
         "Content-Length": String(asset.size),
-        "Cache-Control": "public, max-age=60, stale-while-revalidate=300",
+        "Cache-Control": "no-store",
       },
     });
   }
@@ -54,7 +54,7 @@ export async function GET(
       headers: {
         "Content-Type": fallbackContentType(slot.fallbackSrc),
         "Content-Length": String(bytes.byteLength),
-        "Cache-Control": "public, max-age=3600",
+        "Cache-Control": "no-store",
       },
     });
   } catch {
