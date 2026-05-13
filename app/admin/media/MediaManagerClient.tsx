@@ -176,9 +176,10 @@ export default function MediaManagerClient() {
                         <input
                           key={`${slot.key}-${selectedFile?.name ?? "empty"}`}
                           onChange={(e) => {
+                            const file = e.currentTarget.files?.[0] ?? null;
                             setSelectedFiles((prev) => ({
                               ...prev,
-                              [slot.key]: e.currentTarget.files?.[0] ?? null,
+                              [slot.key]: file,
                             }));
                           }}
                           type="file"
