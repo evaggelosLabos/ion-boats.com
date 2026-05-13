@@ -1,14 +1,20 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 type LoginResponse = { ok: true } | { ok: false; error?: string };
 
+function safeAdminNext(value: string | null) {
+  if (!value) return "/admin/media";
+  if (!value.startsWith("/admin")) return "/admin/media";
+  if (value.startsWith("//")) return "/admin/media";
+  return value;
+}
+
 export default function LoginClient() {
-  const router = useRouter();
   const sp = useSearchParams();
-  const next = useMemo(() => sp.get("next") || "/admin", [sp]);
+  const next = useMemo(() => safeAdminNext(sp.get("next")), [sp]);
 
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("");
@@ -34,7 +40,6 @@ export default function LoginClient() {
         throw new Error(data.ok === false && data.error ? data.error : "Login failed");
       }
 
-      // you want Admin button -> /admin/login always, but after login we go to next
       window.location.href = next;
       return;
     } catch (e: unknown) {
@@ -68,7 +73,7 @@ export default function LoginClient() {
         }}
       >
         <div style={{ fontWeight: 950, fontSize: 18, letterSpacing: -0.2 }}>ION Boats Admin</div>
-        <div style={{ marginTop: 6, opacity: 0.75, fontSize: 13 }}>Login to manage reservations.</div>
+        <div style={{ marginTop: 6, opacity: 0.75, fontSize: 13 }}>Login to manage reservations and site photos.</div>
 
         <form onSubmit={onSubmit} style={{ marginTop: 14, display: "grid", gap: 12 }}>
           <div style={{ display: "grid", gap: 6 }}>
