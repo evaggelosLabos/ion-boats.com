@@ -35,7 +35,8 @@ export async function GET(
 
   const asset = await MediaAsset.findOne({ key }).lean();
   if (asset?.data) {
-    return new NextResponse(asset.data.buffer as BodyInit, {
+    const bytes = new Uint8Array(asset.data as unknown as Buffer);
+    return new NextResponse(bytes, {
       headers: {
         "Content-Type": asset.contentType,
         "Content-Length": String(asset.size),
@@ -49,7 +50,7 @@ export async function GET(
 
   try {
     const bytes = await readFile(fullPath);
-    return new NextResponse(bytes as BodyInit, {
+    return new NextResponse(new Uint8Array(bytes), {
       headers: {
         "Content-Type": fallbackContentType(slot.fallbackSrc),
         "Content-Length": String(bytes.byteLength),
