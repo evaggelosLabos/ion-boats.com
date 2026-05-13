@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 type MediaSlot = {
   key: string;
-  page: "Site" | "Home" | "Trip Pages" | "Boat Page";
+  page: "Site" | "Home" | "Components" | "Trip Pages" | "Boat Page";
   label: string;
   fallbackSrc: string;
   src: string;
@@ -37,6 +38,7 @@ export default function MediaManagerClient() {
   const [error, setError] = useState("");
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [cacheBust, setCacheBust] = useState(() => Date.now());
+  const [selectedFiles, setSelectedFiles] = useState<Record<string, File | null>>({});
 
   async function load() {
     setLoading(true);
@@ -89,6 +91,7 @@ export default function MediaManagerClient() {
       const data = (await res.json().catch(() => ({ ok: false, error: "Upload failed" }))) as { ok: boolean; error?: string };
       if (!res.ok || !data.ok) throw new Error(data.error || "Upload failed");
       setMessage(`${slot.label} updated.`);
+      setSelectedFiles((prev) => ({ ...prev, [slot.key]: null }));
       setCacheBust(Date.now());
       await load();
     } catch (e) {
@@ -128,7 +131,7 @@ export default function MediaManagerClient() {
             <h1 style={titleStyle}>Photo manager</h1>
             <p style={subtitleStyle}>Upload a replacement image for any page slot. Delete resets the slot back to the original site photo.</p>
           </div>
-          <a href="/" style={homeLinkStyle}>View site</a>
+          <Link href="/" style={homeLinkStyle}>View site</Link>
         </div>
 
         {message ? <div style={noticeStyle}>{message}</div> : null}
@@ -141,8 +144,8 @@ export default function MediaManagerClient() {
               <h2 style={sectionTitleStyle}>{page}</h2>
               <div style={gridStyle}>
                 {pageSlots.map((slot) => {
-                  let fileInput: HTMLInputElement | null = null;
                   const busy = busyKey === slot.key;
+                  const selectedFile = selectedFiles[slot.key] ?? null;
 
                   return (
                     <div key={slot.key} style={slotStyle}>
@@ -171,20 +174,27 @@ export default function MediaManagerClient() {
                         )}
 
                         <input
-                          ref={(el) => {
-                            fileInput = el;
+                          key={`${slot.key}-${selectedFile?.name ?? "empty"}`}
+                          onChange={(e) => {
+                            setSelectedFiles((prev) => ({
+                              ...prev,
+                              [slot.key]: e.currentTarget.files?.[0] ?? null,
+                            }));
                           }}
                           type="file"
                           accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
                           style={fileStyle}
                         />
+                        <div style={selectedFileStyle}>
+                          {selectedFile ? `Selected: ${selectedFile.name}` : "Choose an image before uploading."}
+                        </div>
 
                         <div style={actionsStyle}>
                           <button
                             type="button"
-                            disabled={busy}
-                            onClick={() => upload(slot, fileInput?.files?.[0] ?? null)}
-                            style={{ ...buttonStyle, ...primaryButtonStyle, opacity: busy ? 0.6 : 1 }}
+                            disabled={busy || !selectedFile}
+                            onClick={() => upload(slot, selectedFile)}
+                            style={{ ...buttonStyle, ...primaryButtonStyle, opacity: busy || !selectedFile ? 0.55 : 1 }}
                           >
                             {busy ? "Working..." : "Upload"}
                           </button>
@@ -245,6 +255,7 @@ const slotLabelStyle: React.CSSProperties = { fontWeight: 950, lineHeight: 1.25 
 const pathStyle: React.CSSProperties = { marginTop: 4, fontSize: 12, color: "rgba(255,255,255,0.58)", wordBreak: "break-all" };
 const metaStyle: React.CSSProperties = { minHeight: 34, fontSize: 12, lineHeight: 1.45, color: "rgba(255,255,255,0.68)" };
 const fileStyle: React.CSSProperties = { width: "100%", color: "rgba(255,255,255,0.82)", fontSize: 12 };
+const selectedFileStyle: React.CSSProperties = { minHeight: 18, fontSize: 12, lineHeight: 1.4, color: "rgba(255,255,255,0.68)", wordBreak: "break-word" };
 const actionsStyle: React.CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 };
 const buttonStyle: React.CSSProperties = { height: 42, borderRadius: 12, fontWeight: 950, cursor: "pointer" };
 const primaryButtonStyle: React.CSSProperties = { border: "1px solid rgba(98,208,255,0.45)", background: "rgba(98,208,255,0.22)", color: "#fff" };
