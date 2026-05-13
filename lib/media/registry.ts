@@ -1,6 +1,7 @@
 export type MediaPageGroup =
   | "Site"
   | "Home"
+  | "Components"
   | "Trip Pages"
   | "Boat Page";
 
@@ -24,6 +25,43 @@ export const MEDIA_SLOTS: MediaSlot[] = [
   { key: "home-intro-champagne", page: "Home", label: "Intro champagne image", fallbackSrc: "/glasses.png" },
   { key: "home-intro-harbor", page: "Home", label: "Intro harbor image", fallbackSrc: "/trips/ion-corfu-harbor.jpg" },
   { key: "home-intro-beach", page: "Home", label: "Intro beach image", fallbackSrc: "/trips/ion-beach-aerial.jpg" },
+  { key: "home-first-image-bg", page: "Home", label: "Home mobile background image", fallbackSrc: "/firstimage.webp" },
+
+  { key: "component-corfu-jewel-city", page: "Components", label: "Corfu Jewel city image", fallbackSrc: "/trips/hpcity.jpg" },
+  { key: "component-corfu-jewel-old-town", page: "Components", label: "Corfu Jewel old town image", fallbackSrc: "/trips/hp1.jpg" },
+  { key: "component-corfu-jewel-ionian", page: "Components", label: "Corfu Jewel Ionian image", fallbackSrc: "/trips/hp2.jpg" },
+
+  { key: "component-map-benitses", page: "Components", label: "Map Benitses image", fallbackSrc: "/trips/benitses1.jpeg" },
+  { key: "component-map-paleokastritsa", page: "Components", label: "Map Paleokastritsa image", fallbackSrc: "/trips/paleokastritsa1.jpeg" },
+  { key: "component-map-sivota", page: "Components", label: "Map Sivota image", fallbackSrc: "/trips/sivota1.jpeg" },
+  { key: "component-map-paxos-5", page: "Components", label: "Map Paxos image 5", fallbackSrc: "/trips/paxos5.jpeg" },
+  { key: "component-map-paxos-6", page: "Components", label: "Map Paxos image 6", fallbackSrc: "/trips/paxos6.jpeg" },
+  { key: "component-map-paxos-7", page: "Components", label: "Map Paxos image 7", fallbackSrc: "/trips/paxos7.jpeg" },
+  { key: "component-map-paxos-8", page: "Components", label: "Map Paxos image 8", fallbackSrc: "/trips/paxos8.jpeg" },
+
+  { key: "component-paxos-trip-1", page: "Components", label: "Paxos component image 1", fallbackSrc: "/trips/paxostrip1.jpeg" },
+  { key: "component-paxos-trip-2", page: "Components", label: "Paxos component image 2", fallbackSrc: "/trips/paxostrip2.jpeg" },
+  { key: "component-paxos-trip-3", page: "Components", label: "Paxos component image 3", fallbackSrc: "/trips/paxostrip3.jpeg" },
+  { key: "component-paxos-trip-4", page: "Components", label: "Paxos component image 4", fallbackSrc: "/trips/paxostrip4.jpeg" },
+  { key: "component-paxos-trip-5", page: "Components", label: "Paxos component image 5", fallbackSrc: "/trips/paxostrip5.jpeg" },
+  { key: "component-paxos-trip-6", page: "Components", label: "Paxos component image 6", fallbackSrc: "/trips/paxostrip6.jpeg" },
+  { key: "component-paxos-trip-7", page: "Components", label: "Paxos component image 7", fallbackSrc: "/trips/paxostrip7.jpeg" },
+
+  { key: "component-sivota-extra-4", page: "Components", label: "Sivota component image 4", fallbackSrc: "/trips/Sivota4.jpeg" },
+  { key: "component-sivota-extra-5", page: "Components", label: "Sivota component image 5", fallbackSrc: "/trips/Sivota5.jpeg" },
+
+  { key: "component-north-extra-4", page: "Components", label: "North-East component image 4", fallbackSrc: "/trips/north4.jpeg" },
+  { key: "component-north-extra-5", page: "Components", label: "North-East component image 5", fallbackSrc: "/trips/north5.jpeg" },
+  { key: "component-north-extra-20", page: "Components", label: "North-East component image 20", fallbackSrc: "/trips/north20.jpeg" },
+  { key: "component-north-extra-22", page: "Components", label: "North-East component image 22", fallbackSrc: "/trips/north22.jpeg" },
+
+  { key: "component-boating-hero", page: "Components", label: "Boat specifics hero image", fallbackSrc: "/boating.jpg" },
+  { key: "component-glasses-photo", page: "Components", label: "Boat specifics glasses image", fallbackSrc: "/glasses.jpg" },
+  { key: "component-boatinside-clean", page: "Components", label: "Boat interior clean image", fallbackSrc: "/boatinside-clean.png" },
+  { key: "component-sv699-detail-1", page: "Components", label: "SV699 detail image 1", fallbackSrc: "/trips/sv699-detail-1.jpeg" },
+  { key: "component-sv699-detail-2", page: "Components", label: "SV699 detail image 2", fallbackSrc: "/trips/sv699-detail-2.jpeg" },
+  { key: "component-sv699-detail-3", page: "Components", label: "SV699 detail image 3", fallbackSrc: "/trips/sv699-detail-3.jpeg" },
+  { key: "component-sv699-detail-6", page: "Components", label: "SV699 detail image 6", fallbackSrc: "/trips/sv699-detail-6.jpeg" },
 
   { key: "trip-paxos-main", page: "Trip Pages", label: "Paxos main / card image", fallbackSrc: "/trips/paxosmainimage.jpeg" },
   { key: "trip-paxos-gallery-1", page: "Trip Pages", label: "Paxos gallery 1", fallbackSrc: "/trips/paxos1.jpeg" },
