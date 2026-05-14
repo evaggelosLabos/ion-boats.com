@@ -133,9 +133,17 @@ export default function InlineTextEditor() {
       if (editModeRequested) {
         try {
           const adminRes = await fetch("/api/admin/me", { cache: "no-store", credentials: "include" });
-          if (!cancelled) setIsAdmin(adminRes.ok);
+          if (cancelled) return;
+          if (adminRes.ok) {
+            setIsAdmin(true);
+            setEditing(true);
+          } else {
+            window.location.href = `/admin/login?next=${encodeURIComponent(`${pathname}${window.location.search}`)}`;
+          }
         } catch {
-          if (!cancelled) setIsAdmin(false);
+          if (!cancelled) {
+            window.location.href = `/admin/login?next=${encodeURIComponent(`${pathname}${window.location.search}`)}`;
+          }
         }
       }
     }
