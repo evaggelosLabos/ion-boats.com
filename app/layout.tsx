@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import ChatWidget from "../components/chat/ChatWidget";
@@ -68,7 +69,9 @@ export default function RootLayout({
         <Footer />
         <ChatWidget />
         <CookieBanner />
-        <InlineTextEditor />
+        <Suspense fallback={null}>
+          <InlineTextEditor />
+        </Suspense>
       </body>
     </html>
   );

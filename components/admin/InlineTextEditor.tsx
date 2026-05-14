@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 type EditableTextNode = {
   node: Text;
@@ -97,11 +98,10 @@ export default function InlineTextEditor() {
   const [selected, setSelected] = useState<EditableTextNode | null>(null);
   const [draft, setDraft] = useState("");
   const overridesRef = useRef<Record<string, string>>({});
-  const pathname = useMemo(() => (typeof window === "undefined" ? "/" : window.location.pathname), []);
-  const editModeRequested = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return window.location.search.includes("ionTextEdit=1");
-  }, []);
+  const pathname = usePathname() ?? "/";
+  const searchParams = useSearchParams();
+  const search = searchParams.toString();
+  const editModeRequested = searchParams.get("ionTextEdit") === "1";
 
   const applyOverrides = () => {
     const nodes = collectTextNodes(pathname);
@@ -117,6 +117,11 @@ export default function InlineTextEditor() {
     if (pathname.startsWith("/admin")) return;
 
     let cancelled = false;
+    setSelected(null);
+    setDraft("");
+    setMessage("");
+    setIsAdmin(false);
+    setEditing(false);
 
     async function boot() {
       try {
@@ -138,11 +143,11 @@ export default function InlineTextEditor() {
             setIsAdmin(true);
             setEditing(true);
           } else {
-            window.location.href = `/admin/login?next=${encodeURIComponent(`${pathname}${window.location.search}`)}`;
+            window.location.href = `/admin/login?next=${encodeURIComponent(`${pathname}${search ? `?${search}` : ""}`)}`;
           }
         } catch {
           if (!cancelled) {
-            window.location.href = `/admin/login?next=${encodeURIComponent(`${pathname}${window.location.search}`)}`;
+            window.location.href = `/admin/login?next=${encodeURIComponent(`${pathname}${search ? `?${search}` : ""}`)}`;
           }
         }
       }
@@ -156,7 +161,7 @@ export default function InlineTextEditor() {
       cancelled = true;
       observer.disconnect();
     };
-  }, [editModeRequested, pathname]);
+  }, [editModeRequested, pathname, search]);
 
   useEffect(() => {
     if (!editing) return;
