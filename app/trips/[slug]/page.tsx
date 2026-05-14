@@ -9,6 +9,9 @@ import North2 from "../../../components/North2";
 import Sunset from "../../../components/Sunset";
 import Halfday from "../../../components/Halfday";
 import Boatsspecifics from "../../../components/Boatspecifics";
+import { getTripGalleryImages } from "../../../lib/trips/gallery";
+
+export const dynamic = "force-dynamic";
 
 export default async function TripPage({
   params,
@@ -45,9 +48,11 @@ const TripExtraComponent = {
 
 
 
+  const addedImages = await getTripGalleryImages(slug);
   const images = trip.images?.length
   ? trip.images
   : DEFAULT_TRIP_IMAGES;
+  const galleryImages = [...images, ...addedImages.map((image) => image.src)];
 
  
 
@@ -226,7 +231,7 @@ const TripExtraComponent = {
           {/* LEFT — IMAGES (stacked vertically on desktop too) */}
           <div style={{ minWidth: 0 }}>
             <div style={{ display: "grid", gap: 14 }}>
-              {images.map((src, idx) => (
+              {galleryImages.map((src, idx) => (
                 <div
                   key={`${src}-${idx}`}
                   style={{

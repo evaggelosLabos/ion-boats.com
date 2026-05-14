@@ -18,6 +18,26 @@ type MediaSlot = {
 
 type MediaResponse = { ok: true; slots: MediaSlot[] } | { ok: false; error: string };
 
+type TripGalleryImage = {
+  id: string;
+  tripSlug: string;
+  fileName: string;
+  contentType: string;
+  size: number;
+  src: string;
+  createdAt: string;
+};
+
+type TripGallery = {
+  slug: string;
+  title: string;
+  builtInCount: number;
+  recommendedRatio: string;
+  addedImages: TripGalleryImage[];
+};
+
+type TripGalleryResponse = { ok: true; trips: TripGallery[] } | { ok: false; error: string };
+
 function formatBytes(size: number | null) {
   if (!size) return "";
   if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
@@ -39,8 +59,11 @@ export default function MediaManagerClient() {
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [cacheBust, setCacheBust] = useState(() => Date.now());
   const [selectedFiles, setSelectedFiles] = useState<Record<string, File | null>>({});
+  const [tripGalleries, setTripGalleries] = useState<TripGallery[]>([]);
+  const [selectedTripFiles, setSelectedTripFiles] = useState<Record<string, File | null>>({});
+  const [tripBusyKey, setTripBusyKey] = useState<string | null>(null);
 
-  async function load() {
+  async function loadMediaSlots() {
     setLoading(true);
     setError("");
     try {
@@ -53,6 +76,22 @@ export default function MediaManagerClient() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function loadTripGalleries() {
+    setError("");
+    try {
+      const res = await fetch("/api/admin/trip-gallery", { cache: "no-store", credentials: "include" });
+      const data = (await res.json().catch(() => ({ ok: false, error: "Could not load trip galleries" }))) as TripGalleryResponse;
+      if (!res.ok || !data.ok) throw new Error(data.ok ? "Could not load trip galleries" : data.error);
+      setTripGalleries(data.trips);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not load trip galleries");
+    }
+  }
+
+  async function load() {
+    await Promise.all([loadMediaSlots(), loadTripGalleries()]);
   }
 
   useEffect(() => {
@@ -101,6 +140,59 @@ export default function MediaManagerClient() {
     }
   }
 
+  async function uploadTripImage(trip: TripGallery, file: File | null) {
+    setMessage("");
+    setError("");
+    if (!file) {
+      setError("Choose an image first.");
+      return;
+    }
+
+    const form = new FormData();
+    form.set("tripSlug", trip.slug);
+    form.set("file", file);
+
+    setTripBusyKey(trip.slug);
+    try {
+      const res = await fetch("/api/admin/trip-gallery", {
+        method: "POST",
+        body: form,
+        credentials: "include",
+      });
+      const data = (await res.json().catch(() => ({ ok: false, error: "Upload failed" }))) as { ok: boolean; error?: string };
+      if (!res.ok || !data.ok) throw new Error(data.error || "Upload failed");
+      setMessage(`${trip.title} gallery photo added.`);
+      setSelectedTripFiles((prev) => ({ ...prev, [trip.slug]: null }));
+      setCacheBust(Date.now());
+      await loadTripGalleries();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setTripBusyKey(null);
+    }
+  }
+
+  async function removeTripImage(image: TripGalleryImage) {
+    setMessage("");
+    setError("");
+    setTripBusyKey(image.id);
+    try {
+      const res = await fetch(`/api/admin/trip-gallery/${encodeURIComponent(image.id)}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const data = (await res.json().catch(() => ({ ok: false, error: "Delete failed" }))) as { ok: boolean; error?: string };
+      if (!res.ok || !data.ok) throw new Error(data.error || "Delete failed");
+      setMessage(`${image.fileName} deleted from the trip gallery.`);
+      setCacheBust(Date.now());
+      await loadTripGalleries();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Delete failed");
+    } finally {
+      setTripBusyKey(null);
+    }
+  }
+
   async function remove(slot: MediaSlot) {
     setMessage("");
     setError("");
@@ -139,6 +231,86 @@ export default function MediaManagerClient() {
         {loading ? <div style={loadingStyle}>Loading media slots...</div> : null}
 
         <div style={{ display: "grid", gap: 24 }}>
+          <section>
+            <h2 style={sectionTitleStyle}>Trip gallery additions</h2>
+            <div style={galleryHelpStyle}>Add extra photos to each trip page. New photos appear after the existing gallery photos and use the same 16:10 display box.</div>
+            <div style={tripGridStyle}>
+              {tripGalleries.map((trip) => {
+                const selectedFile = selectedTripFiles[trip.slug] ?? null;
+                const busy = tripBusyKey === trip.slug;
+
+                return (
+                  <div key={trip.slug} style={tripPanelStyle}>
+                    <div style={tripPanelHeaderStyle}>
+                      <div>
+                        <div style={slotLabelStyle}>{trip.title}</div>
+                        <div style={metaStyle}>{trip.builtInCount} built-in photos · recommended {trip.recommendedRatio}</div>
+                      </div>
+                    </div>
+
+                    <input
+                      key={`${trip.slug}-${selectedFile?.name ?? "empty"}`}
+                      onChange={(e) => {
+                        const file = e.currentTarget.files?.[0] ?? null;
+                        setSelectedTripFiles((prev) => ({
+                          ...prev,
+                          [trip.slug]: file,
+                        }));
+                      }}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+                      style={fileStyle}
+                    />
+                    <div style={selectedFileStyle}>
+                      {selectedFile ? `Selected: ${selectedFile.name}` : "Choose an image to add to this trip."}
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={busy || !selectedFile}
+                      onClick={() => uploadTripImage(trip, selectedFile)}
+                      style={{ ...buttonStyle, ...primaryButtonStyle, opacity: busy || !selectedFile ? 0.55 : 1 }}
+                    >
+                      {busy ? "Working..." : "Add photo"}
+                    </button>
+
+                    {trip.addedImages.length ? (
+                      <div style={addedGalleryGridStyle}>
+                        {trip.addedImages.map((image) => {
+                          const imageBusy = tripBusyKey === image.id;
+                          return (
+                            <div key={image.id} style={addedImageStyle}>
+                              <div style={addedPreviewStyle}>
+                                <img
+                                  src={`${image.src}?v=${cacheBust}`}
+                                  alt={image.fileName}
+                                  style={previewStyle}
+                                />
+                              </div>
+                              <div style={{ padding: 10, display: "grid", gap: 8 }}>
+                                <div style={pathStyle}>{image.fileName}</div>
+                                <button
+                                  type="button"
+                                  disabled={imageBusy}
+                                  onClick={() => removeTripImage(image)}
+                                  style={{ ...buttonStyle, ...secondaryButtonStyle, opacity: imageBusy ? 0.45 : 1 }}
+                                >
+                                  {imageBusy ? "Working..." : "Delete"}
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div style={metaStyle}>No extra uploaded photos yet.</div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
           {grouped.map(([page, pageSlots]) => (
             <section key={page}>
               <h2 style={sectionTitleStyle}>{page}</h2>
@@ -247,6 +419,13 @@ const noticeStyle: React.CSSProperties = { padding: 12, borderRadius: 14, backgr
 const errorStyle: React.CSSProperties = { padding: 12, borderRadius: 14, background: "rgba(255,80,80,0.12)", border: "1px solid rgba(255,80,80,0.28)", marginBottom: 14, fontWeight: 800 };
 const loadingStyle: React.CSSProperties = { padding: 18, borderRadius: 16, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)" };
 const sectionTitleStyle: React.CSSProperties = { fontFamily: "var(--font-serif)", fontSize: 24, fontWeight: 650, margin: "24px 0 12px" };
+const galleryHelpStyle: React.CSSProperties = { margin: "-4px 0 12px", color: "rgba(255,255,255,0.68)", lineHeight: 1.55 };
+const tripGridStyle: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14 };
+const tripPanelStyle: React.CSSProperties = { borderRadius: 18, border: "1px solid rgba(255,255,255,0.13)", background: "rgba(255,255,255,0.06)", boxShadow: "0 20px 60px rgba(0,0,0,0.25)", padding: 14, display: "grid", gap: 10 };
+const tripPanelHeaderStyle: React.CSSProperties = { display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" };
+const addedGalleryGridStyle: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 10, marginTop: 4 };
+const addedImageStyle: React.CSSProperties = { overflow: "hidden", borderRadius: 14, border: "1px solid rgba(255,255,255,0.12)", background: "rgba(0,0,0,0.18)" };
+const addedPreviewStyle: React.CSSProperties = { aspectRatio: "16 / 10", overflow: "hidden", background: "rgba(0,0,0,0.24)" };
 const gridStyle: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 14 };
 const slotStyle: React.CSSProperties = { borderRadius: 18, overflow: "hidden", border: "1px solid rgba(255,255,255,0.13)", background: "rgba(255,255,255,0.06)", boxShadow: "0 20px 60px rgba(0,0,0,0.25)" };
 const previewWrapStyle: React.CSSProperties = { position: "relative", aspectRatio: "16 / 10", background: "rgba(0,0,0,0.24)", overflow: "hidden" };
