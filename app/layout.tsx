@@ -5,6 +5,7 @@ import ChatWidget from "../components/chat/ChatWidget";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CookieBanner from "../components/CookieBanner"
+import InlineTextEditor from "../components/admin/InlineTextEditor";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -67,6 +68,7 @@ export default function RootLayout({
         <Footer />
         <ChatWidget />
         <CookieBanner />
+        <InlineTextEditor />
       </body>
     </html>
   );
