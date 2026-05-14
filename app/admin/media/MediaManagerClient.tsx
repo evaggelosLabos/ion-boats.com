@@ -223,7 +223,10 @@ export default function MediaManagerClient() {
             <h1 style={titleStyle}>Photo manager</h1>
             <p style={subtitleStyle}>Upload a replacement image for any page slot. Delete resets the slot back to the original site photo.</p>
           </div>
-          <Link href="/" style={homeLinkStyle}>View site</Link>
+          <div style={topbarActionsStyle}>
+            <Link href="/admin/content" style={homeLinkStyle}>Edit text</Link>
+            <Link href="/" style={homeLinkStyle}>View site</Link>
+          </div>
         </div>
 
         {message ? <div style={noticeStyle}>{message}</div> : null}
@@ -410,6 +413,7 @@ const topbarStyle: React.CSSProperties = {
   marginBottom: 20,
   flexWrap: "wrap",
 };
+const topbarActionsStyle: React.CSSProperties = { display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" };
 
 const eyebrowStyle: React.CSSProperties = { fontSize: 12, fontWeight: 900, letterSpacing: 1.2, opacity: 0.72, textTransform: "uppercase" };
 const titleStyle: React.CSSProperties = { margin: "6px 0 8px", fontSize: "clamp(30px, 4vw, 46px)", fontFamily: "var(--font-serif)", fontWeight: 650 };

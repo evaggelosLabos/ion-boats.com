@@ -72,6 +72,10 @@ export default function InlineTextEditor() {
   const [draft, setDraft] = useState("");
   const overridesRef = useRef<Record<string, string>>({});
   const pathname = useMemo(() => (typeof window === "undefined" ? "/" : window.location.pathname), []);
+  const editModeRequested = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.location.search.includes("ionTextEdit=1");
+  }, []);
 
   const applyOverrides = () => {
     const nodes = collectTextNodes(pathname);
@@ -100,11 +104,13 @@ export default function InlineTextEditor() {
         // Keep the hardcoded text if overrides cannot load.
       }
 
-      try {
-        const adminRes = await fetch("/api/admin/me", { cache: "no-store", credentials: "include" });
-        if (!cancelled) setIsAdmin(adminRes.ok);
-      } catch {
-        if (!cancelled) setIsAdmin(false);
+      if (editModeRequested) {
+        try {
+          const adminRes = await fetch("/api/admin/me", { cache: "no-store", credentials: "include" });
+          if (!cancelled) setIsAdmin(adminRes.ok);
+        } catch {
+          if (!cancelled) setIsAdmin(false);
+        }
       }
     }
 
@@ -116,7 +122,7 @@ export default function InlineTextEditor() {
       cancelled = true;
       observer.disconnect();
     };
-  }, [pathname]);
+  }, [editModeRequested, pathname]);
 
   useEffect(() => {
     if (!editing) return;
@@ -196,6 +202,7 @@ export default function InlineTextEditor() {
   }
 
   if (pathname.startsWith("/admin")) return null;
+  if (!editModeRequested) return null;
   if (!isAdmin) return null;
 
   return (
