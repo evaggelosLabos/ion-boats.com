@@ -64,6 +64,32 @@ function collectTextNodes(pathname: string): EditableTextNode[] {
   return nodes;
 }
 
+function getFirstEditableTextNode(root: Node): Text | null {
+  if (root.nodeType === Node.TEXT_NODE) {
+    const textNode = root as Text;
+    return shouldSkipNode(textNode) ? null : textNode;
+  }
+
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    const textNode = walker.currentNode as Text;
+    if (!shouldSkipNode(textNode)) return textNode;
+  }
+
+  return null;
+}
+
+function getClickedTextNode(event: MouseEvent, target: HTMLElement) {
+  const range = document.caretRangeFromPoint?.(event.clientX, event.clientY);
+  const rangeNode = range?.startContainer;
+  if (rangeNode?.nodeType === Node.TEXT_NODE) {
+    const textNode = rangeNode as Text;
+    if (!shouldSkipNode(textNode)) return textNode;
+  }
+
+  return getFirstEditableTextNode(target);
+}
+
 export default function InlineTextEditor() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -132,12 +158,11 @@ export default function InlineTextEditor() {
       if (!(target instanceof HTMLElement)) return;
       if (target.closest("[data-content-editor-ignore]")) return;
 
-      const range = document.caretRangeFromPoint?.(event.clientX, event.clientY);
-      const node = range?.startContainer;
-      if (!node || node.nodeType !== Node.TEXT_NODE) return;
-
-      const textNode = node as Text;
-      if (shouldSkipNode(textNode)) return;
+      const textNode = getClickedTextNode(event, target);
+      if (!textNode) {
+        setMessage("Click directly on the text you want to edit.");
+        return;
+      }
 
       event.preventDefault();
       event.stopPropagation();
