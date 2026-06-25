@@ -483,6 +483,8 @@ const price =
   Number(selectedSlot?.maxIndividualsBookable ?? 0) <= 0;
 
   async function onBookNow() {
+    if (loading || confirmed) return;
+
     setError("");
     setConfirmed(null);
 
@@ -550,7 +552,9 @@ const price =
       setHold(null);
       setSelectedSlotId("");
 
-      void fetchAvailability(tripId, date);
+      window.setTimeout(() => {
+        window.location.href = "/";
+      }, 2500);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
@@ -920,14 +924,14 @@ return Number(sel?.maxCouplesBookable ?? 0);
       <button
         type="button"
         onClick={onBookNow}
-        disabled={loading || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy)}
+        disabled={loading || !!confirmed || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy)}
         style={{
           ...primaryBtn,
-          opacity: loading || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy) ? 0.55 : 1,
-          cursor: loading || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy) ? "not-allowed" : "pointer",
+          opacity: loading || confirmed || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy) ? 0.55 : 1,
+          cursor: loading || confirmed || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy) ? "not-allowed" : "pointer",
         }}
       >
-        {loading ? "Booking..." : "Book now"}
+        {loading ? "Booking..." : confirmed ? "Request received" : "Book now"}
       </button>
 
       {/* Confirmed */}
@@ -951,6 +955,8 @@ return Number(sel?.maxCouplesBookable ?? 0);
             Request ID: <b>{confirmed.reservationId}</b>
             <br />
             Estimated total: <b>€{confirmed.priceEur}</b>
+            <br />
+            Redirecting you to the homepage...
           </div>
         </div>
       ) : null}
