@@ -944,11 +944,13 @@ return Number(sel?.maxCouplesBookable ?? 0);
             lineHeight: 1.35,
           }}
         >
-          Booking confirmed ✅
+          Booking request received
           <div style={{ marginTop: 6, fontSize: 12, opacity: 0.8, fontWeight: 700 }}>
-            Reservation ID: <b>{confirmed.reservationId}</b>
+            Thank you for choosing us. We will reply back to you to confirm your booking request.
             <br />
-            Total: <b>€{confirmed.priceEur}</b>
+            Request ID: <b>{confirmed.reservationId}</b>
+            <br />
+            Estimated total: <b>€{confirmed.priceEur}</b>
           </div>
         </div>
       ) : null}

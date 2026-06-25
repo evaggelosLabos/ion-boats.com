@@ -256,7 +256,7 @@ export default function HomePage() {
                 }}
               >
                 <span style={{ color: "#d1b76e" }}>●</span>
-                <span>Instant confirmation • Online payment • Pay on arrival</span>
+                <span>Fast request • Local confirmation • Clear follow-up</span>
               </div>
 
             

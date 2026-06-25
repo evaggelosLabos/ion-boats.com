@@ -11,7 +11,7 @@ type Reservation = {
   bookingMode: "private" | "shared";
   quantity: number;
   priceEur: number;
-  status: "confirmed" | "cancelled";
+  status: "pending" | "confirmed" | "cancelled";
   customer: { name: string; phone: string; email?: string };
   createdAt?: string;
 };
@@ -334,7 +334,12 @@ export default function AdminClient() {
                         padding: "6px 10px",
                         borderRadius: 999,
                         border: "1px solid rgba(0,0,0,0.12)",
-                        background: r.status === "cancelled" ? "rgba(255,80,80,0.12)" : "rgba(80,200,120,0.18)",
+                        background:
+                          r.status === "cancelled"
+                            ? "rgba(255,80,80,0.12)"
+                            : r.status === "pending"
+                            ? "rgba(255,180,80,0.18)"
+                            : "rgba(80,200,120,0.18)",
                         color: "#0a0a0a",
                       }}
                     >

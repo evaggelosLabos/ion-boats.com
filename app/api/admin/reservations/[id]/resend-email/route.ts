@@ -27,14 +27,14 @@ export async function POST(
   if (!email) return NextResponse.json({ ok: true, skipped: true });
 
   const trip = TRIPS.find((t) => t.id === r.tripId);
-  const subject = `Booking confirmed — ${trip?.title || "ION Boats"}`;
+  const subject = `Booking request received — ${trip?.title || "ION Boats"}`;
 
   const html = `
     <div style="font-family:Arial,sans-serif;line-height:1.5">
-      <h2>Booking Confirmed ✅</h2>
-      <p>Thank you for your booking.</p>
+      <h2>Booking request received</h2>
+      <p>Thank you for choosing us. We will reply back to you to confirm your booking request.</p>
       <hr/>
-      <p><strong>Reservation ID:</strong> ${String(r._id)}</p>
+      <p><strong>Request ID:</strong> ${String(r._id)}</p>
       <p><strong>Trip:</strong> ${trip?.title || r.tripId}</p>
       <p><strong>Date:</strong> ${r.date}</p>
       <p><strong>Slot:</strong> ${r.slotId}</p>
@@ -50,7 +50,7 @@ export async function POST(
     toName: r.customer?.name || undefined,
     subject,
     html,
-    text: `Booking confirmed. Trip: ${trip?.title || r.tripId}. Date: ${r.date}. Slot: ${r.slotId}. Mode: ${r.bookingMode}. Price: €${r.priceEur}. Reservation ID: ${String(r._id)}`,
+    text: `Booking request received. Thank you for choosing us. We will reply back to you to confirm your booking request. Trip: ${trip?.title || r.tripId}. Date: ${r.date}. Slot: ${r.slotId}. Mode: ${r.bookingMode}. Estimated price: €${r.priceEur}. Request ID: ${String(r._id)}`,
     reservationId: String(r._id),
   });
 

@@ -199,7 +199,7 @@ if (!Number.isFinite(totalPriceEur) || totalPriceEur < 0) {
       bookingMode,
       quantity,
       priceEur: totalPriceEur,
-      status: "confirmed",
+      status: "pending",
       customer: (hold as any).customer,
     },
   ],
@@ -222,7 +222,7 @@ if (!Number.isFinite(totalPriceEur) || totalPriceEur < 0) {
         seats: seatsNeeded,
         totalSeats,
         remainingSeatsAfter: remainingAfter,
-        message: "Booking confirmed ✅",
+        message: "Booking request received. We will reply back to confirm your booking request.",
         customer: {
           name: ((hold as any).customer as any)?.name,
           email: ((hold as any).customer as any)?.email,
@@ -249,7 +249,7 @@ if (!Number.isFinite(totalPriceEur) || totalPriceEur < 0) {
       return NextResponse.json(response, { status });
     }
 
-    // ✅ NON-BLOCKING EMAIL after success
+    // Non-blocking request email after success.
     const toEmail = response.customer?.email;
     const toName = response.customer?.name;
 
@@ -291,7 +291,7 @@ if (!Number.isFinite(totalPriceEur) || totalPriceEur < 0) {
         )
         .catch((err: any) => console.error("[BREVO] confirm email failed", err?.message || err));
     } else {
-      console.warn("[BREVO] No customer email found; skipping confirmation email", {
+      console.warn("[BREVO] No customer email found; skipping booking request email", {
         reservationId: response.reservationId,
       });
     }
@@ -301,7 +301,7 @@ if (!Number.isFinite(totalPriceEur) || totalPriceEur < 0) {
     console.error("Confirm error:", e);
 
     if (isDupKeyError(e)) {
-      const r: ConfirmResponse = { ok: false, error: "Already confirmed (duplicate)." };
+      const r: ConfirmResponse = { ok: false, error: "Booking request already exists (duplicate)." };
       return NextResponse.json(r, { status: 409 });
     }
 
