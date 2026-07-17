@@ -7,13 +7,16 @@ import { sendBrevoEmail } from "../../../../../../lib/email/brevo";
 import { getCookieName, verifySession } from "../../../../../../lib/admin/auth";
 
 export async function POST(
-  _req: Request,
+  req: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   const cookieStore = await cookies();
   const token = cookieStore.get(getCookieName())?.value;
   const session = verifySession(token);
   if (!session) return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+
+  const body = (await req.json().catch(() => ({}))) as { message?: unknown };
+  const adminMessage = typeof body.message === "string" ? body.message.trim().slice(0, 2000) : "";
 
   await dbConnect();
 
@@ -31,11 +34,16 @@ export async function POST(
   const slot = buildSlotsForTrip(r.tripId).find((s) => s.id === r.slotId);
   const slotLabel = slot?.start && slot?.end ? `${slot.start}-${slot.end}` : slot?.label || r.slotId;
   const tripTitle = trip?.title || r.tripId;
+  const messageHtml = adminMessage
+    ? `<div style="margin:16px 0;padding:14px;border-radius:12px;background:#f7fbff;border:1px solid #e6f2ff;"><strong>Message from ION Boats:</strong><br/>${escapeHtml(adminMessage).replace(/\n/g, "<br/>")}</div>`
+    : "";
+  const messageText = adminMessage ? `Message from ION Boats:\n${adminMessage}\n` : "";
 
   const html = `
     <div style="font-family:Arial,sans-serif;line-height:1.5">
       <h2>Your booking is confirmed</h2>
       <p>Thank you for choosing ION Boats. Your booking request has been confirmed.</p>
+      ${messageHtml}
       <hr/>
       <p><strong>Reservation ID:</strong> ${String(r._id)}</p>
       <p><strong>Trip:</strong> ${tripTitle}</p>
@@ -64,9 +72,19 @@ export async function POST(
       `Guests: ${r.quantity}\n` +
       `Total: EUR ${r.priceEur}\n` +
       `Meeting point: ${trip?.meetingPoint || "To be confirmed"}\n` +
+      messageText +
       `Reservation ID: ${String(r._id)}\n`,
     reservationId: String(r._id),
   });
 
   return NextResponse.json({ ok: true, skippedEmail: false });
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

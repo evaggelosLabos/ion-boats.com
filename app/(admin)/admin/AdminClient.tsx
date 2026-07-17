@@ -164,6 +164,16 @@ export default function AdminClient() {
   async function updateReservationStatus(r: Reservation, action: "confirm" | "decline") {
     const email = (r.customer?.email || "").trim();
     const verb = action === "confirm" ? "confirm" : "decline";
+    const defaultMessage =
+      action === "confirm"
+        ? "We are happy to confirm your booking. Please reply to this email if you have any questions."
+        : "Unfortunately we cannot confirm this booking request. Please reply to this email if you would like to discuss another date or option.";
+    const adminMessage = email
+      ? window.prompt(`Write the message to include in the email to ${email}:`, defaultMessage)
+      : "";
+
+    if (adminMessage === null) return;
+
     const emailNote = email
       ? `This will ${verb} the request and email ${email}.`
       : `This will ${verb} the request, but no email will be sent because this customer did not enter an email.`;
@@ -177,9 +187,10 @@ export default function AdminClient() {
     try {
       const res = await fetch(`/api/admin/reservations/${encodeURIComponent(r._id)}/${action}`, {
         method: "POST",
-        headers: { accept: "application/json" },
+        headers: { accept: "application/json", "content-type": "application/json" },
         cache: "no-store",
         credentials: "include",
+        body: JSON.stringify({ message: adminMessage.trim() }),
       });
 
       const data = (await res.json().catch(() => ({ ok: false }))) as { ok?: boolean; error?: string; skippedEmail?: boolean };
