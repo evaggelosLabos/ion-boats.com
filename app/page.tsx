@@ -19,6 +19,9 @@ export default function HomePage() {
     position: "relative",
     width: "100%",
     overflow: "hidden",
+    backgroundImage: "url('/videos/hero-poster.webp')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
   }}
 >
 
@@ -29,7 +32,8 @@ export default function HomePage() {
   muted
   loop
   playsInline
-  preload="metadata"
+  preload="auto"
+  poster="/videos/hero-poster.webp"
   style={{
     position: "absolute",
     inset: 0,
@@ -39,7 +43,7 @@ export default function HomePage() {
     pointerEvents: "none",
   }}
 >
-  <source src="/videos/0250-0674.mp4" type="video/mp4" />
+  <source src="/videos/hero-optimized.mp4" type="video/mp4" />
 </video>
 
 {/* subtle dark overlay for readability */}
