@@ -77,6 +77,9 @@ export default function AdminClient() {
   const [rangeError, setRangeError] = useState("");
   const [rows, setRows] = useState<Reservation[]>([]);
   const [rangeRows, setRangeRows] = useState<Reservation[]>([]);
+  const [actionLoading, setActionLoading] = useState("");
+  const [actionMessage, setActionMessage] = useState("");
+  const [actionError, setActionError] = useState("");
 
   // Announcement state
   const [annLoading, setAnnLoading] = useState(false);
@@ -155,6 +158,48 @@ export default function AdminClient() {
       setRangeRows([]);
     } finally {
       setRangeLoading(false);
+    }
+  }
+
+  async function updateReservationStatus(r: Reservation, action: "confirm" | "decline") {
+    const email = (r.customer?.email || "").trim();
+    const verb = action === "confirm" ? "confirm" : "decline";
+    const emailNote = email
+      ? `This will ${verb} the request and email ${email}.`
+      : `This will ${verb} the request, but no email will be sent because this customer did not enter an email.`;
+
+    if (!window.confirm(`${emailNote}\n\nContinue?`)) return;
+
+    setActionLoading(`${r._id}:${action}`);
+    setActionError("");
+    setActionMessage("");
+
+    try {
+      const res = await fetch(`/api/admin/reservations/${encodeURIComponent(r._id)}/${action}`, {
+        method: "POST",
+        headers: { accept: "application/json" },
+        cache: "no-store",
+        credentials: "include",
+      });
+
+      const data = (await res.json().catch(() => ({ ok: false }))) as { ok?: boolean; error?: string; skippedEmail?: boolean };
+
+      if (!res.ok || data.ok === false) {
+        setActionError(data.error || `Failed to ${verb} request`);
+        return;
+      }
+
+      setActionMessage(
+        data.skippedEmail
+          ? `Request ${action === "confirm" ? "confirmed" : "declined"}. No customer email was stored.`
+          : `Request ${action === "confirm" ? "confirmed" : "declined"} and email sent.`
+      );
+
+      await Promise.all([load(date), loadNext15Days()]);
+    } catch (e: unknown) {
+      setActionError(e instanceof Error ? e.message : "Network error");
+    } finally {
+      setActionLoading("");
     }
   }
 
@@ -489,6 +534,22 @@ export default function AdminClient() {
               </div>
             ) : null}
 
+            {(actionError || actionMessage) ? (
+              <div
+                style={{
+                  marginTop: 14,
+                  padding: 12,
+                  borderRadius: 12,
+                  border: actionError ? "1px solid rgba(255, 80, 80, 0.35)" : "1px solid rgba(80,200,120,0.40)",
+                  background: actionError ? "rgba(255, 80, 80, 0.08)" : "rgba(80,200,120,0.14)",
+                  fontWeight: 800,
+                  color: "#0a0a0a",
+                }}
+              >
+                {actionError || actionMessage}
+              </div>
+            ) : null}
+
             <div style={{ marginTop: 14, display: "grid", gap: 10 }}>
               {rows.length === 0 && !loading ? (
                 <div style={{ padding: 14, borderRadius: 12, border: "1px solid rgba(0,0,0,0.12)", color: "rgba(0,0,0,0.85)" }}>
@@ -540,6 +601,52 @@ export default function AdminClient() {
                   </div>
 
                   <div style={{ fontSize: 12, color: "rgba(0,0,0,0.55)" }}>ID: {r._id}</div>
+
+                  {r.status === "pending" ? (
+                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", paddingTop: 4 }}>
+                      <button
+                        type="button"
+                        onClick={() => updateReservationStatus(r, "confirm")}
+                        disabled={!!actionLoading}
+                        style={{
+                          height: 38,
+                          padding: "0 12px",
+                          borderRadius: 10,
+                          border: "1px solid rgba(0,0,0,0.12)",
+                          background: "rgba(80,200,120,0.18)",
+                          color: "#0a0a0a",
+                          fontWeight: 950,
+                          cursor: actionLoading ? "not-allowed" : "pointer",
+                          opacity: actionLoading ? 0.65 : 1,
+                        }}
+                      >
+                        {actionLoading === `${r._id}:confirm` ? "Confirming..." : "Confirm & email"}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => updateReservationStatus(r, "decline")}
+                        disabled={!!actionLoading}
+                        style={{
+                          height: 38,
+                          padding: "0 12px",
+                          borderRadius: 10,
+                          border: "1px solid rgba(0,0,0,0.12)",
+                          background: "rgba(255,80,80,0.12)",
+                          color: "#0a0a0a",
+                          fontWeight: 950,
+                          cursor: actionLoading ? "not-allowed" : "pointer",
+                          opacity: actionLoading ? 0.65 : 1,
+                        }}
+                      >
+                        {actionLoading === `${r._id}:decline` ? "Declining..." : "Decline & email"}
+                      </button>
+
+                      <div style={{ fontSize: 12, color: "rgba(0,0,0,0.56)", fontWeight: 750 }}>
+                        {r.customer?.email ? `Email will be sent to ${r.customer.email}` : "No email stored for this request"}
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               ))}
             </div>
