@@ -121,6 +121,7 @@ export default function MediaManagerClient() {
     form.set("file", file);
 
     setBusyKey(slot.key);
+    setMessage(`Uploading ${slot.label}...`);
     try {
       const res = await fetch("/api/admin/media", {
         method: "POST",
@@ -129,7 +130,7 @@ export default function MediaManagerClient() {
       });
       const data = (await res.json().catch(() => ({ ok: false, error: "Upload failed" }))) as { ok: boolean; error?: string };
       if (!res.ok || !data.ok) throw new Error(data.error || "Upload failed");
-      setMessage(`${slot.label} updated.`);
+      setMessage(`${slot.label} uploaded successfully.`);
       setSelectedFiles((prev) => ({ ...prev, [slot.key]: null }));
       setCacheBust(Date.now());
       await load();
@@ -153,6 +154,7 @@ export default function MediaManagerClient() {
     form.set("file", file);
 
     setTripBusyKey(trip.slug);
+    setMessage(`Uploading photo to ${trip.title}...`);
     try {
       const res = await fetch("/api/admin/trip-gallery", {
         method: "POST",
@@ -161,7 +163,7 @@ export default function MediaManagerClient() {
       });
       const data = (await res.json().catch(() => ({ ok: false, error: "Upload failed" }))) as { ok: boolean; error?: string };
       if (!res.ok || !data.ok) throw new Error(data.error || "Upload failed");
-      setMessage(`${trip.title} gallery photo added.`);
+      setMessage(`${trip.title} gallery photo uploaded successfully.`);
       setSelectedTripFiles((prev) => ({ ...prev, [trip.slug]: null }));
       setCacheBust(Date.now());
       await loadTripGalleries();
@@ -176,6 +178,7 @@ export default function MediaManagerClient() {
     setMessage("");
     setError("");
     setTripBusyKey(image.id);
+    setMessage(`Deleting ${image.fileName}...`);
     try {
       const res = await fetch(`/api/admin/trip-gallery/${encodeURIComponent(image.id)}`, {
         method: "DELETE",
@@ -183,7 +186,7 @@ export default function MediaManagerClient() {
       });
       const data = (await res.json().catch(() => ({ ok: false, error: "Delete failed" }))) as { ok: boolean; error?: string };
       if (!res.ok || !data.ok) throw new Error(data.error || "Delete failed");
-      setMessage(`${image.fileName} deleted from the trip gallery.`);
+      setMessage(`${image.fileName} deleted successfully from the trip gallery.`);
       setCacheBust(Date.now());
       await loadTripGalleries();
     } catch (e) {
@@ -197,6 +200,7 @@ export default function MediaManagerClient() {
     setMessage("");
     setError("");
     setBusyKey(slot.key);
+    setMessage(`Deleting uploaded image for ${slot.label}...`);
     try {
       const res = await fetch(`/api/admin/media/${encodeURIComponent(slot.key)}`, {
         method: "DELETE",
@@ -204,7 +208,7 @@ export default function MediaManagerClient() {
       });
       const data = (await res.json().catch(() => ({ ok: false, error: "Delete failed" }))) as { ok: boolean; error?: string };
       if (!res.ok || !data.ok) throw new Error(data.error || "Delete failed");
-      setMessage(`${slot.label} reset to the original image.`);
+      setMessage(`${slot.label} deleted successfully. Original image restored.`);
       setCacheBust(Date.now());
       await load();
     } catch (e) {
@@ -274,7 +278,7 @@ export default function MediaManagerClient() {
                       onClick={() => uploadTripImage(trip, selectedFile)}
                       style={{ ...buttonStyle, ...primaryButtonStyle, opacity: busy || !selectedFile ? 0.55 : 1 }}
                     >
-                      {busy ? "Working..." : "Add photo"}
+                      {busy ? "Uploading..." : "Add photo"}
                     </button>
 
                     {trip.addedImages.length ? (
@@ -292,13 +296,13 @@ export default function MediaManagerClient() {
                               </div>
                               <div style={{ padding: 10, display: "grid", gap: 8 }}>
                                 <div style={pathStyle}>{image.fileName}</div>
-                                <button
-                                  type="button"
-                                  disabled={imageBusy}
-                                  onClick={() => removeTripImage(image)}
-                                  style={{ ...buttonStyle, ...secondaryButtonStyle, opacity: imageBusy ? 0.45 : 1 }}
-                                >
-                                  {imageBusy ? "Working..." : "Delete"}
+                          <button
+                            type="button"
+                            disabled={imageBusy}
+                            onClick={() => removeTripImage(image)}
+                            style={{ ...buttonStyle, ...secondaryButtonStyle, opacity: imageBusy ? 0.45 : 1 }}
+                          >
+                                  {imageBusy ? "Deleting..." : "Delete"}
                                 </button>
                               </div>
                             </div>
@@ -372,7 +376,7 @@ export default function MediaManagerClient() {
                             onClick={() => upload(slot, selectedFile)}
                             style={{ ...buttonStyle, ...primaryButtonStyle, opacity: busy || !selectedFile ? 0.55 : 1 }}
                           >
-                            {busy ? "Working..." : "Upload"}
+                            {busy ? "Uploading..." : "Upload"}
                           </button>
                           <button
                             type="button"
@@ -380,7 +384,7 @@ export default function MediaManagerClient() {
                             onClick={() => remove(slot)}
                             style={{ ...buttonStyle, ...secondaryButtonStyle, opacity: busy || !slot.hasCustomImage ? 0.45 : 1 }}
                           >
-                            Delete
+                            {busy ? "Deleting..." : "Delete"}
                           </button>
                         </div>
                       </div>

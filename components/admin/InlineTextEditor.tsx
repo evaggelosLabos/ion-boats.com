@@ -95,6 +95,9 @@ export default function InlineTextEditor() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [editing, setEditing] = useState(false);
   const [message, setMessage] = useState("");
+  const [messageTone, setMessageTone] = useState<"info" | "success" | "error">("info");
+  const [saving, setSaving] = useState(false);
+  const [savingAction, setSavingAction] = useState<"save" | "reset" | null>(null);
   const [selected, setSelected] = useState<EditableTextNode | null>(null);
   const [draft, setDraft] = useState("");
   const overridesRef = useRef<Record<string, string>>({});
@@ -120,6 +123,7 @@ export default function InlineTextEditor() {
     setSelected(null);
     setDraft("");
     setMessage("");
+    setMessageTone("info");
     setIsAdmin(false);
     setEditing(false);
 
@@ -174,6 +178,7 @@ export default function InlineTextEditor() {
       const textNode = getClickedTextNode(event, target);
       if (!textNode) {
         setMessage("Click directly on the text you want to edit.");
+        setMessageTone("info");
         return;
       }
 
@@ -192,51 +197,87 @@ export default function InlineTextEditor() {
   }, [editing, pathname]);
 
   async function saveSelected() {
-    if (!selected) return;
+    if (!selected || saving) return;
 
     const next = draft.trim();
     if (!next) {
       setMessage("Text cannot be empty.");
+      setMessageTone("error");
       return;
     }
 
-    const res = await fetch("/api/admin/content", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        path: pathname,
-        textKey: selected.key,
-        originalText: selected.originalText,
-        value: next,
-      }),
-    });
+    setSaving(true);
+    setSavingAction("save");
+    setMessage("Saving text...");
+    setMessageTone("info");
 
-    if (!res.ok) {
+    try {
+      const res = await fetch("/api/admin/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          path: pathname,
+          textKey: selected.key,
+          originalText: selected.originalText,
+          value: next,
+        }),
+      });
+
+      if (!res.ok) {
+        setMessage("Could not save text.");
+        setMessageTone("error");
+        return;
+      }
+
+      overridesRef.current[selected.key] = next;
+      selected.node.nodeValue = next;
+      setSelected(null);
+      setDraft("");
+      setMessage("Text saved successfully.");
+      setMessageTone("success");
+    } catch {
       setMessage("Could not save text.");
-      return;
+      setMessageTone("error");
+    } finally {
+      setSaving(false);
+      setSavingAction(null);
     }
-
-    overridesRef.current[selected.key] = next;
-    selected.node.nodeValue = next;
-    setSelected(null);
-    setDraft("");
-    setMessage("Text saved.");
   }
 
   async function resetSelected() {
-    if (!selected) return;
+    if (!selected || saving) return;
 
-    await fetch(`/api/admin/content/${encodeURIComponent(selected.key)}?path=${encodeURIComponent(pathname)}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+    setSaving(true);
+    setSavingAction("reset");
+    setMessage("Resetting text...");
+    setMessageTone("info");
 
-    delete overridesRef.current[selected.key];
-    selected.node.nodeValue = selected.originalText;
-    setSelected(null);
-    setDraft("");
-    setMessage("Text reset.");
+    try {
+      const res = await fetch(`/api/admin/content/${encodeURIComponent(selected.key)}?path=${encodeURIComponent(pathname)}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        setMessage("Could not reset text.");
+        setMessageTone("error");
+        return;
+      }
+
+      delete overridesRef.current[selected.key];
+      selected.node.nodeValue = selected.originalText;
+      setSelected(null);
+      setDraft("");
+      setMessage("Text reset successfully.");
+      setMessageTone("success");
+    } catch {
+      setMessage("Could not reset text.");
+      setMessageTone("error");
+    } finally {
+      setSaving(false);
+      setSavingAction(null);
+    }
   }
 
   if (pathname.startsWith("/admin")) return null;
@@ -249,17 +290,17 @@ export default function InlineTextEditor() {
         {editing ? "Text edit on" : "Edit page text"}
       </button>
       <span style={hintStyle}>{editing ? "Click any visible text to edit it." : "Admin text tools"}</span>
-      {message ? <span style={messageStyle}>{message}</span> : null}
+      {message ? <span style={{ ...messageStyle, ...(messageTone === "error" ? errorMessageStyle : messageTone === "success" ? successMessageStyle : {}) }}>{message}</span> : null}
 
       {selected ? (
         <div style={modalBackdropStyle}>
           <div style={modalStyle}>
             <div style={modalTitleStyle}>Edit text</div>
-            <textarea value={draft} onChange={(event) => setDraft(event.currentTarget.value)} style={textareaStyle} rows={6} />
+            <textarea value={draft} onChange={(event) => setDraft(event.currentTarget.value)} disabled={saving} style={{ ...textareaStyle, opacity: saving ? 0.72 : 1 }} rows={6} />
             <div style={modalActionsStyle}>
-              <button type="button" onClick={saveSelected} style={{ ...buttonStyle, ...activeButtonStyle }}>Save</button>
-              <button type="button" onClick={resetSelected} style={buttonStyle}>Reset</button>
-              <button type="button" onClick={() => setSelected(null)} style={buttonStyle}>Cancel</button>
+              <button type="button" onClick={saveSelected} disabled={saving} style={{ ...buttonStyle, ...activeButtonStyle, opacity: saving ? 0.65 : 1 }}>{savingAction === "save" ? "Saving..." : "Save"}</button>
+              <button type="button" onClick={resetSelected} disabled={saving} style={{ ...buttonStyle, opacity: saving ? 0.65 : 1 }}>{savingAction === "reset" ? "Resetting..." : "Reset"}</button>
+              <button type="button" onClick={() => setSelected(null)} disabled={saving} style={{ ...buttonStyle, opacity: saving ? 0.65 : 1 }}>Cancel</button>
             </div>
           </div>
         </div>
@@ -303,7 +344,9 @@ const activeButtonStyle: React.CSSProperties = {
 };
 
 const hintStyle: React.CSSProperties = { fontSize: 12, color: "rgba(255,255,255,0.72)" };
-const messageStyle: React.CSSProperties = { fontSize: 12, color: "rgba(120,235,170,0.95)", fontWeight: 800 };
+const messageStyle: React.CSSProperties = { fontSize: 12, color: "rgba(180,225,255,0.95)", fontWeight: 800 };
+const successMessageStyle: React.CSSProperties = { color: "rgba(120,235,170,0.95)" };
+const errorMessageStyle: React.CSSProperties = { color: "rgba(255,150,150,0.95)" };
 const modalBackdropStyle: React.CSSProperties = { position: "fixed", inset: 0, display: "grid", placeItems: "center", background: "rgba(0,0,0,0.38)", zIndex: 2147483647 };
 const modalStyle: React.CSSProperties = { width: "min(620px, calc(100vw - 28px))", borderRadius: 16, padding: 16, background: "#071b25", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", boxShadow: "0 30px 90px rgba(0,0,0,0.45)" };
 const modalTitleStyle: React.CSSProperties = { fontSize: 18, fontWeight: 950, marginBottom: 10 };
