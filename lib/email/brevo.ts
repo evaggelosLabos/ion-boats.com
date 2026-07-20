@@ -69,7 +69,7 @@ const fromName = process.env.BREVO_SENDER_NAME || "ION Boats";
           "X-Reservation-Id": args.reservationId,
         }
       : undefined,
-    tags: ["ion-boats", "booking-confirmed"],
+    tags: ["ion-boats", "booking-request"],
   };
 
   const res = await brevoPostWithRetry("https://api.brevo.com/v3/smtp/email", {

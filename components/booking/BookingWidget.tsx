@@ -483,6 +483,8 @@ const price =
   Number(selectedSlot?.maxIndividualsBookable ?? 0) <= 0;
 
   async function onBookNow() {
+    if (loading || confirmed) return;
+
     setError("");
     setConfirmed(null);
 
@@ -550,7 +552,9 @@ const price =
       setHold(null);
       setSelectedSlotId("");
 
-      void fetchAvailability(tripId, date);
+      window.setTimeout(() => {
+        window.location.href = "/";
+      }, 2500);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
@@ -920,14 +924,14 @@ return Number(sel?.maxCouplesBookable ?? 0);
       <button
         type="button"
         onClick={onBookNow}
-        disabled={loading || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy)}
+        disabled={loading || !!confirmed || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy)}
         style={{
           ...primaryBtn,
-          opacity: loading || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy) ? 0.55 : 1,
-          cursor: loading || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy) ? "not-allowed" : "pointer",
+          opacity: loading || confirmed || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy) ? 0.55 : 1,
+          cursor: loading || confirmed || !selectedSlotId || (bookingMode === "shared" && sharedDisabledByPolicy) ? "not-allowed" : "pointer",
         }}
       >
-        {loading ? "Booking..." : "Book now"}
+        {loading ? "Booking..." : confirmed ? "Request received" : "Book now"}
       </button>
 
       {/* Confirmed */}
@@ -944,11 +948,15 @@ return Number(sel?.maxCouplesBookable ?? 0);
             lineHeight: 1.35,
           }}
         >
-          Booking confirmed ✅
+          Booking request received
           <div style={{ marginTop: 6, fontSize: 12, opacity: 0.8, fontWeight: 700 }}>
-            Reservation ID: <b>{confirmed.reservationId}</b>
+            Thank you for choosing us. We will reply back to you to confirm your booking request.
             <br />
-            Total: <b>€{confirmed.priceEur}</b>
+            Request ID: <b>{confirmed.reservationId}</b>
+            <br />
+            Estimated total: <b>€{confirmed.priceEur}</b>
+            <br />
+            Redirecting you to the homepage...
           </div>
         </div>
       ) : null}

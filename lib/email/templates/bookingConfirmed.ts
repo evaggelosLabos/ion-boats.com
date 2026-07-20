@@ -15,7 +15,7 @@ export function bookingConfirmedTemplate(opts: {
   customerName?: string;
   supportEmail: string;
 }) {
-  const subject = `Booking confirmed — ${opts.tripTitle} (${opts.date})`;
+  const subject = `Booking request received — ${opts.tripTitle} (${opts.date})`;
 
   const html = `
   <!doctype html>
@@ -31,10 +31,10 @@ export function bookingConfirmedTemplate(opts: {
                     ${opts.brand}
                   </div>
                   <div style="font-family:Arial,sans-serif;color:#ffffff;font-size:22px;font-weight:700;margin-top:6px;">
-                    Booking confirmed ✅
+                    Booking request received
                   </div>
                   <div style="font-family:Arial,sans-serif;color:#d9eef7;font-size:14px;margin-top:6px;line-height:1.4;">
-                    Thanks${opts.customerName ? `, ${opts.customerName}` : ""}! Your reservation is confirmed.
+                    Thanks${opts.customerName ? `, ${opts.customerName}` : ""}! Thank you for choosing us. We will reply back to you to confirm your booking request.
                   </div>
                 </td>
               </tr>
@@ -87,7 +87,7 @@ export function bookingConfirmedTemplate(opts: {
 </tr>
 <tr>
   <td colspan="2" style="padding:10px 0;border-top:1px solid #eef0f4;">
-    <div style="color:#6b7280;font-size:12px;">Reservation ID</div>
+    <div style="color:#6b7280;font-size:12px;">Request ID</div>
     <div style="color:#111827;font-size:13px;font-weight:700;">${opts.reservationId}</div>
   </td>
 </tr>
@@ -121,7 +121,8 @@ export function bookingConfirmedTemplate(opts: {
   `;
 
  const text =
-  `Booking confirmed.\n` +
+  `Booking request received.\n` +
+  `Thank you for choosing us. We will reply back to you to confirm your booking request.\n` +
   `Trip: ${opts.tripTitle}\n` +
   `Date: ${opts.date}\n` +
   `Departure time: ${opts.slotLabel ?? opts.slotId}\n` +
@@ -129,7 +130,7 @@ export function bookingConfirmedTemplate(opts: {
   `Guests: ${opts.quantity ?? "-"}\n` +
   `Meeting point: ${opts.meetingPoint ?? "To be confirmed"}\n` +
   `Total: €${opts.priceEur}\n` +
-  `Reservation ID: ${opts.reservationId}\n` +
+  `Request ID: ${opts.reservationId}\n` +
   `Support: ${opts.supportEmail}\n`;
   return { subject, html, text };
 }

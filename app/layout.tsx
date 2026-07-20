@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import ChatWidget from "../components/chat/ChatWidget";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CookieBanner from "../components/CookieBanner"
+import InlineTextEditor from "../components/admin/InlineTextEditor";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -20,7 +22,7 @@ const inter = Inter({
 
 export const metadata = {
   title: "ion-boats | Corfu Boat Trips",
-  description: "Premium boat trips in Corfu with instant booking",
+  description: "Premium boat trips in Corfu with simple booking requests",
 
   icons: {
     icon: [
@@ -67,6 +69,9 @@ export default function RootLayout({
         <Footer />
         <ChatWidget />
         <CookieBanner />
+        <Suspense fallback={null}>
+          <InlineTextEditor />
+        </Suspense>
       </body>
     </html>
   );

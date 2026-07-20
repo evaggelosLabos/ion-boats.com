@@ -26,9 +26,9 @@ export default function TermsPage() {
         <section>
           <h2 style={{ margin: "0 0 6px 0", fontSize: 18 }}>Bookings</h2>
           <ul style={{ margin: 0, paddingLeft: 18 }}>
-            <li>Bookings are confirmed once you receive a confirmation message/email (if email provided).</li>
-            <li>Shared bookings are per couple (or per booking unit as shown).</li>
-            <li>Private bookings reserve the full boat for the selected slot.</li>
+            <li>Booking requests are not confirmed automatically. We will reply to confirm availability and details.</li>
+            <li>Shared booking requests are per person unless stated otherwise on the booking form.</li>
+            <li>Private booking requests are for the full boat, subject to final confirmation from our team.</li>
           </ul>
         </section>
 

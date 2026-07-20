@@ -84,7 +84,7 @@ export default function ContactPage() {
           >
             <div style={{ fontWeight: 950, fontSize: 14 }}>Email</div>
             <div style={{ marginTop: 8, opacity: 0.8, lineHeight: 1.5, fontSize: 13 }}>
-              Best for confirmations, invoices and detailed requests.
+              Best for booking requests, invoices and detailed questions.
             </div>
 
             <a
@@ -199,7 +199,7 @@ export default function ContactPage() {
           >
             {[
               {
-                q: "I didn’t receive the confirmation email",
+                q: "I didn’t receive the booking request email",
                 a: "Check Spam/Promotions. If still missing, message us with your name and date — we’ll resend it.",
               },
               {

@@ -1,0 +1,85 @@
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { dbConnect } from "../../../../../../lib/db/mongoose";
+import { Reservation } from "../../../../../../models/Reservation";
+import { TRIPS, buildSlotsForTrip } from "../../../../../../lib/booking/catalog";
+import { sendBrevoEmail } from "../../../../../../lib/email/brevo";
+import { getCookieName, verifySession } from "../../../../../../lib/admin/auth";
+
+export async function POST(
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(getCookieName())?.value;
+  const session = verifySession(token);
+  if (!session) return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+
+  const body = (await req.json().catch(() => ({}))) as { message?: unknown };
+  const adminMessage = typeof body.message === "string" ? body.message.trim().slice(0, 2000) : "";
+
+  await dbConnect();
+
+  const { id } = await context.params;
+  const r = await Reservation.findById(id);
+  if (!r) return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
+
+  r.status = "cancelled";
+  await r.save();
+
+  const email = (r.customer?.email || "").trim();
+  if (!email) return NextResponse.json({ ok: true, skippedEmail: true });
+
+  const trip = TRIPS.find((t) => t.id === r.tripId);
+  const slot = buildSlotsForTrip(r.tripId).find((s) => s.id === r.slotId);
+  const slotLabel = slot?.start && slot?.end ? `${slot.start}-${slot.end}` : slot?.label || r.slotId;
+  const tripTitle = trip?.title || r.tripId;
+  const messageHtml = adminMessage
+    ? `<div style="margin:16px 0;padding:14px;border-radius:12px;background:#f7fbff;border:1px solid #e6f2ff;"><strong>Message from ION Boats:</strong><br/>${escapeHtml(adminMessage).replace(/\n/g, "<br/>")}</div>`
+    : "";
+  const messageText = adminMessage ? `Message from ION Boats:\n${adminMessage}\n` : "";
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;line-height:1.5">
+      <h2>Booking request update</h2>
+      <p>Thank you for choosing ION Boats. We are sorry, but we cannot confirm this booking request.</p>
+      ${messageHtml}
+      <hr/>
+      <p><strong>Request ID:</strong> ${String(r._id)}</p>
+      <p><strong>Trip:</strong> ${tripTitle}</p>
+      <p><strong>Date:</strong> ${r.date}</p>
+      <p><strong>Departure:</strong> ${slotLabel}</p>
+      <p><strong>Booking type:</strong> ${r.bookingMode}</p>
+      <hr/>
+      <p>If you have any questions, reply to this email.</p>
+    </div>
+  `;
+
+  await sendBrevoEmail({
+    toEmail: email,
+    toName: r.customer?.name || undefined,
+    subject: `Booking request update - ${tripTitle}`,
+    html,
+    text:
+      `Booking request update.\n` +
+      `Thank you for choosing ION Boats. We are sorry, but we cannot confirm this booking request.\n` +
+      `Trip: ${tripTitle}\n` +
+      `Date: ${r.date}\n` +
+      `Departure: ${slotLabel}\n` +
+      `Booking type: ${r.bookingMode}\n` +
+      messageText +
+      `Request ID: ${String(r._id)}\n`,
+    reservationId: String(r._id),
+  });
+
+  return NextResponse.json({ ok: true, skippedEmail: false });
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}

@@ -54,7 +54,8 @@ export default function AgentLoginPage() {
     <main
       style={{
         minHeight: "100vh",
-        background: "#fff",
+        background:
+          "linear-gradient(135deg, #f5fbff 0%, #ffffff 48%, #eef7fb 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -68,13 +69,20 @@ export default function AgentLoginPage() {
           maxWidth: 420,
           border: "1px solid #e5e5e5",
           borderRadius: 12,
-          padding: 20,
-          boxShadow: "0 6px 22px rgba(0,0,0,0.06)",
+          padding: 24,
+          background: "#ffffff",
+          color: "#0f2430",
+          boxShadow: "0 18px 48px rgba(15,36,48,0.12)",
         }}
       >
-        <h1 style={{ margin: 0, marginBottom: 14, fontSize: 22 }}>Agent Login</h1>
+        <h1 style={{ margin: 0, marginBottom: 6, fontSize: 24, color: "#0f2430", fontWeight: 900 }}>
+          Agent Login
+        </h1>
+        <div style={{ marginBottom: 18, color: "rgba(15,36,48,0.68)", fontSize: 14, lineHeight: 1.45 }}>
+          Sign in to manage partner reservations.
+        </div>
 
-        <label style={{ display: "block", fontSize: 14, marginBottom: 6 }}>Email</label>
+        <label style={{ display: "block", fontSize: 14, marginBottom: 6, color: "#294454", fontWeight: 800 }}>Email</label>
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -87,10 +95,13 @@ export default function AgentLoginPage() {
             border: "1px solid #d8d8d8",
             outline: "none",
             marginBottom: 12,
+            background: "#ffffff",
+            color: "#0f2430",
+            fontSize: 15,
           }}
         />
 
-        <label style={{ display: "block", fontSize: 14, marginBottom: 6 }}>Password</label>
+        <label style={{ display: "block", fontSize: 14, marginBottom: 6, color: "#294454", fontWeight: 800 }}>Password</label>
         <input
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -103,6 +114,9 @@ export default function AgentLoginPage() {
             border: "1px solid #d8d8d8",
             outline: "none",
             marginBottom: 12,
+            background: "#ffffff",
+            color: "#0f2430",
+            fontSize: 15,
           }}
         />
 
@@ -131,9 +145,11 @@ export default function AgentLoginPage() {
             borderRadius: 10,
             border: "none",
             cursor: loading ? "not-allowed" : "pointer",
-            background: "#111",
+            background: "linear-gradient(135deg, #0f3f57, #0a6a86)",
             color: "#fff",
-            fontWeight: 700,
+            fontWeight: 900,
+            boxShadow: "0 10px 22px rgba(10,106,134,0.22)",
+            opacity: loading ? 0.72 : 1,
           }}
         >
           {loading ? "Signing in..." : "Sign in"}

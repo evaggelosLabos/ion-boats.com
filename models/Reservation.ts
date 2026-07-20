@@ -3,7 +3,7 @@
 import mongoose, { Schema, type Model } from "mongoose";
 import type { TripId, BookingMode } from "../lib/booking/catalog";
 
-export type ReservationStatus = "confirmed" | "cancelled";
+export type ReservationStatus = "pending" | "confirmed" | "cancelled";
 
 export type ReservationDoc = {
   tripId: TripId;
@@ -53,8 +53,8 @@ const ReservationSchema = new Schema<ReservationDoc>(
     status: {
       type: String,
       required: true,
-      enum: ["confirmed", "cancelled"],
-      default: "confirmed",
+      enum: ["pending", "confirmed", "cancelled"],
+      default: "pending",
     },
 
     customer: {
@@ -79,11 +79,13 @@ const MODEL_NAME = "Reservation";
 const existing = mongoose.models[MODEL_NAME] as Model<any> | undefined;
 if (existing) {
   const paths = Object.keys(existing.schema.paths || {});
+  const statusValues = (existing.schema.path("status") as any)?.enumValues || [];
   const isOld =
     paths.includes("customerName") ||
     paths.includes("customerPhone") ||
     paths.includes("source") ||
-    paths.includes("paymentStatus");
+    paths.includes("paymentStatus") ||
+    !statusValues.includes("pending");
 
   if (isOld) {
     delete mongoose.models[MODEL_NAME];

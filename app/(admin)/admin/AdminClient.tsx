@@ -11,13 +11,14 @@ type Reservation = {
   bookingMode: "private" | "shared";
   quantity: number;
   priceEur: number;
-  status: "confirmed" | "cancelled";
+  status: "pending" | "confirmed" | "cancelled";
   customer: { name: string; phone: string; email?: string };
   createdAt?: string;
 };
 
 type ReservationsResponse =
   | { ok: true; date: string; reservations: Reservation[] }
+  | { ok: true; startDate: string; endDate: string; reservations: Reservation[] }
   | { ok: false; error?: string };
 
 type Announcement = {
@@ -41,14 +42,44 @@ function todayISO(): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+function addDaysISO(baseISO: string, days: number): string {
+  const [year, month, day] = baseISO.split("-").map(Number);
+  const d = new Date(year, month - 1, day);
+  d.setDate(d.getDate() + days);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function nextDays(count: number): string[] {
+  const today = todayISO();
+  return Array.from({ length: count }, (_, i) => addDaysISO(today, i));
+}
+
+function formatDayLabel(iso: string): string {
+  const [year, month, day] = iso.split("-").map(Number);
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+  }).format(new Date(year, month - 1, day));
+}
+
 export default function AdminClient() {
   const [view, setView] = useState<"reservations" | "announcement">("reservations");
 
   // Reservations state
   const [date, setDate] = useState(todayISO());
   const [loading, setLoading] = useState(false);
+  const [rangeLoading, setRangeLoading] = useState(false);
   const [error, setError] = useState("");
+  const [rangeError, setRangeError] = useState("");
   const [rows, setRows] = useState<Reservation[]>([]);
+  const [rangeRows, setRangeRows] = useState<Reservation[]>([]);
+  const [actionLoading, setActionLoading] = useState("");
+  const [actionMessage, setActionMessage] = useState("");
+  const [actionError, setActionError] = useState("");
 
   // Announcement state
   const [annLoading, setAnnLoading] = useState(false);
@@ -91,6 +122,95 @@ export default function AdminClient() {
       setRows([]);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadNext15Days() {
+    const days = nextDays(15);
+    const startDate = days[0];
+    const endDate = days[days.length - 1];
+
+    setRangeLoading(true);
+    setRangeError("");
+
+    try {
+      const res = await fetch(
+        `/api/admin/reservations?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`,
+        {
+          headers: { accept: "application/json" },
+          cache: "no-store",
+          credentials: "include",
+        }
+      );
+
+      const data: ReservationsResponse = (await res.json().catch(() => ({ ok: false }))) as ReservationsResponse;
+
+      if (!res.ok || data.ok === false) {
+        setRangeError(data.ok === false && data.error ? data.error : "Failed to load upcoming reservations");
+        setRangeRows([]);
+        return;
+      }
+
+      setRangeRows(Array.isArray(data.reservations) ? data.reservations : []);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Network error";
+      setRangeError(msg);
+      setRangeRows([]);
+    } finally {
+      setRangeLoading(false);
+    }
+  }
+
+  async function updateReservationStatus(r: Reservation, action: "confirm" | "decline") {
+    const email = (r.customer?.email || "").trim();
+    const verb = action === "confirm" ? "confirm" : "decline";
+    const defaultMessage =
+      action === "confirm"
+        ? "We are happy to confirm your booking. Please reply to this email if you have any questions."
+        : "Unfortunately we cannot confirm this booking request. Please reply to this email if you would like to discuss another date or option.";
+    const adminMessage = email
+      ? window.prompt(`Write the message to include in the email to ${email}:`, defaultMessage)
+      : "";
+
+    if (adminMessage === null) return;
+
+    const emailNote = email
+      ? `This will ${verb} the request and email ${email}.`
+      : `This will ${verb} the request, but no email will be sent because this customer did not enter an email.`;
+
+    if (!window.confirm(`${emailNote}\n\nContinue?`)) return;
+
+    setActionLoading(`${r._id}:${action}`);
+    setActionError("");
+    setActionMessage("");
+
+    try {
+      const res = await fetch(`/api/admin/reservations/${encodeURIComponent(r._id)}/${action}`, {
+        method: "POST",
+        headers: { accept: "application/json", "content-type": "application/json" },
+        cache: "no-store",
+        credentials: "include",
+        body: JSON.stringify({ message: adminMessage.trim() }),
+      });
+
+      const data = (await res.json().catch(() => ({ ok: false }))) as { ok?: boolean; error?: string; skippedEmail?: boolean };
+
+      if (!res.ok || data.ok === false) {
+        setActionError(data.error || `Failed to ${verb} request`);
+        return;
+      }
+
+      setActionMessage(
+        data.skippedEmail
+          ? `Request ${action === "confirm" ? "confirmed" : "declined"}. No customer email was stored.`
+          : `Request ${action === "confirm" ? "confirmed" : "declined"} and email sent.`
+      );
+
+      await Promise.all([load(date), loadNext15Days()]);
+    } catch (e: unknown) {
+      setActionError(e instanceof Error ? e.message : "Network error");
+    } finally {
+      setActionLoading("");
     }
   }
 
@@ -167,6 +287,11 @@ export default function AdminClient() {
     if (view === "reservations") void load(date);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date, view]);
+
+  useEffect(() => {
+    if (view === "reservations") void loadNext15Days();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view]);
 
   useEffect(() => {
     if (view === "announcement") void loadAnnouncement();
@@ -246,6 +371,124 @@ export default function AdminClient() {
         {/* ============== RESERVATIONS VIEW ============== */}
         {view === "reservations" ? (
           <>
+            <div style={{ marginTop: 16, display: "grid", gap: 10 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 950 }}>Next 15 days</div>
+                  <div style={{ marginTop: 3, color: "rgba(0,0,0,0.58)", fontSize: 13 }}>
+                    See upcoming requests and reservations without checking dates one by one.
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={loadNext15Days}
+                  disabled={rangeLoading}
+                  style={{
+                    height: 38,
+                    padding: "0 12px",
+                    borderRadius: 12,
+                    border: "1px solid rgba(0,0,0,0.15)",
+                    background: "#ffffff",
+                    color: "#0a0a0a",
+                    fontWeight: 900,
+                    cursor: rangeLoading ? "not-allowed" : "pointer",
+                    opacity: rangeLoading ? 0.7 : 1,
+                  }}
+                >
+                  {rangeLoading ? "Loading..." : "Refresh overview"}
+                </button>
+              </div>
+
+              {rangeError ? (
+                <div
+                  style={{
+                    padding: 12,
+                    borderRadius: 12,
+                    border: "1px solid rgba(255, 80, 80, 0.35)",
+                    background: "rgba(255, 80, 80, 0.08)",
+                    fontWeight: 800,
+                    color: "#0a0a0a",
+                  }}
+                >
+                  {rangeError}
+                </div>
+              ) : null}
+
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 10 }}>
+                {nextDays(15).map((day) => {
+                  const dayRows = rangeRows.filter((r) => r.date === day);
+                  const pending = dayRows.filter((r) => r.status === "pending").length;
+                  const confirmed = dayRows.filter((r) => r.status === "confirmed").length;
+                  const cancelled = dayRows.filter((r) => r.status === "cancelled").length;
+                  const active = day === date;
+                  const hasRows = dayRows.length > 0;
+
+                  return (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => setDate(day)}
+                      style={{
+                        minHeight: 124,
+                        padding: 12,
+                        borderRadius: 14,
+                        border: active ? "2px solid rgba(13,91,215,0.72)" : "1px solid rgba(0,0,0,0.12)",
+                        background: hasRows ? "rgba(255,248,232,0.95)" : "#ffffff",
+                        color: "#0a0a0a",
+                        textAlign: "left",
+                        cursor: "pointer",
+                        boxShadow: hasRows ? "0 8px 24px rgba(0,0,0,0.07)" : "none",
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "start" }}>
+                        <div>
+                          <div style={{ fontWeight: 950 }}>{formatDayLabel(day)}</div>
+                          <div style={{ marginTop: 2, fontSize: 12, color: "rgba(0,0,0,0.55)", fontWeight: 800 }}>{day}</div>
+                        </div>
+                        <div
+                          style={{
+                            minWidth: 28,
+                            height: 28,
+                            borderRadius: 999,
+                            display: "grid",
+                            placeItems: "center",
+                            background: hasRows ? "rgba(255,180,80,0.28)" : "rgba(0,0,0,0.06)",
+                            fontSize: 12,
+                            fontWeight: 950,
+                          }}
+                        >
+                          {dayRows.length}
+                        </div>
+                      </div>
+
+                      {hasRows ? (
+                        <div style={{ marginTop: 10, display: "grid", gap: 6 }}>
+                          <div style={{ fontSize: 12, color: "rgba(0,0,0,0.7)", fontWeight: 850 }}>
+                            {pending} pending · {confirmed} confirmed · {cancelled} cancelled
+                          </div>
+                          <div style={{ display: "grid", gap: 4 }}>
+                            {dayRows.slice(0, 2).map((r) => (
+                              <div key={r._id} style={{ fontSize: 12, color: "rgba(0,0,0,0.74)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                {r.tripId} · {r.bookingMode} · {r.customer?.name || "Guest"}
+                              </div>
+                            ))}
+                            {dayRows.length > 2 ? (
+                              <div style={{ fontSize: 12, fontWeight: 900, color: "rgba(0,0,0,0.55)" }}>+{dayRows.length - 2} more</div>
+                            ) : null}
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ marginTop: 18, fontSize: 12, color: "rgba(0,0,0,0.48)", fontWeight: 800 }}>
+                          No reservations
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div style={{ marginTop: 14, display: "flex", gap: 10, alignItems: "end", flexWrap: "wrap" }}>
               <div style={{ display: "grid", gap: 6 }}>
                 <label style={{ fontSize: 12, fontWeight: 800, color: "rgba(0,0,0,0.65)" }}>Date</label>
@@ -302,6 +545,22 @@ export default function AdminClient() {
               </div>
             ) : null}
 
+            {(actionError || actionMessage) ? (
+              <div
+                style={{
+                  marginTop: 14,
+                  padding: 12,
+                  borderRadius: 12,
+                  border: actionError ? "1px solid rgba(255, 80, 80, 0.35)" : "1px solid rgba(80,200,120,0.40)",
+                  background: actionError ? "rgba(255, 80, 80, 0.08)" : "rgba(80,200,120,0.14)",
+                  fontWeight: 800,
+                  color: "#0a0a0a",
+                }}
+              >
+                {actionError || actionMessage}
+              </div>
+            ) : null}
+
             <div style={{ marginTop: 14, display: "grid", gap: 10 }}>
               {rows.length === 0 && !loading ? (
                 <div style={{ padding: 14, borderRadius: 12, border: "1px solid rgba(0,0,0,0.12)", color: "rgba(0,0,0,0.85)" }}>
@@ -334,7 +593,12 @@ export default function AdminClient() {
                         padding: "6px 10px",
                         borderRadius: 999,
                         border: "1px solid rgba(0,0,0,0.12)",
-                        background: r.status === "cancelled" ? "rgba(255,80,80,0.12)" : "rgba(80,200,120,0.18)",
+                        background:
+                          r.status === "cancelled"
+                            ? "rgba(255,80,80,0.12)"
+                            : r.status === "pending"
+                            ? "rgba(255,180,80,0.18)"
+                            : "rgba(80,200,120,0.18)",
                         color: "#0a0a0a",
                       }}
                     >
@@ -348,6 +612,52 @@ export default function AdminClient() {
                   </div>
 
                   <div style={{ fontSize: 12, color: "rgba(0,0,0,0.55)" }}>ID: {r._id}</div>
+
+                  {r.status === "pending" ? (
+                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", paddingTop: 4 }}>
+                      <button
+                        type="button"
+                        onClick={() => updateReservationStatus(r, "confirm")}
+                        disabled={!!actionLoading}
+                        style={{
+                          height: 38,
+                          padding: "0 12px",
+                          borderRadius: 10,
+                          border: "1px solid rgba(0,0,0,0.12)",
+                          background: "rgba(80,200,120,0.18)",
+                          color: "#0a0a0a",
+                          fontWeight: 950,
+                          cursor: actionLoading ? "not-allowed" : "pointer",
+                          opacity: actionLoading ? 0.65 : 1,
+                        }}
+                      >
+                        {actionLoading === `${r._id}:confirm` ? "Confirming..." : "Confirm & email"}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => updateReservationStatus(r, "decline")}
+                        disabled={!!actionLoading}
+                        style={{
+                          height: 38,
+                          padding: "0 12px",
+                          borderRadius: 10,
+                          border: "1px solid rgba(0,0,0,0.12)",
+                          background: "rgba(255,80,80,0.12)",
+                          color: "#0a0a0a",
+                          fontWeight: 950,
+                          cursor: actionLoading ? "not-allowed" : "pointer",
+                          opacity: actionLoading ? 0.65 : 1,
+                        }}
+                      >
+                        {actionLoading === `${r._id}:decline` ? "Declining..." : "Decline & email"}
+                      </button>
+
+                      <div style={{ fontSize: 12, color: "rgba(0,0,0,0.56)", fontWeight: 750 }}>
+                        {r.customer?.email ? `Email will be sent to ${r.customer.email}` : "No email stored for this request"}
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               ))}
             </div>

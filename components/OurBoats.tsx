@@ -82,8 +82,8 @@ export default function IonBoatsIntroSection() {
             experienced skippers, and clear pricing ensure a predictable and
             stress-free experience, while flexible options allow you to choose
             between shared outings or fully private cruises. Check real-time
-            availability, select your preferred time slot, and confirm your trip
-            in minutes — with instant confirmation, local support, and a strong
+            availability, select your preferred time slot, and send your booking
+            request in minutes — with local follow-up, clear support, and a strong
             emphasis on safety, comfort, and peace of mind.
           </div>
         </div>
